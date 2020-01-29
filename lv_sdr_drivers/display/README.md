@@ -19,3 +19,8 @@ A more proper approach would be to query SDL. Combined with an hypothetical way
 to dynamically set the window size at launch, this would allow easier testing
 of different sizes.
 
+fbdev
+-----
+
+We're simply re-opening the framebuffer, looking at the size, and configuring
+the display accordingly.
