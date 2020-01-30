@@ -32,6 +32,9 @@ extern "C" {
 #ifndef EVDEV_CALIBRATE
 #define EVDEV_CALIBRATE 0
 #endif
+#ifndef EVDEV_DRV_MAX_EVENTS
+#define EVDEV_DRV_MAX_EVENTS 10
+#endif
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
 #include "lvgl.h"
