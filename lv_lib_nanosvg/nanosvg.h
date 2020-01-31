@@ -522,18 +522,18 @@ static void nsvg__xformMultiply(float* t, float* s)
 
 static void nsvg__xformInverse(float* inv, float* t)
 {
-	double invdet, det = (double)t[0] * t[3] - (double)t[2] * t[1];
+	double invdet, det = (double)t[0] * (double)t[3] - (double)t[2] * (double)t[1];
 	if (det > -1e-6 && det < 1e-6) {
 		nsvg__xformIdentity(t);
 		return;
 	}
 	invdet = 1.0 / det;
-	inv[0] = (float)(t[3] * invdet);
-	inv[2] = (float)(-t[2] * invdet);
-	inv[4] = (float)(((double)t[2] * t[5] - (double)t[3] * t[4]) * invdet);
-	inv[1] = (float)(-t[1] * invdet);
-	inv[3] = (float)(t[0] * invdet);
-	inv[5] = (float)(((double)t[1] * t[4] - (double)t[0] * t[5]) * invdet);
+	inv[0] = (float)((double)t[3] * invdet);
+	inv[2] = (float)((double)-t[2] * invdet);
+	inv[4] = (float)(((double)t[2] * (double)t[5] - (double)t[3] * (double)t[4]) * invdet);
+	inv[1] = (float)((double)-t[1] * invdet);
+	inv[3] = (float)((double)t[0] * invdet);
+	inv[5] = (float)(((double)t[1] * (double)t[4] - (double)t[0] * (double)t[5]) * invdet);
 }
 
 static void nsvg__xformPremultiply(float* t, float* s)
@@ -592,9 +592,9 @@ static void nsvg__curveBounds(float* bounds, float* curve)
 
 	// Add bezier curve inflection points in X and Y.
 	for (i = 0; i < 2; i++) {
-		a = -3.0 * v0[i] + 9.0 * v1[i] - 9.0 * v2[i] + 3.0 * v3[i];
-		b = 6.0 * v0[i] - 12.0 * v1[i] + 6.0 * v2[i];
-		c = 3.0 * v1[i] - 3.0 * v0[i];
+		a = -3.0 * (double)v0[i] + 9.0 * (double)v1[i] - 9.0 * (double)v2[i] + 3.0 * (double)v3[i];
+		b = 6.0 * (double)v0[i] - 12.0 * (double)v1[i] + 6.0 * (double)v2[i];
+		c = 3.0 * (double)v1[i] - 3.0 * (double)v0[i];
 		count = 0;
 		if (fabs(a) < NSVG_EPSILON) {
 			if (fabs(b) > NSVG_EPSILON) {
@@ -2085,8 +2085,8 @@ static void nsvg__pathArcTo(NSVGparser* p, float* cpx, float* cpy, float* args, 
 	rx = fabsf(args[0]);				// y radius
 	ry = fabsf(args[1]);				// x radius
 	rotx = args[2] / 180.0f * NSVG_PI;		// x rotation angle
-	fa = fabsf(args[3]) > 1e-6 ? 1 : 0;	// Large arc
-	fs = fabsf(args[4]) > 1e-6 ? 1 : 0;	// Sweep direction
+	fa = (double)fabsf(args[3]) > 1e-6 ? 1 : 0;	// Large arc
+	fs = (double)fabsf(args[4]) > 1e-6 ? 1 : 0;	// Sweep direction
 	x1 = *cpx;							// start point
 	y1 = *cpy;
 	if (rel) {							// end point
