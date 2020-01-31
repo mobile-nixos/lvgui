@@ -332,6 +332,11 @@ int nsvg__parseXML(char* input,
 				   void (*startelCb)(void* ud, const char* el, const char** attr),
 				   void (*endelCb)(void* ud, const char* el),
 				   void (*contentCb)(void* ud, const char* s),
+				   void* ud);
+int nsvg__parseXML(char* input,
+				   void (*startelCb)(void* ud, const char* el, const char** attr),
+				   void (*endelCb)(void* ud, const char* el),
+				   void (*contentCb)(void* ud, const char* s),
 				   void* ud)
 {
 	char* s = input;
