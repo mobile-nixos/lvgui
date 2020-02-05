@@ -47,7 +47,7 @@ static lv_res_t decoder_info(struct _lv_img_decoder * decoder, const void * src,
 
 		image = nsvgParseFromFile(filename, "px", 96.0f);
 		if (image == NULL) {
-			fprintf(stderr, "Could not open SVG image for information.\n");
+			fprintf(stderr, "Could not open SVG image '%s' for information.\n", filename);
 			nsvgDelete(image);
 
 			return LV_RES_INV;
@@ -95,7 +95,7 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
 
 	image = nsvgParseFromFile(filename, "px", 96.0f);
 	if (image == NULL) {
-		fprintf(stderr, "Could not open SVG image for rasterizing.\n");
+		fprintf(stderr, "Could not open SVG image '%s' for rasterizing.\n", filename);
 		nsvgDelete(image);
 
 		return LV_RES_INV;
