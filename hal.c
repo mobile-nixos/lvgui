@@ -8,6 +8,7 @@
 mn_hal_default_font_t mn_hal_default_font;
 int mn_hal_default_dpi;
 lv_disp_drv_t disp_drv;
+static lv_obj_t * cursor_obj;
 
 void hal_preinit(void);
 void hal_set_dpi(void);
@@ -118,19 +119,14 @@ static void init_evdev(char* name)
 	lv_indev_drv_init(&indev_drv);
 
 	// FIXME: This assumes only pointers via evdev...
-	indev_drv.type = LV_INDEV_TYPE_POINTER;
+	indev_drv.type = instance->lv_indev_drv_type;
 	indev_drv.read_cb = evdev_read;
 	indev_drv.user_data = instance;
-	/*lv_indev_t * indev = */lv_indev_drv_register(&indev_drv);
+	lv_indev_t * indev = lv_indev_drv_register(&indev_drv);
 
-	// // TODO: Better handle pointer.
-	// if (indev_drv.type == LV_INDEV_TYPE_POINTER) {
-	// 	lv_obj_t * cursor_obj =  lv_img_create(lv_scr_act(), NULL);
-	// 	// FIXME: stop relying on LV_SYMBOL_POWER and instead on a custom pointer.
-	// 	lv_img_set_src(cursor_obj, LV_SYMBOL_POWER);
-	// 	lv_indev_set_cursor(indev, cursor_obj);
-	// 	lv_obj_set_click(cursor_obj, false);
-	// }
+	if (indev_drv.type == LV_INDEV_TYPE_POINTER) {
+		lv_indev_set_cursor(indev, cursor_obj);
+	}
 }
 #endif
 
@@ -153,6 +149,14 @@ void hal_init(void)
 	LV_LOG_INFO("HAL begins");
 
 	lv_disp_drv_register(&disp_drv);
+
+	// FIXME: don't instantiate unless required?
+	// FIXME: stop relying on LV_SYMBOL_POWER and instead on a custom pointer.
+	{
+	cursor_obj = lv_img_create(lv_scr_act(), NULL);
+	lv_img_set_src(cursor_obj, LV_SYMBOL_POWER);
+	lv_obj_set_click(cursor_obj, false);
+	}
 
 #if USE_SDR_EVDEV
 	for (int i = 0; i < EVDEV_DRV_MAX_EVENTS; i++) {
