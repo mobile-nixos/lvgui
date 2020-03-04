@@ -53,6 +53,11 @@ typedef struct {
 	int evdev_button;
 	int evdev_key_val;
 	int evdev_mt_slot;
+
+	int evdev_abs_x_min;
+	int evdev_abs_y_min;
+	int evdev_abs_x_max;
+	int evdev_abs_y_max;
 } evdev_drv_instance;
 
 /**********************

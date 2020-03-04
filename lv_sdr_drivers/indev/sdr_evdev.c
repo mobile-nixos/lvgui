@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <linux/input.h>
+#include <libevdev/libevdev.h>
 
 int map(int x, int in_min, int in_max, int out_min, int out_max);
 evdev_drv_instance* evdev_drv_instance_new(void);
@@ -47,6 +48,27 @@ evdev_drv_instance* evdev_init(char* dev_name)
 	instance->evdev_key_val = 0;
 	instance->evdev_button = LV_INDEV_STATE_REL;
 	instance->evdev_mt_slot = 0;
+	instance->evdev_abs_x_min = 0;
+	instance->evdev_abs_y_min = 0;
+	instance->evdev_abs_x_max = 0;
+	instance->evdev_abs_y_max = 0;
+
+	struct libevdev *evdev = libevdev_new();
+	libevdev_set_fd(evdev, evdev_fd);
+
+	instance->evdev_abs_x_min = libevdev_get_abs_minimum(evdev, ABS_X);
+	instance->evdev_abs_y_min = libevdev_get_abs_minimum(evdev, ABS_Y);
+	instance->evdev_abs_x_max = libevdev_get_abs_maximum(evdev, ABS_X);
+	instance->evdev_abs_y_max = libevdev_get_abs_maximum(evdev, ABS_Y);
+
+	printf(
+			"Device %s\n  - x_min: %d, x_max: %d\n  - y_min: %d, y_max: %d\n",
+			libevdev_get_name(evdev),
+			instance->evdev_abs_x_min,
+			instance->evdev_abs_x_max,
+			instance->evdev_abs_y_min,
+			instance->evdev_abs_y_max
+		  );
 
 	return instance;
 }
@@ -131,7 +153,7 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 #endif
 			}
 		} else if(in.type == EV_KEY) {
-			if(in.code == BTN_MOUSE || in.code == BTN_TOUCH) {
+			if(in.code == BTN_MOUSE || in.code == BTN_TOUCH || in.code == BTN_LEFT) {
 				if(in.value == 0)
 					instance->evdev_button = LV_INDEV_STATE_REL;
 				else if(in.value == 1)
@@ -178,17 +200,17 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 		return false;
 	/*Store the collected data*/
 
-#if EVDEV_SCALE
-	data->point.x = map(instance->evdev_root_x, 0, EVDEV_SCALE_HOR_RES, 0, lv_disp_get_hor_res(drv->disp));
-	data->point.y = map(instance->evdev_root_y, 0, EVDEV_SCALE_VER_RES, 0, lv_disp_get_ver_res(drv->disp));
-#endif
-#if EVDEV_CALIBRATE
-	data->point.x = map(instance->evdev_root_x, EVDEV_HOR_MIN, EVDEV_HOR_MAX, 0, lv_disp_get_hor_res(drv->disp));
-	data->point.y = map(instance->evdev_root_y, EVDEV_VER_MIN, EVDEV_VER_MAX, 0, lv_disp_get_ver_res(drv->disp));
-#else
-	data->point.x = instance->evdev_root_x;
-	data->point.y = instance->evdev_root_y;
-#endif
+	/* There may be no abs max. */
+	if (instance->evdev_abs_x_max == 0) {
+		/* Use the values directly */
+		data->point.x = instance->evdev_root_x;
+		data->point.y = instance->evdev_root_y;
+	}
+	else {
+		/* Otherwise map */
+		data->point.x = map(instance->evdev_root_x, instance->evdev_abs_x_min, instance->evdev_abs_x_max, 0, lv_disp_get_hor_res(drv->disp));
+		data->point.y = map(instance->evdev_root_y, instance->evdev_abs_y_min, instance->evdev_abs_y_max, 0, lv_disp_get_ver_res(drv->disp));
+	}
 
 	data->state = instance->evdev_button;
 
