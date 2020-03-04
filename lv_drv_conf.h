@@ -13,7 +13,7 @@
 #define USE_MONITOR 1
 #define USE_MOUSE 1
 // #define USE_MOUSEWHEEL 1
-// #define USE_KEYBOARD 1
+#define USE_KEYBOARD 1
 #define USE_SDR_EVDEV 0
 #else
 #define USE_FBDEV 1

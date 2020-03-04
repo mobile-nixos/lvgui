@@ -29,6 +29,10 @@ void hal_setup_display(void);
 #	include "lv_drivers/indev/mouse.h"
 #endif
 
+#if USE_KEYBOARD
+#	include "lv_drivers/indev/keyboard.h"
+#endif
+
 #define DISP_BUF_SIZE (80*LV_HOR_RES_MAX)
 
 // WARNING: This is not proper DPI.
@@ -160,11 +164,23 @@ void hal_init(void)
 
 #if USE_MOUSE
     mouse_init();
+	{
     lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = mouse_read;
 	lv_indev_drv_register(&indev_drv);
+	}
+#endif
+#if USE_KEYBOARD
+    keyboard_init();
+	{
+    lv_indev_drv_t indev_drv;
+    lv_indev_drv_init(&indev_drv);
+    indev_drv.type = LV_INDEV_TYPE_KEYPAD;
+    indev_drv.read_cb = keyboard_read;
+	lv_indev_drv_register(&indev_drv);
+	}
 #endif
 
 	LV_LOG_INFO("HAL Finished");
