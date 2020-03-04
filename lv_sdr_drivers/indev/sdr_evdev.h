@@ -47,6 +47,7 @@ extern "C" {
  *********************/
 
 typedef struct {
+	int lv_indev_drv_type;
 	int evdev_fd;
 	int evdev_root_x;
 	int evdev_root_y;

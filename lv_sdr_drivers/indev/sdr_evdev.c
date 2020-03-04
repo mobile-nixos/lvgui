@@ -42,6 +42,8 @@ evdev_drv_instance* evdev_init(char* dev_name)
 
 	fcntl(evdev_fd, F_SETFL, O_ASYNC | O_NONBLOCK);
 
+	instance->lv_indev_drv_type = LV_INDEV_TYPE_POINTER;
+
 	instance->evdev_fd = evdev_fd;
 	instance->evdev_root_x = 0;
 	instance->evdev_root_y = 0;
