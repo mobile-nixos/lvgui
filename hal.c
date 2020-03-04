@@ -5,6 +5,8 @@
 
 #include "hal.h"
 
+LV_IMG_DECLARE(lvgui_cursor);
+
 mn_hal_default_font_t mn_hal_default_font;
 int mn_hal_default_dpi;
 lv_disp_drv_t disp_drv;
@@ -151,10 +153,9 @@ void hal_init(void)
 	lv_disp_drv_register(&disp_drv);
 
 	// FIXME: don't instantiate unless required?
-	// FIXME: stop relying on LV_SYMBOL_POWER and instead on a custom pointer.
 	{
 	cursor_obj = lv_img_create(lv_scr_act(), NULL);
-	lv_img_set_src(cursor_obj, LV_SYMBOL_POWER);
+	lv_img_set_src(cursor_obj, &lvgui_cursor);
 	lv_obj_set_click(cursor_obj, false);
 	}
 
