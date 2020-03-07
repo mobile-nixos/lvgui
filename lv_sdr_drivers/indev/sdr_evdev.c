@@ -25,6 +25,29 @@ void evdev_drv_instance_destroy(evdev_drv_instance* instance)
 	free(instance);
 }
 
+/* WARNING: This is a bad implementation that should instead rely on `udev_device_get_property_value`.
+ * Why isn't it? First of all... C is annoying to work  with.
+ * But that's not the real reason.
+ * All udev implementations fail to cross-compile using pkgsStatic. So we can't rely on udev.
+ * If we could we would instead rely on the libinput driver for LVGL.
+ * (Though that driver has warts that need fixing.)
+ *
+ * So, instead of doing the right thing, we rely on the return value of an external command.
+ * As it is, it should be safe, as we are globbing a root-controlled location.
+ * Though, a stray "'" in a filename there invites hackers into this process.
+ *
+ * Ugh. If *at least* a `shellwords` like escaping was available in C, or some
+ * kind of `gsub` or character-based replace...
+ */
+static bool evdev_drv_device_is_touchpad(char* dev_name)
+{
+	char cmd[1024];
+	snprintf(cmd, 1024, "udevadm info '%s' | grep 'ID_INPUT_TOUCHPAD=1$' > /dev/null", dev_name);
+
+	/* :( */
+	return system(cmd) == 0;
+}
+
 /**
  * Initialize the evdev interface
  */
@@ -54,6 +77,7 @@ evdev_drv_instance* evdev_init(char* dev_name)
 	instance->evdev_abs_y_min = 0;
 	instance->evdev_abs_x_max = 0;
 	instance->evdev_abs_y_max = 0;
+	instance->is_touchpad = false;
 
 	struct libevdev *evdev = libevdev_new();
 	libevdev_set_fd(evdev, evdev_fd);
@@ -71,6 +95,11 @@ evdev_drv_instance* evdev_init(char* dev_name)
 			instance->evdev_abs_y_min,
 			instance->evdev_abs_y_max
 		  );
+
+	if (evdev_drv_device_is_touchpad(dev_name)) {
+		instance->is_touchpad = true;
+		printf("  - is a touchpad\n");
+	}
 
 	return instance;
 }
