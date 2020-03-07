@@ -8,7 +8,14 @@
 #include <linux/input.h>
 #include <libevdev/libevdev.h>
 
+#define FUDGE_FACTOR 0.5
+
+/**
+ * Read: https://www.kernel.org/doc/Documentation/input/event-codes.txt
+ */
+
 int map(int x, int in_min, int in_max, int out_min, int out_max);
+inline static int clamp(int value, int min, int max);
 evdev_drv_instance* evdev_drv_instance_new(void);
 void evdev_drv_instance_destroy(evdev_drv_instance* instance);
 
@@ -105,16 +112,106 @@ evdev_drv_instance* evdev_init(char* dev_name)
 }
 
 /**
+ * Completely bypass the usual evdev input handling.
+ * Emulating a touchpad across the existing mess is not working well.
+ *
+ * @return false: because the points are not buffered, so no more data to be read
+ */
+static bool emulate_touchpad(lv_indev_drv_t * drv, lv_indev_data_t * data, evdev_drv_instance * instance) {
+	int evdev_fd = instance->evdev_fd;
+	struct input_event in;
+
+	int delta_x = 0;
+	int delta_y = 0;
+
+	int new_abs_x = instance->evdev_root_x;
+	int new_abs_y = instance->evdev_root_y;
+	bool new_touch = instance->is_touched;
+
+	while(read(evdev_fd, &in, sizeof(struct input_event)) > 0) {
+		switch (in.type) {
+			case EV_SYN:
+				if (in.code == SYN_REPORT) {
+					// Is this the continuation from a touch?
+					if (instance->is_touched == new_touch) {
+						delta_x += new_abs_x - instance->evdev_root_x;
+						delta_y += new_abs_y - instance->evdev_root_y;
+					}
+					instance->evdev_root_x = new_abs_x;
+					instance->evdev_root_y = new_abs_y;
+					instance->is_touched = new_touch;
+				}
+				break;
+			case EV_ABS:
+				switch (in.code) {
+					case ABS_X:
+						new_abs_x = in.value;
+						break;
+					case ABS_Y:
+						new_abs_y = in.value;
+						break;
+					default:
+						break;
+				}
+				break;
+			case EV_KEY:
+				switch (in.code) {
+					case BTN_LEFT:
+						if (in.value == 0) {
+							instance->evdev_button = LV_INDEV_STATE_REL;
+						}
+						else if (in.value == 1) {
+							instance->evdev_button = LV_INDEV_STATE_PR;
+						}
+
+						break;
+					case BTN_TOUCH:
+						if (in.value == 0) {
+							new_touch = false;
+						}
+						else if (in.value == 1) {
+							new_touch = true;
+						}
+						break;
+					default:
+						break;
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
+	// TODO: We probably want to use evdev_abs_*_max to make all touchpad act
+	// more alike... right now our delta is based on the implementation detail
+	// of the specific touchpad being used.
+
+	data->point.x += delta_x * FUDGE_FACTOR;
+	data->point.y += delta_y * FUDGE_FACTOR;
+	data->point.x = clamp(data->point.x, 0, lv_disp_get_hor_res(drv->disp) - 1);
+	data->point.y = clamp(data->point.y, 0, lv_disp_get_ver_res(drv->disp) - 1);
+
+	// At each loop the state of the button needs to be refreshed.
+	data->state = instance->evdev_button;
+
+	return false;
+}
+
+/**
  * Get the current position and state of the evdev
  * @param data store the evdev data here
  * @return false: because the points are not buffered, so no more data to be read
  */
 bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 {
-	struct input_event in;
-
 	evdev_drv_instance* instance = drv->user_data;
+	if (instance->is_touchpad) {
+		return emulate_touchpad(drv, data, instance);
+	}
+
+	struct input_event in;
 	int evdev_fd = instance->evdev_fd;
+
 	while(read(evdev_fd, &in, sizeof(struct input_event)) > 0) {
 		if(in.type == EV_REL) {
 			if(in.code == REL_X)
@@ -265,4 +362,14 @@ int map(int x, int in_min, int in_max, int out_min, int out_max)
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+inline static int clamp(int value, int min, int max)
+{
+	if (value < min) {
+		return min;
+	}
+	if (value > max) {
+		return max;
+	}
+	return value;
+}
 #endif

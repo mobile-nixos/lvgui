@@ -60,6 +60,7 @@ typedef struct {
 	int evdev_abs_x_max;
 	int evdev_abs_y_max;
 	bool is_touchpad;
+	bool is_touched;
 } evdev_drv_instance;
 
 /**********************
