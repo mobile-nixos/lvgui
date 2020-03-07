@@ -1,3 +1,4 @@
+#include <glob.h>
 #include <stdio.h>
 #include <sys/time.h>
 #include "lvgl/lvgl.h"
@@ -160,10 +161,14 @@ void hal_init(void)
 	}
 
 #if USE_SDR_EVDEV
-	for (int i = 0; i < EVDEV_DRV_MAX_EVENTS; i++) {
-		char event_file[256];
-		snprintf(event_file, 256, "/dev/input/event%d", i);
-		init_evdev(event_file);
+	{
+		char **filename;
+		size_t cnt;
+		glob_t globbuf;
+		glob("/dev/input/event*", 0, NULL, &globbuf);
+		for (filename = globbuf.gl_pathv, cnt = globbuf.gl_pathc; cnt; filename++, cnt--) {
+			init_evdev(*filename);
+		}
 	}
 #endif
 

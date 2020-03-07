@@ -300,7 +300,6 @@ extern int monitor_height;
 #endif
 
 #if USE_EVDEV
-#  define EVDEV_DRV_MAX_EVENTS 10 /* From 0 to MAX-1 */
 #  define EVDEV_SWAP_AXES         0               /*Swap the x and y axes of the touchscreen*/
 
 #  define EVDEV_SCALE             0               /* Scale input, e.g. if touchscreen resolution does not match display resolution */
