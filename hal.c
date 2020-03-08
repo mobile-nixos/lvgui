@@ -127,8 +127,11 @@ static void init_evdev(char* name)
 	indev_drv.user_data = instance;
 	lv_indev_t * indev = lv_indev_drv_register(&indev_drv);
 
-	if (indev_drv.type == LV_INDEV_TYPE_POINTER) {
+	// Whitelisting mice and touchpads. We don't want to bind a keyboard to
+	// a cursor.
+	if (instance->is_mouse || instance->is_touchpad) {
 		lv_indev_set_cursor(indev, cursor_obj);
+		lv_obj_set_hidden(cursor_obj, false);
 	}
 }
 #endif
@@ -153,11 +156,13 @@ void hal_init(void)
 
 	lv_disp_drv_register(&disp_drv);
 
-	// FIXME: don't instantiate unless required?
 	{
 	cursor_obj = lv_img_create(lv_scr_act(), NULL);
 	lv_img_set_src(cursor_obj, &lvgui_cursor);
 	lv_obj_set_click(cursor_obj, false);
+	// Hide by default
+	// Un-hide when used.
+	lv_obj_set_hidden(cursor_obj, true);
 	}
 
 #if USE_SDR_EVDEV
