@@ -59,7 +59,11 @@ typedef struct {
 	int evdev_abs_y_min;
 	int evdev_abs_x_max;
 	int evdev_abs_y_max;
+	bool is_mouse;
+	bool is_touchscreen;
 	bool is_touchpad;
+
+	// Used only by touchpad emulation.
 	bool is_touched;
 } evdev_drv_instance;
 

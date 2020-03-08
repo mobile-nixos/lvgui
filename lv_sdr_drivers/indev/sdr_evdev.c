@@ -55,6 +55,30 @@ static bool evdev_drv_device_is_touchpad(char* dev_name)
 	return system(cmd) == 0;
 }
 
+/* See the previous function's comment.
+ * Same pitfalls, same reasoning.
+ */
+static bool evdev_drv_device_is_touchscreen(char* dev_name)
+{
+	char cmd[1024];
+	snprintf(cmd, 1024, "udevadm info '%s' | grep 'ID_INPUT_TOUCHSCREEN=1$' > /dev/null", dev_name);
+
+	/* :( */
+	return system(cmd) == 0;
+}
+
+/* See the previous function's comment.
+ * Same pitfalls, same reasoning.
+ */
+static bool evdev_drv_device_is_mouse(char* dev_name)
+{
+	char cmd[1024];
+	snprintf(cmd, 1024, "udevadm info '%s' | grep 'ID_INPUT_MOUSE=1$' > /dev/null", dev_name);
+
+	/* :( */
+	return system(cmd) == 0;
+}
+
 /**
  * Initialize the evdev interface
  */
@@ -103,9 +127,19 @@ evdev_drv_instance* evdev_init(char* dev_name)
 			instance->evdev_abs_y_max
 		  );
 
+	if (evdev_drv_device_is_touchscreen(dev_name)) {
+		instance->is_touchscreen = true;
+		printf("  - is a touchscreen\n");
+	}
+
 	if (evdev_drv_device_is_touchpad(dev_name)) {
 		instance->is_touchpad = true;
 		printf("  - is a touchpad\n");
+	}
+
+	if (evdev_drv_device_is_mouse(dev_name)) {
+		instance->is_mouse = true;
+		printf("  - is a mouse\n");
 	}
 
 	return instance;
