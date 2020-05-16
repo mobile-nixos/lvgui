@@ -50,7 +50,7 @@ WARNING_FLAGS ?= \
 
 DEBUG_FLAGS ?= -O3 -g0
 
-CFLAGS ?= $(WARNING_FLAGS) $(DEBUG_FLAGS) -I$(LVGL_DIR)/ -DLVGL_ENV_SIMULATOR=$(LVGL_ENV_SIMULATOR)
+CFLAGS ?= $(WARNING_FLAGS) $(DEBUG_FLAGS) -I$(LVGL_DIR)/ -DLVGL_ENV_SIMULATOR=$(LVGL_ENV_SIMULATOR) -fPIC
 LDFLAGS ?=
 LDFLAGS += -lm
 ifeq ($(LVGL_ENV_SIMULATOR), 1)
@@ -69,7 +69,7 @@ include $(LVGL_DIR)/lv_sdr_drivers/lv_sdr_drivers.mk
 include $(LVGL_DIR)/lv_lib_nanosvg/lv_lib_nanosvg.mk
 
 # Name of the archive
-ARCHIVE = liblvgui.a
+LIBRARY = liblvgui.so
 
 # Additional source files
 CSRCS += ./hal.c ./artwork/lvgui_cursor.c
@@ -91,8 +91,8 @@ all: default
 	@echo "CC $<"
     
 default: $(AOBJS) $(COBJS) $(CONFFILES)
-	$(AR) rcs $(ARCHIVE) $(AOBJS) $(COBJS)
+	$(CC) -shared -o $(LIBRARY) -fPIC $(AOBJS) $(COBJS) $(LDFLAGS)
 
 clean: 
-	rm -f $(ARCHIVE) $(AOBJS) $(COBJS)
+	rm -f $(LIBRARY) $(AOBJS) $(COBJS)
 
