@@ -72,7 +72,7 @@ include $(LVGL_DIR)/lv_lib_nanosvg/lv_lib_nanosvg.mk
 LIBRARY = liblvgui.so
 
 # Additional source files
-CSRCS += ./hal.c ./artwork/lvgui_cursor.c
+CSRCS += ./hal.c ./simulator.c ./artwork/lvgui_cursor.c
 
 CONFFILES = ./lv_conf.h ./lv_drv_conf.h
 
