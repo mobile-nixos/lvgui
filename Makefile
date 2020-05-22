@@ -84,7 +84,10 @@ LIBRARY = liblvgui.so
 endif
 
 # Additional source files
-CSRCS += ./hal.c ./introspection.c ./artwork/lvgui_cursor.c
+CSRCS += ./hal.c
+CSRCS += ./introspection.c
+CSRCS += ./artwork/lvgui_cursor.c
+CSRCS += ./lvgui_struct_accessors.c
 
 CONFFILES = ./lv_conf.h ./lv_drv_conf.h
 

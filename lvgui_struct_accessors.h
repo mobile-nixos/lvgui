@@ -1,0 +1,99 @@
+#ifndef GENERATED_FFI_H
+#define GENERATED_FFI_H
+
+#include <lvgl/lvgl.h>
+#include <lv_drv_conf.h>
+
+lv_style_t * lvgui_allocate_lv_style();
+
+uint8_t lvgui_get_lv_style__glass(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__glass(lv_style_t * s, uint8_t value) __attribute__((used));
+
+lv_color_t lvgui_get_lv_style__body_main_color(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_main_color(lv_style_t * s, lv_color_t value) __attribute__((used));
+
+lv_color_t lvgui_get_lv_style__body_grad_color(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_grad_color(lv_style_t * s, lv_color_t value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__body_radius(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_radius(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_opa_t lvgui_get_lv_style__body_opa(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_opa(lv_style_t * s, lv_opa_t value) __attribute__((used));
+
+lv_color_t lvgui_get_lv_style__body_border_color(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_border_color(lv_style_t * s, lv_color_t value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__body_border_width(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_border_width(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_border_part_t lvgui_get_lv_style__body_border_part(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_border_part(lv_style_t * s, lv_border_part_t value) __attribute__((used));
+
+lv_opa_t lvgui_get_lv_style__body_border_opa(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_border_opa(lv_style_t * s, lv_opa_t value) __attribute__((used));
+
+lv_color_t lvgui_get_lv_style__body_shadow_color(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_shadow_color(lv_style_t * s, lv_color_t value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__body_shadow_width(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_shadow_width(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_shadow_type_t lvgui_get_lv_style__body_shadow_type(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_shadow_type(lv_style_t * s, lv_shadow_type_t value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__body_padding_top(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_padding_top(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__body_padding_bottom(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_padding_bottom(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__body_padding_left(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_padding_left(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__body_padding_right(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_padding_right(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__body_padding_inner(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__body_padding_inner(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_color_t lvgui_get_lv_style__text_color(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__text_color(lv_style_t * s, lv_color_t value) __attribute__((used));
+
+lv_color_t lvgui_get_lv_style__text_sel_color(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__text_sel_color(lv_style_t * s, lv_color_t value) __attribute__((used));
+
+lv_font_t * lvgui_get_lv_style__text_font(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__text_font(lv_style_t * s, lv_font_t * value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__text_letter_space(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__text_letter_space(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__text_line_space(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__text_line_space(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_opa_t lvgui_get_lv_style__text_opa(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__text_opa(lv_style_t * s, lv_opa_t value) __attribute__((used));
+
+lv_color_t lvgui_get_lv_style__image_color(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__image_color(lv_style_t * s, lv_color_t value) __attribute__((used));
+
+lv_opa_t lvgui_get_lv_style__image_intense(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__image_intense(lv_style_t * s, lv_opa_t value) __attribute__((used));
+
+lv_opa_t lvgui_get_lv_style__image_opa(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__image_opa(lv_style_t * s, lv_opa_t value) __attribute__((used));
+
+lv_color_t lvgui_get_lv_style__line_color(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__line_color(lv_style_t * s, lv_color_t value) __attribute__((used));
+
+lv_coord_t lvgui_get_lv_style__line_width(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__line_width(lv_style_t * s, lv_coord_t value) __attribute__((used));
+
+lv_opa_t lvgui_get_lv_style__line_opa(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__line_opa(lv_style_t * s, lv_opa_t value) __attribute__((used));
+
+uint8_t lvgui_get_lv_style__line_rounded(lv_style_t * s) __attribute__((used));
+void lvgui_set_lv_style__line_rounded(lv_style_t * s, uint8_t value) __attribute__((used));
+
+#endif
