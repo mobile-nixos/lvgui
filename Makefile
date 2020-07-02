@@ -59,14 +59,16 @@ CFLAGS ?= $(WARNING_FLAGS) $(DEBUG_FLAGS) -I$(LVGL_DIR)/ -DLVGL_ENV_SIMULATOR=$(
 LDFLAGS ?=
 LDFLAGS += -lm
 
+PKG_CONFIG ?= pkg-config
+
 REQUIRES = 
 ifeq ($(LVGL_ENV_SIMULATOR), 1)
-CFLAGS += $(shell pkg-config --cflags sdl2)
-LDFLAGS += $(shell pkg-config --libs sdl2)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags sdl2)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs sdl2)
 REQUIRES += sdl2
 else
-CFLAGS += $(shell pkg-config --cflags libevdev)
-LDFLAGS += $(shell pkg-config --libs libevdev)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags libevdev)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs libevdev)
 LDFLAGS += -lpthread
 REQUIRES += libevdev
 endif
