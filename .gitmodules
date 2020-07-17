@@ -1,6 +1,3 @@
-[submodule "lv_drivers"]
-	path = lv_drivers
-	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lv_drivers
 [submodule "lvgl"]
 	path = lvgl
 	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lvgl
