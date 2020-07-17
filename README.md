@@ -1,13 +1,25 @@
-# "`lvgui`"
+"`lvgui`"
+=========
 
-This is a pre-configured project used to provide a pre-configured and common
-environment to run on the Linux framebuffer, and as a "simulator", using the
-"monitor" SDL options.
+This is a fork of some parts of the project previously known as LittleVGL.
 
-This is expected to be used as a library with mruby bindings.
+The main reason for the fork is to take ownership of the code as some of my
+requirements do not match with the design goals of the upstream project.
 
+This fork aims to support **only** non-embedded Linux-based systems.
+
+The main goals are:
+
+ - Keep the output binaries and dependencies small
+ - Work on the framebuffer and a "desktop" implementation
+ - First class support for keyboard, mouse and touch input
+
+Additionally, these are foundational blocks used by an mruby implementation of
+a more in-depth toolkit. Compared to LittleVGL, some of the more complex parts
+and interactions will be dropped from the native code library and pushed into
+the scripted layer.
 
 ## Acknowledgements
 
-This is originally based on [lv_port_linux_frame_buffer](https://github.com/littlevgl/lv_port_linux_frame_buffer),
-but not much from the original setup remains.
+This is originally based on the [LittleVGL](https://github.com/lvgl/lvgl)
+project version 6.
