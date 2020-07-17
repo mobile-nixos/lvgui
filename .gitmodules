@@ -1,12 +1,12 @@
 [submodule "lv_drivers"]
 	path = lv_drivers
-	url = https://github.com/littlevgl/lv_drivers.git
+	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lv_drivers
 [submodule "lvgl"]
 	path = lvgl
-	url = https://github.com/littlevgl/lvgl.git
+	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lvgl
 [submodule "lv_sdr_drivers"]
 	path = lv_sdr_drivers
-	url = https://github.com/mobile-nixos/lv_sdr_drivers.git
+	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lv_sdr_drivers
 [submodule "lv_lib_nanosvg"]
 	path = lv_lib_nanosvg
-	url = https://github.com/mobile-nixos/lv_lib_nanosvg.git
+	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lv_lib_nanosvg
