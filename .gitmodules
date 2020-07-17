@@ -4,6 +4,3 @@
 [submodule "lvgl"]
 	path = lvgl
 	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lvgl
-[submodule "lv_lib_nanosvg"]
-	path = lv_lib_nanosvg
-	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lv_lib_nanosvg
