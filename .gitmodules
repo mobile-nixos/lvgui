@@ -4,9 +4,6 @@
 [submodule "lvgl"]
 	path = lvgl
 	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lvgl
-[submodule "lv_sdr_drivers"]
-	path = lv_sdr_drivers
-	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lv_sdr_drivers
 [submodule "lv_lib_nanosvg"]
 	path = lv_lib_nanosvg
 	url = /Users/samuel/Projects/mobile-nixos/projects/_tmp/lv_lib_nanosvg
