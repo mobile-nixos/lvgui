@@ -18,7 +18,7 @@ void hal_set_dpi(void);
 void hal_setup_display(void);
 
 #if USE_FBDEV
-#	include "lv_sdr_drivers/display/sdr_fbdev.h"
+#	include "lv_drivers/display/fbdev.h"
 #endif
 
 #if USE_SDR_EVDEV
