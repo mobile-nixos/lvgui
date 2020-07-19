@@ -350,6 +350,47 @@ void lv_list_set_btn_selected(lv_obj_t * list, lv_obj_t * btn)
 #endif
 
 /**
+ * Set the scroll bar mode of a list
+ * @param list pointer to a list object
+ * @param sb_mode the new mode from 'lv_page_sb_mode_t' enum
+ */
+void lv_list_set_sb_mode(lv_obj_t * list, lv_sb_mode_t mode)
+{
+    lv_page_set_sb_mode(list, mode);
+}
+
+/**
+ * Enable the scroll propagation feature. If enabled then the List will move its parent if there is
+ * no more space to scroll.
+ * @param list pointer to a List
+ * @param en true or false to enable/disable scroll propagation
+ */
+void lv_list_set_scroll_propagation(lv_obj_t * list, bool en)
+{
+    lv_page_set_scroll_propagation(list, en);
+}
+
+/**
+ * Enable the edge flash effect. (Show an arc when the an edge is reached)
+ * @param list pointer to a List
+ * @param en true or false to enable/disable end flash
+ */
+void lv_list_set_edge_flash(lv_obj_t * list, bool en)
+{
+    lv_page_set_edge_flash(list, en);
+}
+
+/**
+ * Set scroll animation duration on 'list_up()' 'list_down()' 'list_focus()'
+ * @param list pointer to a list object
+ * @param anim_time duration of animation [ms]
+ */
+void lv_list_set_anim_time(lv_obj_t * list, uint16_t anim_time)
+{
+    lv_page_set_anim_time(list, anim_time);
+}
+
+/**
  * Set a style of a list
  * @param list pointer to a list object
  * @param type which style should be set
@@ -637,6 +678,46 @@ lv_layout_t lv_list_get_layout(lv_obj_t * list)
     LV_ASSERT_OBJ(list, LV_OBJX_NAME);
 
     return lv_page_get_scrl_layout(list);
+}
+
+/**
+ * Get the scroll bar mode of a list
+ * @param list pointer to a list object
+ * @return scrollbar mode from 'lv_page_sb_mode_t' enum
+ */
+lv_sb_mode_t lv_list_get_sb_mode(const lv_obj_t * list)
+{
+    return lv_page_get_sb_mode(list);
+}
+
+/**
+ * Get the scroll propagation property
+ * @param list pointer to a List
+ * @return true or false
+ */
+bool lv_list_get_scroll_propagation(lv_obj_t * list)
+{
+    return lv_page_get_scroll_propagation(list);
+}
+
+/**
+ * Get the scroll propagation property
+ * @param list pointer to a List
+ * @return true or false
+ */
+bool lv_list_get_edge_flash(lv_obj_t * list)
+{
+    return lv_page_get_edge_flash(list);
+}
+
+/**
+ * Get scroll animation duration
+ * @param list pointer to a list object
+ * @return duration of animation [ms]
+ */
+uint16_t lv_list_get_anim_time(const lv_obj_t * list)
+{
+    return lv_page_get_anim_time(list);
 }
 
 /**
