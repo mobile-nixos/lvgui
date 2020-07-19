@@ -121,10 +121,7 @@ uint16_t lv_font_get_glyph_width(const lv_font_t * font, uint32_t letter, uint32
  * @param font_p pointer to a font
  * @return the height of a font
  */
-static inline uint8_t lv_font_get_line_height(const lv_font_t * font_p)
-{
-    return font_p->line_height;
-}
+uint8_t lv_font_get_line_height(const lv_font_t * font_p);
 
 /**********************
  *      MACROS
