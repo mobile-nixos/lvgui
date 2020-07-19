@@ -26,7 +26,7 @@ void hal_setup_display(void);
 #endif
 
 #if USE_MONITOR
-#	include "lv_sdr_drivers/display/sdr_monitor.h"
+#	include "lv_drivers/display/monitor.h"
 #endif
 
 #if USE_MOUSE

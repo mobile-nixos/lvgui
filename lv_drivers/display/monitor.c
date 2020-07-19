@@ -95,6 +95,10 @@ void monitor_sdl_refr_core(void); /* called from Emscripten loop */
 static void monitor_sdl_refr_core(void);
 #endif
 
+// Obviously "unset" values, that are not zeroes.
+int monitor_height = 480;
+int monitor_width = 640;
+
 /**********************
  *      MACROS
  **********************/
@@ -411,6 +415,13 @@ static void window_update(monitor_t * m)
     /*Update the renderer with the texture containing the rendered image*/
     SDL_RenderCopy(m->renderer, m->texture, NULL, NULL);
     SDL_RenderPresent(m->renderer);
+}
+
+void monitor_set_resolution(lv_disp_drv_t* disp_drv)
+{
+	// HACK: we should actually query SDL.
+	disp_drv->hor_res = MONITOR_HOR_RES;
+	disp_drv->ver_res = MONITOR_VER_RES;
 }
 
 #endif /*USE_MONITOR*/
