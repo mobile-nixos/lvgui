@@ -238,11 +238,7 @@ void lv_chart_set_update_mode(lv_obj_t * chart, lv_chart_update_mode_t update_mo
  * @param type which style should be set (can be only `LV_CHART_STYLE_MAIN`)
  * @param style pointer to a style
  */
-static inline void lv_chart_set_style(lv_obj_t * chart, lv_chart_style_t type, const lv_style_t * style)
-{
-    (void)type; /*Unused*/
-    lv_obj_set_style(chart, style);
-}
+void lv_chart_set_style(lv_obj_t * chart, lv_chart_style_t type, const lv_style_t * style);
 
 /**
  * Set the length of the tick marks on the x axis
@@ -359,11 +355,7 @@ lv_opa_t lv_chart_get_series_darking(const lv_obj_t * chart);
  * @param type which style should be get (can be only `LV_CHART_STYLE_MAIN`)
  * @return pointer to the chart's style
  */
-static inline const lv_style_t * lv_chart_get_style(const lv_obj_t * chart, lv_chart_style_t type)
-{
-    (void)type; /*Unused*/
-    return lv_obj_get_style(chart);
-}
+const lv_style_t * lv_chart_get_style(const lv_obj_t * chart, lv_chart_style_t type);
 
 /**
  * Get the margin around the chart, used for axes value and labels
