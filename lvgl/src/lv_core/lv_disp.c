@@ -173,6 +173,43 @@ void lv_disp_trig_activity(lv_disp_t * disp)
     disp->last_activity_time = lv_tick_get();
 }
 
+/*------------------------------------------------
+ * To improve backward compatibility
+ * Recommended only if you have one display
+ *------------------------------------------------*/
+
+/**
+ * Get the active screen of the default display
+ * @return pointer to the active screen
+ */
+lv_obj_t * lv_scr_act(void)
+{
+    return lv_disp_get_scr_act(lv_disp_get_default());
+}
+
+/**
+ * Get the top layer  of the default display
+ * @return pointer to the top layer
+ */
+lv_obj_t * lv_layer_top(void)
+{
+    return lv_disp_get_layer_top(lv_disp_get_default());
+}
+
+/**
+ * Get the active screen of the default display
+ * @return  pointer to the sys layer
+ */
+lv_obj_t * lv_layer_sys(void)
+{
+    return lv_disp_get_layer_sys(lv_disp_get_default());
+}
+
+void lv_scr_load(lv_obj_t * scr)
+{
+    lv_disp_load_scr(scr);
+}
+
 /**********************
  *   STATIC FUNCTIONS
  **********************/
