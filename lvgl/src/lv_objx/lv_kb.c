@@ -247,6 +247,30 @@ void lv_kb_set_cursor_manage(lv_obj_t * kb, bool en)
 }
 
 /**
+ * Set a new map for the keyboard
+ * @param kb pointer to a Keyboard object
+ * @param map pointer to a string array to describe the map.
+ *            See 'lv_btnm_set_map()' for more info.
+ */
+void lv_kb_set_map(lv_obj_t * kb, const char * map[])
+{
+    lv_btnm_set_map(kb, map);
+}
+
+/**
+ * Set the button control map (hidden, disabled etc.) for the keyboard. The
+ * control map array will be copied and so may be deallocated after this
+ * function returns.
+ * @param kb pointer to a keyboard object
+ * @param ctrl_map pointer to an array of `lv_btn_ctrl_t` control bytes.
+ *                 See: `lv_btnm_set_ctrl_map` for more details.
+ */
+void lv_kb_set_ctrl_map(lv_obj_t * kb, const lv_btnm_ctrl_t ctrl_map[])
+{
+    lv_btnm_set_ctrl_map(kb, ctrl_map);
+}
+
+/**
  * Set a style of a keyboard
  * @param kb pointer to a keyboard object
  * @param type which style should be set
@@ -307,6 +331,16 @@ bool lv_kb_get_cursor_manage(const lv_obj_t * kb)
 
     lv_kb_ext_t * ext = lv_obj_get_ext_attr(kb);
     return ext->cursor_mng == 0 ? false : true;
+}
+
+/**
+ * Get the current map of a keyboard
+ * @param kb pointer to a keyboard object
+ * @return the current map
+ */
+const char ** lv_kb_get_map_array(const lv_obj_t * kb)
+{
+    return lv_btnm_get_map_array(kb);
 }
 
 /**
