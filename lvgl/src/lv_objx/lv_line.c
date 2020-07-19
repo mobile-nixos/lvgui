@@ -169,6 +169,18 @@ void lv_line_set_y_invert(lv_obj_t * line, bool en)
     lv_obj_invalidate(line);
 }
 
+/**
+ * Set the style of a line
+ * @param line pointer to a line object
+ * @param type which style should be set (can be only `LV_LINE_STYLE_MAIN`)
+ * @param style pointer to a style
+ */
+void lv_line_set_style(lv_obj_t * line, lv_line_style_t type, const lv_style_t * style)
+{
+    (void)type; /*Unused*/
+    lv_obj_set_style(line, style);
+}
+
 /*=====================
  * Getter functions
  *====================*/
@@ -199,6 +211,18 @@ bool lv_line_get_y_invert(const lv_obj_t * line)
     lv_line_ext_t * ext = lv_obj_get_ext_attr(line);
 
     return ext->y_inv == 0 ? false : true;
+}
+
+/**
+ * Get the style of an line object
+ * @param line pointer to an line object
+ * @param type which style should be get (can be only `LV_LINE_STYLE_MAIN`)
+ * @return pointer to the line's style
+ */
+const lv_style_t * lv_line_get_style(const lv_obj_t * line, lv_line_style_t type)
+{
+    (void)type; /*Unused*/
+    return lv_obj_get_style(line);
 }
 
 /**********************
