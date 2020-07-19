@@ -126,10 +126,7 @@ void lv_sw_set_anim_time(lv_obj_t * sw, uint16_t anim_time);
  * @param sw pointer to a switch object
  * @return false: OFF; true: ON
  */
-static inline bool lv_sw_get_state(const lv_obj_t * sw)
-{
-    return lv_bar_get_value(sw) < LV_SW_MAX_VALUE / 2 ? false : true;
-}
+bool lv_sw_get_state(const lv_obj_t * sw);
 
 /**
  * Get a style of a switch
