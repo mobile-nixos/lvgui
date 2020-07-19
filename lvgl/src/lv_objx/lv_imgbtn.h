@@ -113,29 +113,20 @@ void lv_imgbtn_set_src(lv_obj_t * imgbtn, lv_btn_state_t state, const void * src
  * @param imgbtn pointer to an image button object
  * @param tgl true: enable toggled states, false: disable
  */
-static inline void lv_imgbtn_set_toggle(lv_obj_t * imgbtn, bool tgl)
-{
-    lv_btn_set_toggle(imgbtn, tgl);
-}
+void lv_imgbtn_set_toggle(lv_obj_t * imgbtn, bool tgl);
 
 /**
  * Set the state of the image button
  * @param imgbtn pointer to an image button object
  * @param state the new state of the button (from lv_btn_state_t enum)
  */
-static inline void lv_imgbtn_set_state(lv_obj_t * imgbtn, lv_btn_state_t state)
-{
-    lv_btn_set_state(imgbtn, state);
-}
+void lv_imgbtn_set_state(lv_obj_t * imgbtn, lv_btn_state_t state);
 
 /**
  * Toggle the state of the image button (ON->OFF, OFF->ON)
  * @param imgbtn pointer to a image button object
  */
-static inline void lv_imgbtn_toggle(lv_obj_t * imgbtn)
-{
-    lv_btn_toggle(imgbtn);
-}
+void lv_imgbtn_toggle(lv_obj_t * imgbtn);
 
 /**
  * Set a style of a image button.
@@ -185,25 +176,20 @@ const void * lv_imgbtn_get_src_middle(lv_obj_t * imgbtn, lv_btn_state_t state);
 const void * lv_imgbtn_get_src_right(lv_obj_t * imgbtn, lv_btn_state_t state);
 
 #endif
+
 /**
  * Get the current state of the image button
  * @param imgbtn pointer to a image button object
  * @return the state of the button (from lv_btn_state_t enum)
  */
-static inline lv_btn_state_t lv_imgbtn_get_state(const lv_obj_t * imgbtn)
-{
-    return lv_btn_get_state(imgbtn);
-}
+lv_btn_state_t lv_imgbtn_get_state(const lv_obj_t * imgbtn);
 
 /**
  * Get the toggle enable attribute of the image button
  * @param imgbtn pointer to a image button object
  * @return ture: toggle enabled, false: disabled
  */
-static inline bool lv_imgbtn_get_toggle(const lv_obj_t * imgbtn)
-{
-    return lv_btn_get_toggle(imgbtn);
-}
+bool lv_imgbtn_get_toggle(const lv_obj_t * imgbtn);
 
 /**
  * Get style of a image button.
