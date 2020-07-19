@@ -253,6 +253,18 @@ void lv_img_set_offset_y(lv_obj_t * img, lv_coord_t y)
     }
 }
 
+/**
+ * Set the style of an image
+ * @param img pointer to an image object
+ * @param type which style should be set (can be only `LV_IMG_STYLE_MAIN`)
+ * @param style pointer to a style
+ */
+void lv_img_set_style(lv_obj_t * img, lv_img_style_t type, const lv_style_t * style)
+{
+    (void)type; /*Unused*/
+    lv_obj_set_style(img, style);
+}
+
 /*=====================
  * Getter functions
  *====================*/
@@ -328,6 +340,18 @@ lv_coord_t lv_img_get_offset_y(lv_obj_t * img)
     lv_img_ext_t * ext = lv_obj_get_ext_attr(img);
 
     return ext->offset.y;
+}
+
+/**
+ * Get the style of an image object
+ * @param img pointer to an image object
+ * @param type which style should be get (can be only `LV_IMG_STYLE_MAIN`)
+ * @return pointer to the image's style
+ */
+const lv_style_t * lv_img_get_style(const lv_obj_t * img, lv_img_style_t type)
+{
+    (void)type; /*Unused*/
+    return lv_obj_get_style(img);
 }
 
 /**********************
