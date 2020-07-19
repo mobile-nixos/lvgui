@@ -208,6 +208,18 @@ void lv_lmeter_set_mirror(lv_obj_t *lmeter, bool mirror) {
     lv_obj_invalidate(lmeter);
 }
 
+/**
+ * Set the styles of a line meter
+ * @param lmeter pointer to a line meter object
+ * @param type which style should be set (can be only `LV_LMETER_STYLE_MAIN`)
+ * @param style set the style of the line meter
+ */
+void lv_lmeter_set_style(lv_obj_t * lmeter, lv_lmeter_style_t type, lv_style_t * style)
+{
+    (void)type; /*Unused*/
+    lv_obj_set_style(lmeter, style);
+}
+
 /*=====================
  * Getter functions
  *====================*/
@@ -300,6 +312,19 @@ bool lv_lmeter_get_mirror(lv_obj_t * lmeter)
 
     return ext->mirrored;
 }
+
+/**
+ * Get the style of a line meter
+ * @param lmeter pointer to a line meter object
+ * @param type which style should be get (can be only `LV_LMETER_STYLE_MAIN`)
+ * @return pointer to the line meter's style
+ */
+const lv_style_t * lv_lmeter_get_style(const lv_obj_t * lmeter, lv_lmeter_style_t type)
+{
+    (void)type; /*Unused*/
+    return lv_obj_get_style(lmeter);
+}
+
 /**********************
  *   STATIC FUNCTIONS
  **********************/
