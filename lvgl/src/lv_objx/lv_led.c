@@ -161,6 +161,18 @@ void lv_led_toggle(lv_obj_t * led)
         lv_led_on(led);
 }
 
+/**
+ * Set the style of a led
+ * @param led pointer to a led object
+ * @param type which style should be set (can be only `LV_LED_STYLE_MAIN`)
+ * @param style pointer to a style
+ */
+void lv_led_set_style(lv_obj_t * led, lv_led_style_t type, const lv_style_t * style)
+{
+    (void)type; /*Unused*/
+    lv_obj_set_style(led, style);
+}
+
 /*=====================
  * Getter functions
  *====================*/
@@ -176,6 +188,18 @@ uint8_t lv_led_get_bright(const lv_obj_t * led)
 
     lv_led_ext_t * ext = lv_obj_get_ext_attr(led);
     return ext->bright;
+}
+
+/**
+ * Get the style of an led object
+ * @param led pointer to an led object
+ * @param type which style should be get (can be only `LV_CHART_STYLE_MAIN`)
+ * @return pointer to the led's style
+ */
+const lv_style_t * lv_led_get_style(const lv_obj_t * led, lv_led_style_t type)
+{
+    (void)type; /*Unused*/
+    return lv_obj_get_style(led);
 }
 
 /**********************
