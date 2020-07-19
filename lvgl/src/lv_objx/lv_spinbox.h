@@ -82,10 +82,7 @@ lv_obj_t * lv_spinbox_create(lv_obj_t * par, const lv_obj_t * copy);
  * @param type which style should be set
  * @param style pointer to a style
  */
-static inline void lv_spinbox_set_style(lv_obj_t * spinbox, lv_spinbox_style_t type, const lv_style_t * style)
-{
-    lv_ta_set_style(spinbox, type, style);
-}
+void lv_spinbox_set_style(lv_obj_t * spinbox, lv_spinbox_style_t type, const lv_style_t * style);
 
 /**
  * Set spinbox value
@@ -135,10 +132,7 @@ void lv_spinbox_set_padding_left(lv_obj_t * spinbox, uint8_t padding);
  * @param type which style should be get
  * @return style pointer to the style
  */
-static inline const lv_style_t * lv_spinbox_get_style(lv_obj_t * spinbox, lv_spinbox_style_t type)
-{
-    return lv_ta_get_style(spinbox, type);
-}
+const lv_style_t * lv_spinbox_get_style(lv_obj_t * spinbox, lv_spinbox_style_t type);
 
 /**
  * Get the spinbox numeral value (user has to convert to float according to its digit format)
