@@ -14,10 +14,10 @@
 #define USE_MOUSE 1
 // #define USE_MOUSEWHEEL 1
 #define USE_KEYBOARD 1
-#define USE_SDR_EVDEV 0
+#define USE_EVDEV 0
 #else
 #define USE_FBDEV 1
-#define USE_SDR_EVDEV 1
+#define USE_EVDEV 1
 #endif
 
 #ifndef LV_DRV_CONF_H

@@ -76,7 +76,6 @@ endif
 # External components
 include $(LVGL_DIR)/lvgl/lvgl.mk
 include $(LVGL_DIR)/lv_drivers/lv_drivers.mk
-include $(LVGL_DIR)/lv_sdr_drivers/lv_sdr_drivers.mk
 include $(LVGL_DIR)/lv_lib_nanosvg/lv_lib_nanosvg.mk
 
 ifeq ($(STATIC), true)

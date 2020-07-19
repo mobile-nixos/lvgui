@@ -1,5 +1,5 @@
-#include "sdr_evdev.h"
-#if USE_SDR_EVDEV != 0
+#include "evdev.h"
+#if USE_EVDEV != 0
 
 #include <stdlib.h>
 #include <stdio.h>

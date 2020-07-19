@@ -3,8 +3,8 @@
  *
  */
 
-#ifndef SDR_EVDEV_H
-#define SDR_EVDEV_H
+#ifndef EVDEV_H
+#define EVDEV_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
 #endif
 #endif
 
-#if USE_SDR_EVDEV
+#if USE_EVDEV
 
 #ifndef EVDEV_SWAP_AXES
 #define EVDEV_SWAP_AXES 0
@@ -91,10 +91,10 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data);
  *      MACROS
  **********************/
 
-#endif /* USE_SDR_EVDEV */
+#endif /* USE_EVDEV */
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /* SDR_EVDEV_H */
+#endif /* EVDEV_H */

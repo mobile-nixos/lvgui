@@ -21,8 +21,8 @@ void hal_setup_display(void);
 #	include "lv_drivers/display/fbdev.h"
 #endif
 
-#if USE_SDR_EVDEV
-#	include "lv_sdr_drivers/indev/sdr_evdev.h"
+#if USE_EVDEV
+#	include "lv_drivers/indev/evdev.h"
 #endif
 
 #if USE_MONITOR
@@ -109,7 +109,7 @@ void hal_setup_display()
 #endif
 }
 
-#if USE_SDR_EVDEV
+#if USE_EVDEV
 static void init_evdev(char* name)
 {
 	evdev_drv_instance* instance = evdev_init(name);
@@ -165,7 +165,7 @@ void hal_init(void)
 	lv_obj_set_hidden(cursor_obj, true);
 	}
 
-#if USE_SDR_EVDEV
+#if USE_EVDEV
 	{
 		char **filename;
 		size_t cnt;
