@@ -76,10 +76,7 @@ lv_obj_t * lv_slider_create(lv_obj_t * par, const lv_obj_t * copy);
  * @param value new value
  * @param anim LV_ANIM_ON: set the value with an animation; LV_ANIM_OFF: change the value immediately
  */
-static inline void lv_slider_set_value(lv_obj_t * slider, int16_t value, lv_anim_enable_t anim)
-{
-    lv_bar_set_value(slider, value, anim);
-}
+void lv_slider_set_value(lv_obj_t * slider, int16_t value, lv_anim_enable_t anim);
 
 /**
  * Set minimum and the maximum values of a bar
@@ -87,20 +84,14 @@ static inline void lv_slider_set_value(lv_obj_t * slider, int16_t value, lv_anim
  * @param min minimum value
  * @param max maximum value
  */
-static inline void lv_slider_set_range(lv_obj_t * slider, int16_t min, int16_t max)
-{
-    lv_bar_set_range(slider, min, max);
-}
+void lv_slider_set_range(lv_obj_t * slider, int16_t min, int16_t max);
 
 /**
  * Set the animation time of the slider
  * @param slider pointer to a bar object
  * @param anim_time the animation time in milliseconds.
  */
-static inline void lv_slider_set_anim_time(lv_obj_t * slider, uint16_t anim_time)
-{
-    lv_bar_set_anim_time(slider, anim_time);
-}
+void lv_slider_set_anim_time(lv_obj_t * slider, uint16_t anim_time);
 
 /**
  * Make the slider symmetric to zero. The indicator will grow from zero instead of the minimum
@@ -108,10 +99,7 @@ static inline void lv_slider_set_anim_time(lv_obj_t * slider, uint16_t anim_time
  * @param slider pointer to a slider object
  * @param en true: enable disable symmetric behavior; false: disable
  */
-static inline void lv_slider_set_sym(lv_obj_t * slider, bool en)
-{
-    lv_bar_set_sym(slider, en);
-}
+void lv_slider_set_sym(lv_obj_t * slider, bool en);
 
 /**
  * Set the 'knob in' attribute of a slider
@@ -145,20 +133,14 @@ int16_t lv_slider_get_value(const lv_obj_t * slider);
  * @param slider pointer to a slider object
  * @return the minimum value of the slider
  */
-static inline int16_t lv_slider_get_min_value(const lv_obj_t * slider)
-{
-    return lv_bar_get_min_value(slider);
-}
+int16_t lv_slider_get_min_value(const lv_obj_t * slider);
 
 /**
  * Get the maximum value of a slider
  * @param slider pointer to a slider object
  * @return the maximum value of the slider
  */
-static inline int16_t lv_slider_get_max_value(const lv_obj_t * slider)
-{
-    return lv_bar_get_max_value(slider);
-}
+int16_t lv_slider_get_max_value(const lv_obj_t * slider);
 
 /**
  * Give the slider is being dragged or not
@@ -172,20 +154,14 @@ bool lv_slider_is_dragged(const lv_obj_t * slider);
  * @param slider pointer to a slider object
  * @return the animation time in milliseconds.
  */
-static inline uint16_t lv_slider_get_anim_time(lv_obj_t * slider)
-{
-    return lv_bar_get_anim_time(slider);
-}
+uint16_t lv_slider_get_anim_time(lv_obj_t * slider);
 
 /**
  * Get whether the slider is symmetric or not.
  * @param slider pointer to a bar object
  * @return true: symmetric is enabled; false: disable
  */
-static inline bool lv_slider_get_sym(lv_obj_t * slider)
-{
-    return lv_bar_get_sym(slider);
-}
+bool lv_slider_get_sym(lv_obj_t * slider);
 
 /**
  * Get the 'knob in' attribute of a slider
