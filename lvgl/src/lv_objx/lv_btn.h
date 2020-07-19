@@ -148,10 +148,7 @@ void lv_btn_toggle(lv_obj_t * btn);
  * @param btn pointer to a button object
  * @param layout a layout from 'lv_cont_layout_t'
  */
-static inline void lv_btn_set_layout(lv_obj_t * btn, lv_layout_t layout)
-{
-    lv_cont_set_layout(btn, layout);
-}
+void lv_btn_set_layout(lv_obj_t * btn, lv_layout_t layout);
 
 /**
  * Set the fit policy in all 4 directions separately.
@@ -162,10 +159,7 @@ static inline void lv_btn_set_layout(lv_obj_t * btn, lv_layout_t layout)
  * @param top top fit policy from `lv_fit_t`
  * @param bottom bottom fit policy from `lv_fit_t`
  */
-static inline void lv_btn_set_fit4(lv_obj_t * btn, lv_fit_t left, lv_fit_t right, lv_fit_t top, lv_fit_t bottom)
-{
-    lv_cont_set_fit4(btn, left, right, top, bottom);
-}
+void lv_btn_set_fit4(lv_obj_t * btn, lv_fit_t left, lv_fit_t right, lv_fit_t top, lv_fit_t bottom);
 
 /**
  * Set the fit policy horizontally and vertically separately.
@@ -174,10 +168,7 @@ static inline void lv_btn_set_fit4(lv_obj_t * btn, lv_fit_t left, lv_fit_t right
  * @param hor horizontal fit policy from `lv_fit_t`
  * @param ver vertical fit policy from `lv_fit_t`
  */
-static inline void lv_btn_set_fit2(lv_obj_t * btn, lv_fit_t hor, lv_fit_t ver)
-{
-    lv_cont_set_fit2(btn, hor, ver);
-}
+void lv_btn_set_fit2(lv_obj_t * btn, lv_fit_t hor, lv_fit_t ver);
 
 /**
  * Set the fit policy in all 4 direction at once.
@@ -185,10 +176,7 @@ static inline void lv_btn_set_fit2(lv_obj_t * btn, lv_fit_t hor, lv_fit_t ver)
  * @param btn pointer to a button object
  * @param fit fit policy from `lv_fit_t`
  */
-static inline void lv_btn_set_fit(lv_obj_t * btn, lv_fit_t fit)
-{
-    lv_cont_set_fit(btn, fit);
-}
+void lv_btn_set_fit(lv_obj_t * btn, lv_fit_t fit);
 
 /**
  * Set time of the ink effect (draw a circle on click to animate in the new state)
@@ -242,50 +230,35 @@ bool lv_btn_get_toggle(const lv_obj_t * btn);
  * @param btn pointer to button object
  * @return the layout from 'lv_cont_layout_t'
  */
-static inline lv_layout_t lv_btn_get_layout(const lv_obj_t * btn)
-{
-    return lv_cont_get_layout(btn);
-}
+lv_layout_t lv_btn_get_layout(const lv_obj_t * btn);
 
 /**
  * Get the left fit mode
  * @param btn pointer to a button object
  * @return an element of `lv_fit_t`
  */
-static inline lv_fit_t lv_btn_get_fit_left(const lv_obj_t * btn)
-{
-    return lv_cont_get_fit_left(btn);
-}
+lv_fit_t lv_btn_get_fit_left(const lv_obj_t * btn);
 
 /**
  * Get the right fit mode
  * @param btn pointer to a button object
  * @return an element of `lv_fit_t`
  */
-static inline lv_fit_t lv_btn_get_fit_right(const lv_obj_t * btn)
-{
-    return lv_cont_get_fit_right(btn);
-}
+lv_fit_t lv_btn_get_fit_right(const lv_obj_t * btn);
 
 /**
  * Get the top fit mode
  * @param btn pointer to a button object
  * @return an element of `lv_fit_t`
  */
-static inline lv_fit_t lv_btn_get_fit_top(const lv_obj_t * btn)
-{
-    return lv_cont_get_fit_top(btn);
-}
+lv_fit_t lv_btn_get_fit_top(const lv_obj_t * btn);
 
 /**
  * Get the bottom fit mode
  * @param btn pointer to a button object
  * @return an element of `lv_fit_t`
  */
-static inline lv_fit_t lv_btn_get_fit_bottom(const lv_obj_t * btn)
-{
-    return lv_cont_get_fit_bottom(btn);
-}
+lv_fit_t lv_btn_get_fit_bottom(const lv_obj_t * btn);
 
 /**
  * Get time of the ink in effect (draw a circle on click to animate in the new state)
