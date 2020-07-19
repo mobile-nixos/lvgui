@@ -99,19 +99,13 @@ void lv_cb_set_static_text(lv_obj_t * cb, const char * txt);
  * @param cb pointer to a check box object
  * @param checked true: make the check box checked; false: make it unchecked
  */
-static inline void lv_cb_set_checked(lv_obj_t * cb, bool checked)
-{
-    lv_btn_set_state(cb, checked ? LV_BTN_STATE_TGL_REL : LV_BTN_STATE_REL);
-}
+void lv_cb_set_checked(lv_obj_t * cb, bool checked);
 
 /**
  * Make the check box inactive (disabled)
  * @param cb pointer to a check box object
  */
-static inline void lv_cb_set_inactive(lv_obj_t * cb)
-{
-    lv_btn_set_state(cb, LV_BTN_STATE_INA);
-}
+void lv_cb_set_inactive(lv_obj_t * cb);
 
 /**
  * Set a style of a check box
@@ -137,20 +131,14 @@ const char * lv_cb_get_text(const lv_obj_t * cb);
  * @param cb pointer to a check box object
  * @return true: checked; false: not checked
  */
-static inline bool lv_cb_is_checked(const lv_obj_t * cb)
-{
-    return lv_btn_get_state(cb) == LV_BTN_STATE_REL ? false : true;
-}
+bool lv_cb_is_checked(const lv_obj_t * cb);
 
 /**
  * Get whether the check box is inactive or not.
  * @param cb pointer to a check box object
  * @return true: inactive; false: not inactive
  */
-static inline bool lv_cb_is_inactive(const lv_obj_t * cb)
-{
-    return lv_btn_get_state(cb) == LV_BTN_STATE_INA ? true :false;
-}
+bool lv_cb_is_inactive(const lv_obj_t * cb);
 
 /**
  * Get a style of a button
