@@ -88,6 +88,7 @@ endif
 CSRCS += ./hal.c
 CSRCS += ./introspection.c
 CSRCS += ./artwork/lvgui_cursor.c
+CSRCS += ./artwork/lvgui_touch.c
 CSRCS += ./lvgui_struct_accessors.c
 
 CONFFILES = ./lv_conf.h ./lv_drv_conf.h

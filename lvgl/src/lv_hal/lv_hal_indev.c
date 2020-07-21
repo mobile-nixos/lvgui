@@ -87,6 +87,9 @@ lv_indev_t * lv_indev_drv_register(lv_indev_drv_t * driver)
 
     indev->proc.reset_query = 1;
     indev->cursor           = NULL;
+    indev->cursor_offset.x = 0;
+    indev->cursor_offset.y = 0;
+    indev->cursor_unclutter_animation = NULL;
     indev->group            = NULL;
     indev->btn_points       = NULL;
 

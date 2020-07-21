@@ -196,7 +196,11 @@ void lv_indev_set_cursor(lv_indev_t * indev, lv_obj_t * cur_obj)
 
     indev->cursor = cur_obj;
     lv_obj_set_parent(indev->cursor, lv_disp_get_layer_sys(indev->driver.disp));
-    lv_obj_set_pos(indev->cursor, indev->proc.types.pointer.act_point.x, indev->proc.types.pointer.act_point.y);
+    lv_obj_set_pos(
+        indev->cursor,
+        indev->proc.types.pointer.act_point.x + indev->cursor_offset.x,
+        indev->proc.types.pointer.act_point.y + indev->cursor_offset.y
+    );
 }
 
 #if LV_USE_GROUP
@@ -340,7 +344,17 @@ static void indev_pointer_proc(lv_indev_t * i, lv_indev_data_t * data)
     /*Move the cursor if set and moved*/
     if(i->cursor != NULL &&
        (i->proc.types.pointer.last_point.x != data->point.x || i->proc.types.pointer.last_point.y != data->point.y)) {
-        lv_obj_set_pos(i->cursor, data->point.x, data->point.y);
+        lv_obj_set_pos(
+            i->cursor,
+            data->point.x + i->cursor_offset.x,
+            data->point.y + i->cursor_offset.y
+        );
+        lv_obj_set_hidden(i->cursor, false);
+
+        // When it unclutters itself, restart the animation.
+        if (i->cursor_unclutter_animation) {
+            lv_anim_create(i->cursor_unclutter_animation);
+        }
     }
 
     i->proc.types.pointer.act_point.x = data->point.x;

@@ -23,6 +23,7 @@ extern "C" {
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "../lv_misc/lv_anim.h"
 #include "../lv_misc/lv_area.h"
 #include "../lv_misc/lv_task.h"
 
@@ -152,12 +153,15 @@ struct _lv_group_t;
  * information*/
 typedef struct _lv_indev_t
 {
-    lv_indev_drv_t driver;
-    lv_indev_proc_t proc;
-    struct _lv_obj_t * cursor;     /**< Cursor for LV_INPUT_TYPE_POINTER*/
-    struct _lv_group_t * group;    /**< Keypad destination group*/
-    const lv_point_t * btn_points; /**< Array points assigned to the button ()screen will be pressed
-                                      here by the buttons*/
+	lv_indev_drv_t driver;
+	lv_indev_proc_t proc;
+	struct _lv_obj_t * cursor;       /**< Cursor for LV_INPUT_TYPE_POINTER*/
+	struct _lv_group_t * group;      /**< Keypad destination group*/
+	const lv_point_t * btn_points;   /**< Array points assigned to the button ()screen will be pressed
+	                                      here by the buttons*/
+	lv_point_t cursor_offset; /**< Offset to apply to the cursor */
+	lv_anim_t * cursor_unclutter_animation; /**< When null, no uncluttering, otherwise re-initialised
+	                                             whenever the cursor is moved.*/
 } lv_indev_t;
 
 /**********************

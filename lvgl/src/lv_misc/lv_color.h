@@ -266,7 +266,8 @@ typedef lv_color32_t lv_color_t;
 #error "Invalid LV_COLOR_DEPTH in lv_conf.h! Set it to 1, 8, 16 or 32!"
 #endif
 
-typedef uint8_t lv_opa_t;
+// To be compatible with lv_anim_t
+typedef lv_coord_t lv_opa_t;
 
 typedef struct
 {
