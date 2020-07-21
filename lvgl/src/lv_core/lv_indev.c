@@ -203,7 +203,6 @@ void lv_indev_set_cursor(lv_indev_t * indev, lv_obj_t * cur_obj)
     );
 }
 
-#if LV_USE_GROUP
 /**
  * Set a destination group for a keyboard input device (for LV_INDEV_TYPE_KEYBOARD)
  * @param indev pointer to an input device
@@ -215,7 +214,6 @@ void lv_indev_set_group(lv_indev_t * indev, lv_group_t * group)
         indev->group = group;
     }
 }
-#endif
 
 /**
  * Set the an array of points for LV_INDEV_TYPE_BUTTON.
@@ -377,7 +375,6 @@ static void indev_pointer_proc(lv_indev_t * i, lv_indev_data_t * data)
  */
 static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
 {
-#if LV_USE_GROUP
     if(data->state == LV_INDEV_STATE_PR && i->proc.wait_until_release) return;
 
     if(i->proc.wait_until_release) {
@@ -512,10 +509,6 @@ static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
         i->proc.long_pr_sent = 0;
     }
     indev_obj_act = NULL;
-#else
-    (void)data; /*Unused*/
-    (void)i;    /*Unused*/
-#endif
 }
 
 /**
@@ -525,8 +518,6 @@ static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
  */
 static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
 {
-#if LV_USE_GROUP
-
     if(data->state == LV_INDEV_STATE_PR && i->proc.wait_until_release) return;
 
     if(i->proc.wait_until_release) {
@@ -660,10 +651,6 @@ static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
         i->proc.long_pr_sent = 0;
     }
     indev_obj_act = NULL;
-#else
-    (void)data; /*Unused*/
-    (void)i;    /*Unused*/
-#endif
 }
 
 /**
@@ -912,7 +899,7 @@ static void indev_proc_release(lv_indev_proc_t * proc)
 
         /*Handle click focus*/
         bool click_focus_sent = false;
-#if LV_USE_GROUP
+
         lv_group_t * g = lv_obj_get_group(indev_obj_act);
 
         /*Check, if the parent is in a group and focus on it.*/
@@ -941,7 +928,6 @@ static void indev_proc_release(lv_indev_proc_t * proc)
                 }
             }
         }
-#endif
 
         /* Send defocus to the lastly "active" object and foucus to the new one.
          * DO not sent the events if they was sent by the click focus*/

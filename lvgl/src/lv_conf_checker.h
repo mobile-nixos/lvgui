@@ -189,13 +189,6 @@
 #define LV_USE_SHADOW           1
 #endif
 
-/* 1: Enable object groups (for keyboard/encoder navigation) */
-#ifndef LV_USE_GROUP
-#define LV_USE_GROUP            1
-#endif
-#if LV_USE_GROUP
-#endif  /*LV_USE_GROUP*/
-
 /* 1: Enable GPU interface*/
 #ifndef LV_USE_GPU
 #define LV_USE_GPU              1

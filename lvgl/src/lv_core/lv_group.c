@@ -7,7 +7,6 @@
  *      INCLUDES
  *********************/
 #include "lv_group.h"
-#if LV_USE_GROUP != 0
 #include <stddef.h>
 #include "../lv_core/lv_debug.h"
 #include "../lv_themes/lv_theme.h"
@@ -704,5 +703,3 @@ static void obj_to_foreground(lv_obj_t * obj)
         lv_obj_move_foreground(last_top);
     }
 }
-
-#endif /*LV_USE_GROUP != 0*/

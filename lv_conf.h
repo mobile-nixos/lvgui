@@ -141,11 +141,7 @@ typedef void * lv_anim_user_data_t;
 /* 1: Enable shadow drawing*/
 #define LV_USE_SHADOW           1
 
-/* 1: Enable object groups (for keyboard/encoder navigation) */
-#define LV_USE_GROUP            1
-#if LV_USE_GROUP
 typedef void * lv_group_user_data_t;
-#endif  /*LV_USE_GROUP*/
 
 /* 1: Enable GPU interface*/
 #define LV_USE_GPU              1

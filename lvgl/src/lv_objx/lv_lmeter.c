@@ -353,12 +353,10 @@ static bool lv_lmeter_design(lv_obj_t * lmeter, const lv_area_t * mask, lv_desig
         lv_style_t style_tmp;
         lv_style_copy(&style_tmp, style);
 
-#if LV_USE_GROUP
         lv_group_t * g = lv_obj_get_group(lmeter);
         if(lv_group_get_focused(g) == lmeter) {
             style_tmp.line.width += 1;
         }
-#endif
 
         lv_coord_t r_out = lv_obj_get_width(lmeter) / 2;
         lv_coord_t r_in  = r_out - style->body.padding.left;

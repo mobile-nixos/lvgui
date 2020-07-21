@@ -80,14 +80,12 @@ void lv_indev_enable(lv_indev_t * indev, bool en);
  */
 void lv_indev_set_cursor(lv_indev_t * indev, lv_obj_t * cur_obj);
 
-#if LV_USE_GROUP
 /**
  * Set a destination group for a keyboard input device (for LV_INDEV_TYPE_KEYBOARD)
  * @param indev pointer to an input device
  * @param group point to a group
  */
 void lv_indev_set_group(lv_indev_t * indev, lv_group_t * group);
-#endif
 
 /**
  * Set the an array of points for LV_INDEV_TYPE_BUTTON.

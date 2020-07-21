@@ -828,15 +828,11 @@ static lv_res_t lv_btnm_signal(lv_obj_t * btnm, lv_signal_t sign, void * param)
             /*Invalidate to old pressed area*/;
             invalidate_button_area(btnm, ext->btn_id_pr);
 
-#if LV_USE_GROUP
             /*Leave the clicked button when releases if this not the focused object in a group*/
             lv_group_t * g = lv_obj_get_group(btnm);
             if(lv_group_get_focused(g) != btnm) {
                 ext->btn_id_pr = LV_BTNM_BTN_NONE;
             }
-#else
-            ext->btn_id_pr = LV_BTNM_BTN_NONE;
-#endif
 
             if(button_is_click_trig(ext->ctrl_bits[ext->btn_id_act]) == true &&
                button_is_inactive(ext->ctrl_bits[ext->btn_id_act]) == false &&
@@ -859,7 +855,6 @@ static lv_res_t lv_btnm_signal(lv_obj_t * btnm, lv_signal_t sign, void * param)
         ext->btn_id_act = LV_BTNM_BTN_NONE;
         lv_obj_invalidate(btnm);
     } else if(sign == LV_SIGNAL_FOCUS) {
-#if LV_USE_GROUP
         lv_indev_t * indev         = lv_indev_get_act();
         lv_indev_type_t indev_type = lv_indev_get_type(indev);
 
@@ -885,9 +880,6 @@ static lv_res_t lv_btnm_signal(lv_obj_t * btnm, lv_signal_t sign, void * param)
         } else {
             ext->btn_id_pr = 0;
         }
-#else
-        ext->btn_id_pr = 0;
-#endif
 
         ext->btn_id_act = ext->btn_id_pr;
         lv_obj_invalidate(btnm);

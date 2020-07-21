@@ -98,9 +98,7 @@ void lv_init(void)
     lv_anim_core_init();
 #endif
 
-#if LV_USE_GROUP
     lv_group_init();
-#endif
 
     /*Init. the sstyles*/
     lv_style_init();
@@ -209,9 +207,7 @@ lv_obj_t * lv_obj_create(lv_obj_t * parent, const lv_obj_t * copy)
         memset(&new_obj->user_data, 0, sizeof(lv_obj_user_data_t));
 #endif
 
-#if LV_USE_GROUP
         new_obj->group_p = NULL;
-#endif
         /*Set attributes*/
         new_obj->click        = 0;
         new_obj->drag         = 0;
@@ -309,9 +305,7 @@ lv_obj_t * lv_obj_create(lv_obj_t * parent, const lv_obj_t * copy)
         memset(&new_obj->user_data, 0, sizeof(lv_obj_user_data_t));
 #endif
 
-#if LV_USE_GROUP
         new_obj->group_p = NULL;
-#endif
 
         /*Set attributes*/
         new_obj->click        = 1;
@@ -378,12 +372,10 @@ lv_obj_t * lv_obj_create(lv_obj_t * parent, const lv_obj_t * copy)
 
         new_obj->style_p = copy->style_p;
 
-#if LV_USE_GROUP
         /*Add to the same group*/
         if(copy->group_p != NULL) {
             lv_group_add_obj(copy->group_p, new_obj);
         }
-#endif
 
         /*Set the same coordinates for non screen objects*/
         if(lv_obj_get_parent(copy) != NULL && parent != NULL) {
@@ -417,10 +409,8 @@ lv_res_t lv_obj_del(lv_obj_t * obj)
     lv_obj_invalidate(obj);
 
     /*Delete from the group*/
-#if LV_USE_GROUP
     lv_group_t * group = lv_obj_get_group(obj);
     if(group) lv_group_remove_obj(obj);
-#endif
 
         /*Remove the animations from this object*/
 #if LV_USE_ANIMATION
@@ -457,11 +447,9 @@ lv_res_t lv_obj_del(lv_obj_t * obj)
             indev->proc.types.pointer.last_pressed = NULL;
         }
 
-#if LV_USE_GROUP
         if(indev->group == group && obj == lv_indev_get_obj_act()) {
             lv_indev_reset(indev);
         }
-#endif
         indev = lv_indev_get_next(indev);
     }
 
@@ -2030,9 +2018,6 @@ const lv_style_t * lv_obj_get_style(const lv_obj_t * obj)
         while(par) {
             if(par->style_p) {
                 if(par->style_p->glass == 0) {
-#if LV_USE_GROUP == 0
-                    style_act = par->style_p;
-#else
                     /*If a parent is focused then use then focused style*/
                     lv_group_t * g = lv_obj_get_group(par);
                     if(lv_group_get_focused(g) == par) {
@@ -2040,20 +2025,17 @@ const lv_style_t * lv_obj_get_style(const lv_obj_t * obj)
                     } else {
                         style_act = par->style_p;
                     }
-#endif
                     break;
                 }
             }
             par = par->par;
         }
     }
-#if LV_USE_GROUP
     if(obj->group_p) {
         if(lv_group_get_focused(obj->group_p) == obj) {
             style_act = lv_group_mod_style(obj->group_p, style_act);
         }
     }
-#endif
 
     if(style_act == NULL) style_act = &lv_style_plain;
 
@@ -2356,7 +2338,6 @@ void lv_obj_set_user_data(lv_obj_t * obj, lv_obj_user_data_t data)
 }
 #endif
 
-#if LV_USE_GROUP
 /**
  * Get the group of the object
  * @param obj pointer to an object
@@ -2384,8 +2365,6 @@ bool lv_obj_is_focused(const lv_obj_t * obj)
 
     return false;
 }
-#endif
-
 
 /*-------------------
  * OTHER FUNCTIONS
@@ -2565,10 +2544,8 @@ static void delete_children(lv_obj_t * obj)
     /*Remove from the group; remove before transversing children so that
      * the object still has access to all children during the
      * LV_SIGNAL_DEFOCUS call*/
-#if LV_USE_GROUP
     lv_group_t * group = lv_obj_get_group(obj);
     if(group) lv_group_remove_obj(obj);
-#endif
 
     while(i != NULL) {
         /*Get the next object before delete this*/
@@ -2602,11 +2579,9 @@ static void delete_children(lv_obj_t * obj)
         if(indev->proc.types.pointer.last_pressed == obj) {
             indev->proc.types.pointer.last_pressed = NULL;
         }
-#if LV_USE_GROUP
         if(indev->group == group && obj == lv_indev_get_obj_act()) {
             lv_indev_reset(indev);
         }
-#endif
         indev = lv_indev_get_next(indev);
     }
 

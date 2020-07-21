@@ -777,8 +777,6 @@ static void win_init(void)
 #endif
 }
 
-#if LV_USE_GROUP
-
 static void style_mod(lv_group_t * group, lv_style_t * style)
 {
     (void)group; /*Unused*/
@@ -819,8 +817,6 @@ static void style_mod_edit(lv_group_t * group, lv_style_t * style)
     style->body.border.width = 3;
 #endif
 }
-
-#endif /*LV_USE_GROUP*/
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -878,10 +874,8 @@ lv_theme_t * lv_theme_zen_init(uint16_t hue, lv_font_t * font)
     table_init();
     win_init();
 
-#if LV_USE_GROUP
     theme.group.style_mod_xcb      = style_mod;
     theme.group.style_mod_edit_xcb = style_mod_edit;
-#endif
 
     return &theme;
 }

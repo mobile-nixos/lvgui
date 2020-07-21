@@ -495,7 +495,6 @@ static lv_res_t lv_mbox_signal(lv_obj_t * mbox, lv_signal_t sign, void * param)
         /* The button matrix with ENCODER input supposes it's in a group but in this case it isn't
          * (Only the message box's container) So so some actions here instead*/
         if(sign == LV_SIGNAL_FOCUS) {
-#if LV_USE_GROUP
             lv_indev_t * indev         = lv_indev_get_act();
             lv_indev_type_t indev_type = lv_indev_get_type(indev);
             if(indev_type == LV_INDEV_TYPE_ENCODER) {
@@ -506,7 +505,6 @@ static lv_res_t lv_mbox_signal(lv_obj_t * mbox, lv_signal_t sign, void * param)
                 else
                     btnm_ext->btn_id_pr = LV_BTNM_BTN_NONE;
             }
-#endif
         }
     }
 

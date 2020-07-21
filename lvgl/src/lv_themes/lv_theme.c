@@ -58,10 +58,8 @@ void lv_theme_set_current(lv_theme_t * th)
 #if LV_THEME_LIVE_UPDATE == 0
     current_theme = th;
 
-#if LV_USE_GROUP
     /*Copy group style modification callback functions*/
     memcpy(&current_theme->group, &th->group, sizeof(th->group));
-#endif
 
     /*Let the object know their style might change*/
     lv_obj_report_style_mod(NULL);
@@ -88,19 +86,15 @@ void lv_theme_set_current(lv_theme_t * th)
         if(s) memcpy(&th_styles[i], (void *)s, sizeof(lv_style_t));
     }
 
-#if LV_USE_GROUP
     /*Copy group style modification callback functions*/
     memcpy(&current_theme.group, &th->group, sizeof(th->group));
-#endif
 
     /*Let the object know their style might change*/
     lv_obj_report_style_mod(NULL);
 
 #endif
 
-#if LV_USE_GROUP
     lv_group_report_style_mod(NULL);
-#endif
 }
 
 /**

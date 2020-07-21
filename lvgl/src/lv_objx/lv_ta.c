@@ -1572,7 +1572,6 @@ static lv_res_t lv_ta_signal(lv_obj_t * ta, lv_signal_t sign, void * param)
         cur_type = lv_ta_get_cursor_type(ta);
         lv_ta_set_cursor_type(ta, cur_type | LV_CURSOR_HIDDEN);
     } else if(sign == LV_SIGNAL_FOCUS) {
-#if LV_USE_GROUP
         lv_cursor_type_t cur_type;
         cur_type                   = lv_ta_get_cursor_type(ta);
         lv_group_t * g             = lv_obj_get_group(ta);
@@ -1588,7 +1587,6 @@ static lv_res_t lv_ta_signal(lv_obj_t * ta, lv_signal_t sign, void * param)
         } else {
             lv_ta_set_cursor_type(ta, cur_type & (~LV_CURSOR_HIDDEN));
         }
-#endif
     } else if(sign == LV_SIGNAL_PRESSED || sign == LV_SIGNAL_PRESSING || sign == LV_SIGNAL_PRESS_LOST ||
               sign == LV_SIGNAL_RELEASED) {
         update_cursor_position_on_click(ta, sign, (lv_indev_t *)param);

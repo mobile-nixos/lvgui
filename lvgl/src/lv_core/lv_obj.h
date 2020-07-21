@@ -198,9 +198,7 @@ typedef struct _lv_obj_t
     void * ext_attr;            /**< Object type specific extended data*/
     const lv_style_t * style_p; /**< Pointer to the object's style*/
 
-#if LV_USE_GROUP != 0
     void * group_p; /**< Pointer to the group of the object*/
-#endif
 
 #if LV_USE_EXT_CLICK_AREA == LV_EXT_CLICK_AREA_TINY
     uint8_t ext_click_pad_hor; /**< Extra click padding in horizontal direction */
@@ -969,7 +967,6 @@ void lv_obj_set_user_data(lv_obj_t * obj, lv_obj_user_data_t data);
 
 #endif
 
-#if LV_USE_GROUP
 /**
  * Get the group of the object
  * @param obj pointer to an object
@@ -983,8 +980,6 @@ void * lv_obj_get_group(const lv_obj_t * obj);
  * @return true: the object is focused, false: the object is not focused or not in a group
  */
 bool lv_obj_is_focused(const lv_obj_t * obj);
-
-#endif
 
 /*-------------------
  * OTHER FUNCTIONS
