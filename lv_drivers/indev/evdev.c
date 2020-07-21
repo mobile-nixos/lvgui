@@ -320,7 +320,7 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 					instance->evdev_button = LV_INDEV_STATE_REL;
 				else if(in.value == 1)
 					instance->evdev_button = LV_INDEV_STATE_PR;
-			} else if(drv->type == LV_INDEV_TYPE_KEYPAD) {
+			} else if(drv->type == LV_INDEV_TYPE_KEYBOARD) {
 				data->state = (in.value) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
 				switch(in.code) {
 					case KEY_BACKSPACE:
@@ -352,7 +352,7 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 		}
 	}
 
-	if(drv->type == LV_INDEV_TYPE_KEYPAD) {
+	if(drv->type == LV_INDEV_TYPE_KEYBOARD) {
 		/* No data retrieved */
 		data->key = instance->evdev_key_val;
 		data->state = instance->evdev_button;

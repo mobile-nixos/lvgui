@@ -883,10 +883,10 @@ static lv_res_t lv_list_signal(lv_obj_t * list, lv_signal_t sign, void * param)
     if(sign == LV_SIGNAL_RELEASED || sign == LV_SIGNAL_PRESSED || sign == LV_SIGNAL_PRESSING ||
        sign == LV_SIGNAL_LONG_PRESS || sign == LV_SIGNAL_LONG_PRESS_REP) {
 #if LV_USE_GROUP
-        /*If pressed/released etc by a KEYPAD or ENCODER delegate signal to the button*/
+        /*If pressed/released etc by a KEYBOARD or ENCODER delegate signal to the button*/
         lv_indev_t * indev         = lv_indev_get_act();
         lv_indev_type_t indev_type = lv_indev_get_type(indev);
-        if(indev_type == LV_INDEV_TYPE_KEYPAD ||
+        if(indev_type == LV_INDEV_TYPE_KEYBOARD ||
            (indev_type == LV_INDEV_TYPE_ENCODER && lv_group_get_editing(lv_obj_get_group(list)))) {
             /*Get the 'pressed' button*/
             lv_obj_t * btn = NULL;

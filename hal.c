@@ -228,7 +228,7 @@ void hal_init(void)
 	{
     lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
-    indev_drv.type = LV_INDEV_TYPE_KEYPAD;
+    indev_drv.type = LV_INDEV_TYPE_KEYBOARD;
     indev_drv.read_cb = keyboard_read;
 	lv_indev_drv_register(&indev_drv);
 	}

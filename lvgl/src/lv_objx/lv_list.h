@@ -250,7 +250,7 @@ uint16_t lv_list_get_size(const lv_obj_t * list);
 
 #if LV_USE_GROUP
 /**
- * Get the currently selected button. Can be used while navigating in the list with a keypad.
+ * Get the currently selected button. Can be used while navigating in the list with a keyboard.
  * @param list pointer to a list object
  * @return pointer to the selected button
  */

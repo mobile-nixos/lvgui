@@ -757,11 +757,11 @@ static lv_res_t lv_tabview_signal(lv_obj_t * tabview, lv_signal_t sign, void * p
         }
     } else if(sign == LV_SIGNAL_RELEASED) {
 #if LV_USE_GROUP
-        /*If released by a KEYPAD or ENCODER then really the tab buttons should be released.
+        /*If released by a KEYBOARD or ENCODER then really the tab buttons should be released.
          * So simulate a CLICK on the tab buttons*/
         lv_indev_t * indev         = lv_indev_get_act();
         lv_indev_type_t indev_type = lv_indev_get_type(indev);
-        if(indev_type == LV_INDEV_TYPE_KEYPAD ||
+        if(indev_type == LV_INDEV_TYPE_KEYBOARD ||
            (indev_type == LV_INDEV_TYPE_ENCODER && lv_group_get_editing(lv_obj_get_group(tabview)))) {
             lv_event_send(ext->btns, LV_EVENT_CLICKED, lv_event_get_data());
         }
