@@ -7,11 +7,13 @@
 #include "hal.h"
 
 LV_IMG_DECLARE(lvgui_cursor);
+LV_IMG_DECLARE(lvgui_touch);
 
 mn_hal_default_font_t mn_hal_default_font;
 int mn_hal_default_dpi;
 lv_disp_drv_t disp_drv;
-static lv_obj_t * cursor_obj;
+static lv_obj_t * lvgui_cursor_obj;
+static lv_obj_t * lvgui_touch_obj;
 
 void hal_preinit(void);
 void hal_set_dpi(void);
@@ -121,17 +123,41 @@ static void init_evdev(char* name)
 	lv_indev_drv_t indev_drv;
 	lv_indev_drv_init(&indev_drv);
 
-	// FIXME: This assumes only pointers via evdev...
 	indev_drv.type = instance->lv_indev_drv_type;
 	indev_drv.read_cb = evdev_read;
 	indev_drv.user_data = instance;
 	lv_indev_t * indev = lv_indev_drv_register(&indev_drv);
 
-	// Whitelisting mice and touchpads. We don't want to bind a keyboard to
-	// a cursor.
+	// Add a "regular" cursor for touchpads and mice.
 	if (instance->is_mouse || instance->is_touchpad) {
-		lv_indev_set_cursor(indev, cursor_obj);
-		lv_obj_set_hidden(cursor_obj, false);
+		lv_indev_set_cursor(indev, lvgui_cursor_obj);
+		lv_obj_set_hidden(lvgui_cursor_obj, true);
+	}
+
+	// For touchscreen, a helpful indicator of where the touch happens.
+	// This will be useful to detect display orientation or calibration that
+	// does not match with the expected.
+	if (instance->is_touchscreen) {
+		// The cursor should be offset so the center of the cursor is the
+		// x,y point of the touch.
+		indev->cursor_offset.x = -1 * lvgui_touch.header.w/2;
+		indev->cursor_offset.y = -1 * lvgui_touch.header.h/2;
+
+		lv_indev_set_cursor(indev, lvgui_touch_obj);
+		// Start hidden, there may be a touchscreen that never gets used.
+		// Additionally helps with "one-shot" uses like for splash screens.
+		lv_obj_set_hidden(lvgui_touch_obj, true);
+
+		// Setup an animation to "unclutter" (make the cursor disappear)
+		lv_anim_t * a;
+		a = lv_mem_alloc(sizeof(lv_anim_t));
+		indev->cursor_unclutter_animation = a;
+		lv_anim_init(a);
+		lv_anim_set_exec_cb(a, lvgui_touch_obj, (lv_anim_exec_xcb_t)lv_obj_set_opa_scale);
+		// 400ms after the move, take 500ms to disappear.
+		lv_anim_set_time(a, 300, 500);
+		lv_anim_set_values(a, 255, 0);
+		lv_anim_set_path_cb(a, lv_anim_path_ease_in);
 	}
 }
 #endif
@@ -157,12 +183,22 @@ void hal_init(void)
 	lv_disp_drv_register(&disp_drv);
 
 	{
-	cursor_obj = lv_img_create(lv_scr_act(), NULL);
-	lv_img_set_src(cursor_obj, &lvgui_cursor);
-	lv_obj_set_click(cursor_obj, false);
+	lvgui_cursor_obj = lv_img_create(lv_scr_act(), NULL);
+	lv_img_set_src(lvgui_cursor_obj, &lvgui_cursor);
+	lv_obj_set_click(lvgui_cursor_obj, false);
 	// Hide by default
 	// Un-hide when used.
-	lv_obj_set_hidden(cursor_obj, true);
+	lv_obj_set_hidden(lvgui_cursor_obj, true);
+	}
+
+	{
+	lvgui_touch_obj = lv_img_create(lv_scr_act(), NULL);
+	lv_img_set_src(lvgui_touch_obj, &lvgui_touch);
+	lv_obj_set_click(lvgui_touch_obj, false);
+	// Hide by default
+	// Un-hide when used.
+	lv_obj_set_hidden(lvgui_touch_obj, true);
+	lv_obj_set_opa_scale_enable(lvgui_touch_obj, true);
 	}
 
 #if USE_EVDEV
