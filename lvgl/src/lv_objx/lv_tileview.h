@@ -106,20 +106,14 @@ void lv_tileview_set_tile_act(lv_obj_t * tileview, lv_coord_t x, lv_coord_t y, l
  * @param tileview pointer to a Tileview
  * @param en true or false to enable/disable end flash
  */
-static inline void lv_tileview_set_edge_flash(lv_obj_t * tileview, bool en)
-{
-    lv_page_set_edge_flash(tileview, en);
-}
+void lv_tileview_set_edge_flash(lv_obj_t * tileview, bool en);
 
 /**
  * Set the animation time for the Tile view
  * @param tileview pointer to a page object
  * @param anim_time animation time in milliseconds
  */
-static inline void lv_tileview_set_anim_time(lv_obj_t * tileview, uint16_t anim_time)
-{
-    lv_page_set_anim_time(tileview, anim_time);
-}
+void lv_tileview_set_anim_time(lv_obj_t * tileview, uint16_t anim_time);
 
 /**
  * Set a style of a tileview.
@@ -138,20 +132,14 @@ void lv_tileview_set_style(lv_obj_t * tileview, lv_tileview_style_t type, const 
  * @param tileview pointer to a Tileview
  * @return true or false
  */
-static inline bool lv_tileview_get_edge_flash(lv_obj_t * tileview)
-{
-    return lv_page_get_edge_flash(tileview);
-}
+bool lv_tileview_get_edge_flash(lv_obj_t * tileview);
 
 /**
  * Get the animation time for the Tile view
  * @param tileview pointer to a page object
  * @return animation time in milliseconds
  */
-static inline uint16_t lv_tileview_get_anim_time(lv_obj_t * tileview)
-{
-    return lv_page_get_anim_time(tileview);
-}
+uint16_t lv_tileview_get_anim_time(lv_obj_t * tileview);
 
 /**
  * Get style of a tileview.

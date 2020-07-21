@@ -277,6 +277,26 @@ void lv_tileview_set_tile_act(lv_obj_t * tileview, lv_coord_t x, lv_coord_t y, l
 }
 
 /**
+ * Enable the edge flash effect. (Show an arc when the an edge is reached)
+ * @param tileview pointer to a Tileview
+ * @param en true or false to enable/disable end flash
+ */
+void lv_tileview_set_edge_flash(lv_obj_t * tileview, bool en)
+{
+    lv_page_set_edge_flash(tileview, en);
+}
+
+/**
+ * Set the animation time for the Tile view
+ * @param tileview pointer to a page object
+ * @param anim_time animation time in milliseconds
+ */
+void lv_tileview_set_anim_time(lv_obj_t * tileview, uint16_t anim_time)
+{
+    lv_page_set_anim_time(tileview, anim_time);
+}
+
+/**
  * Set a style of a tileview.
  * @param tileview pointer to tileview object
  * @param type which style should be set
@@ -298,6 +318,26 @@ void lv_tileview_set_style(lv_obj_t * tileview, lv_tileview_style_t type, const 
 /*
  * New object specific "get" functions come here
  */
+
+/**
+ * Get the scroll propagation property
+ * @param tileview pointer to a Tileview
+ * @return true or false
+ */
+bool lv_tileview_get_edge_flash(lv_obj_t * tileview)
+{
+    return lv_page_get_edge_flash(tileview);
+}
+
+/**
+ * Get the animation time for the Tile view
+ * @param tileview pointer to a page object
+ * @return animation time in milliseconds
+ */
+uint16_t lv_tileview_get_anim_time(lv_obj_t * tileview)
+{
+    return lv_page_get_anim_time(tileview);
+}
 
 /**
  * Get style of a tileview.

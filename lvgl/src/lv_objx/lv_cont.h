@@ -118,10 +118,7 @@ void lv_cont_set_fit4(lv_obj_t * cont, lv_fit_t left, lv_fit_t right, lv_fit_t t
  * @param hor horizontal fit policy from `lv_fit_t`
  * @param ver vertical fit policy from `lv_fit_t`
  */
-static inline void lv_cont_set_fit2(lv_obj_t * cont, lv_fit_t hor, lv_fit_t ver)
-{
-    lv_cont_set_fit4(cont, hor, hor, ver, ver);
-}
+void lv_cont_set_fit2(lv_obj_t * cont, lv_fit_t hor, lv_fit_t ver);
 
 /**
  * Set the fit policy in all 4 direction at once.
@@ -129,10 +126,7 @@ static inline void lv_cont_set_fit2(lv_obj_t * cont, lv_fit_t hor, lv_fit_t ver)
  * @param cont pointer to a container object
  * @param fit fit policy from `lv_fit_t`
  */
-static inline void lv_cont_set_fit(lv_obj_t * cont, lv_fit_t fit)
-{
-    lv_cont_set_fit4(cont, fit, fit, fit, fit);
-}
+void lv_cont_set_fit(lv_obj_t * cont, lv_fit_t fit);
 
 /**
  * Set the style of a container
@@ -140,11 +134,7 @@ static inline void lv_cont_set_fit(lv_obj_t * cont, lv_fit_t fit)
  * @param type which style should be set (can be only `LV_CONT_STYLE_MAIN`)
  * @param style pointer to the new style
  */
-static inline void lv_cont_set_style(lv_obj_t * cont, lv_cont_style_t type, const lv_style_t * style)
-{
-    (void)type; /*Unused*/
-    lv_obj_set_style(cont, style);
-}
+void lv_cont_set_style(lv_obj_t * cont, lv_cont_style_t type, const lv_style_t * style);
 
 /*=====================
  * Getter functions
@@ -191,11 +181,7 @@ lv_fit_t lv_cont_get_fit_bottom(const lv_obj_t * cont);
  * @param type which style should be get (can be only `LV_CONT_STYLE_MAIN`)
  * @return pointer to the container's style
  */
-static inline const lv_style_t * lv_cont_get_style(const lv_obj_t * cont, lv_cont_style_t type)
-{
-    (void)type; /*Unused*/
-    return lv_obj_get_style(cont);
-}
+const lv_style_t * lv_cont_get_style(const lv_obj_t * cont, lv_cont_style_t type);
 
 /**********************
  *      MACROS

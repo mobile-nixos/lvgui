@@ -202,6 +202,53 @@ void lv_btn_toggle(lv_obj_t * btn)
 }
 
 /**
+ * Set the layout on a button
+ * @param btn pointer to a button object
+ * @param layout a layout from 'lv_cont_layout_t'
+ */
+void lv_btn_set_layout(lv_obj_t * btn, lv_layout_t layout)
+{
+    lv_cont_set_layout(btn, layout);
+}
+
+/**
+ * Set the fit policy in all 4 directions separately.
+ * It tells how to change the button size automatically.
+ * @param btn pointer to a button object
+ * @param left left fit policy from `lv_fit_t`
+ * @param right right fit policy from `lv_fit_t`
+ * @param top top fit policy from `lv_fit_t`
+ * @param bottom bottom fit policy from `lv_fit_t`
+ */
+void lv_btn_set_fit4(lv_obj_t * btn, lv_fit_t left, lv_fit_t right, lv_fit_t top, lv_fit_t bottom)
+{
+    lv_cont_set_fit4(btn, left, right, top, bottom);
+}
+
+/**
+ * Set the fit policy horizontally and vertically separately.
+ * It tells how to change the button size automatically.
+ * @param btn pointer to a button object
+ * @param hor horizontal fit policy from `lv_fit_t`
+ * @param ver vertical fit policy from `lv_fit_t`
+ */
+void lv_btn_set_fit2(lv_obj_t * btn, lv_fit_t hor, lv_fit_t ver)
+{
+    lv_cont_set_fit2(btn, hor, ver);
+}
+
+/**
+ * Set the fit policy in all 4 direction at once.
+ * It tells how to change the button size automatically.
+ * @param btn pointer to a button object
+ * @param fit fit policy from `lv_fit_t`
+ */
+void lv_btn_set_fit(lv_obj_t * btn, lv_fit_t fit)
+{
+    lv_cont_set_fit(btn, fit);
+}
+
+/**
  * Set time of the ink effect (draw a circle on click to animate in the new state)
  * @param btn pointer to a button object
  * @param time the time of the ink animation
@@ -315,6 +362,56 @@ bool lv_btn_get_toggle(const lv_obj_t * btn)
     lv_btn_ext_t * ext = lv_obj_get_ext_attr(btn);
 
     return ext->toggle != 0 ? true : false;
+}
+
+/**
+ * Get the layout of a button
+ * @param btn pointer to button object
+ * @return the layout from 'lv_cont_layout_t'
+ */
+lv_layout_t lv_btn_get_layout(const lv_obj_t * btn)
+{
+    return lv_cont_get_layout(btn);
+}
+
+/**
+ * Get the left fit mode
+ * @param btn pointer to a button object
+ * @return an element of `lv_fit_t`
+ */
+lv_fit_t lv_btn_get_fit_left(const lv_obj_t * btn)
+{
+    return lv_cont_get_fit_left(btn);
+}
+
+/**
+ * Get the right fit mode
+ * @param btn pointer to a button object
+ * @return an element of `lv_fit_t`
+ */
+lv_fit_t lv_btn_get_fit_right(const lv_obj_t * btn)
+{
+    return lv_cont_get_fit_right(btn);
+}
+
+/**
+ * Get the top fit mode
+ * @param btn pointer to a button object
+ * @return an element of `lv_fit_t`
+ */
+lv_fit_t lv_btn_get_fit_top(const lv_obj_t * btn)
+{
+    return lv_cont_get_fit_top(btn);
+}
+
+/**
+ * Get the bottom fit mode
+ * @param btn pointer to a button object
+ * @return an element of `lv_fit_t`
+ */
+lv_fit_t lv_btn_get_fit_bottom(const lv_obj_t * btn)
+{
+    return lv_cont_get_fit_bottom(btn);
 }
 
 /**

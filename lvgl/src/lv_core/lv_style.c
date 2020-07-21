@@ -313,6 +313,43 @@ void lv_style_anim_set_styles(lv_anim_t * a, lv_style_t * to_anim, const lv_styl
     memcpy(&dsc->style_end, end, sizeof(lv_style_t));
     memcpy(dsc->style_anim, start, sizeof(lv_style_t));
 }
+
+void lv_style_anim_set_time(lv_anim_t * a, uint16_t duration, int16_t delay)
+{
+    lv_anim_set_time(a, duration, delay);
+}
+
+void lv_style_anim_set_ready_cb(lv_anim_t * a, lv_anim_ready_cb_t ready_cb)
+{
+    lv_style_anim_dsc_t * dsc = (lv_style_anim_dsc_t *)a->var;
+    dsc->ready_cb             = ready_cb;
+}
+
+void lv_style_anim_set_playback(lv_anim_t * a, uint16_t wait_time)
+{
+    lv_anim_set_playback(a, wait_time);
+}
+
+void lv_style_anim_clear_playback(lv_anim_t * a)
+{
+    lv_anim_clear_playback(a);
+}
+
+void lv_style_anim_set_repeat(lv_anim_t * a, uint16_t wait_time)
+{
+    lv_anim_set_repeat(a, wait_time);
+}
+
+void lv_style_anim_clear_repeat(lv_anim_t * a)
+{
+    lv_anim_clear_repeat(a);
+}
+
+void lv_style_anim_create(lv_anim_t * a)
+{
+    lv_anim_create(a);
+}
+
 #endif
 /**********************
  *   STATIC FUNCTIONS

@@ -113,20 +113,14 @@ void lv_roller_set_visible_row_count(lv_obj_t * roller, uint8_t row_cnt);
  * @param roller pointer to a roller obejct
  * @param w the width when the list is opened (0: auto size)
  */
-static inline void lv_roller_set_fix_width(lv_obj_t * roller, lv_coord_t w)
-{
-    lv_ddlist_set_fix_width(roller, w);
-}
+void lv_roller_set_fix_width(lv_obj_t * roller, lv_coord_t w);
 
 /**
  * Set the open/close animation time.
  * @param roller pointer to a roller object
  * @param anim_time: open/close animation time [ms]
  */
-static inline void lv_roller_set_anim_time(lv_obj_t * roller, uint16_t anim_time)
-{
-    lv_ddlist_set_anim_time(roller, anim_time);
-}
+void lv_roller_set_anim_time(lv_obj_t * roller, uint16_t anim_time);
 
 /**
  * Set a style of a roller
@@ -152,10 +146,7 @@ uint16_t lv_roller_get_selected(const lv_obj_t * roller);
  * @param buf pointer to an array to store the string
  * @param buf_size size of `buf` in bytes. 0: to ignore it.
  */
-static inline void lv_roller_get_selected_str(const lv_obj_t * roller, char * buf, uint16_t buf_size)
-{
-    lv_ddlist_get_selected_str(roller, buf, buf_size);
-}
+void lv_roller_get_selected_str(const lv_obj_t * roller, char * buf, uint16_t buf_size);
 
 /**
  * Get the align attribute. Default alignment after _create is LV_LABEL_ALIGN_CENTER
@@ -169,20 +160,14 @@ lv_label_align_t lv_roller_get_align(const lv_obj_t * roller);
  * @param roller pointer to roller object
  * @return the options separated by '\n'-s (E.g. "Option1\nOption2\nOption3")
  */
-static inline const char * lv_roller_get_options(const lv_obj_t * roller)
-{
-    return lv_ddlist_get_options(roller);
-}
+const char * lv_roller_get_options(const lv_obj_t * roller);
 
 /**
  * Get the open/close animation time.
  * @param roller pointer to a roller
  * @return open/close animation time [ms]
  */
-static inline uint16_t lv_roller_get_anim_time(const lv_obj_t * roller)
-{
-    return lv_ddlist_get_anim_time(roller);
-}
+uint16_t lv_roller_get_anim_time(const lv_obj_t * roller);
 
 /**
  * Get the auto width set attribute

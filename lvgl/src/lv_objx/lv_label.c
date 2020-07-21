@@ -439,6 +439,18 @@ void lv_label_set_anim_speed(lv_obj_t * label, uint16_t anim_speed)
 #endif
 }
 
+/**
+ * Set the style of an label
+ * @param label pointer to an label object
+ * @param type which style should be get (can be only `LV_LABEL_STYLE_MAIN`)
+ * @param style pointer to a style
+ */
+void lv_label_set_style(lv_obj_t * label, lv_label_style_t type, const lv_style_t * style)
+{
+    (void)type; /*Unused*/
+    lv_obj_set_style(label, style);
+}
+
 void lv_label_set_text_sel_start(lv_obj_t * label, uint16_t index)
 {
     LV_ASSERT_OBJ(label, LV_OBJX_NAME);
@@ -920,6 +932,18 @@ bool lv_label_is_char_under_pos(const lv_obj_t * label, lv_point_t * pos)
 
     int32_t max_diff = lv_font_get_glyph_width(font, letter, letter_next) + style->text.letter_space + 1;
     return (pos->x >= (last_x - style->text.letter_space) && pos->x <= (last_x + max_diff));
+}
+
+/**
+ * Get the style of an label object
+ * @param label pointer to an label object
+ * @param type which style should be get (can be only `LV_LABEL_STYLE_MAIN`)
+ * @return pointer to the label's style
+ */
+const lv_style_t * lv_label_get_style(const lv_obj_t * label, lv_label_style_t type)
+{
+    (void)type; /*Unused*/
+    return lv_obj_get_style(label);
 }
 
 /*=====================

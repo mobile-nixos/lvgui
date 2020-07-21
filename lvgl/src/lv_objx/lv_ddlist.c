@@ -304,6 +304,25 @@ void lv_ddlist_set_stay_open(lv_obj_t * ddlist, bool en)
 }
 
 /**
+ * Set the scroll bar mode of a drop down list
+ * @param ddlist pointer to a drop down list object
+ * @param sb_mode the new mode from 'lv_page_sb_mode_t' enum
+ */
+void lv_ddlist_set_sb_mode(lv_obj_t * ddlist, lv_sb_mode_t mode)
+{
+    lv_page_set_sb_mode(ddlist, mode);
+}
+/**
+ * Set the open/close animation time.
+ * @param ddlist pointer to a drop down list
+ * @param anim_time: open/close animation time [ms]
+ */
+void lv_ddlist_set_anim_time(lv_obj_t * ddlist, uint16_t anim_time)
+{
+    lv_page_set_anim_time(ddlist, anim_time);
+}
+
+/**
  * Set a style of a drop down list
  * @param ddlist pointer to a drop down list object
  * @param type which style should be set
@@ -443,6 +462,26 @@ bool lv_ddlist_get_stay_open(lv_obj_t * ddlist)
     lv_ddlist_ext_t * ext = lv_obj_get_ext_attr(ddlist);
 
     return ext->stay_open ? true : false;
+}
+
+/**
+ * Get the scroll bar mode of a drop down list
+ * @param ddlist pointer to a  drop down list object
+ * @return scrollbar mode from 'lv_page_sb_mode_t' enum
+ */
+lv_sb_mode_t lv_ddlist_get_sb_mode(const lv_obj_t * ddlist)
+{
+    return lv_page_get_sb_mode(ddlist);
+}
+
+/**
+ * Get the open/close animation time.
+ * @param ddlist pointer to a drop down list
+ * @return open/close animation time [ms]
+ */
+uint16_t lv_ddlist_get_anim_time(const lv_obj_t * ddlist)
+{
+    return lv_page_get_anim_time(ddlist);
 }
 
 /**

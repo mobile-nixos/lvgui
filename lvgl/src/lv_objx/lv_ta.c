@@ -849,6 +849,37 @@ void lv_ta_set_insert_replace(lv_obj_t * ta, const char * txt)
 }
 
 /**
+ * Set the scroll bar mode of a text area
+ * @param ta pointer to a text area object
+ * @param sb_mode the new mode from 'lv_page_sb_mode_t' enum
+ */
+void lv_ta_set_sb_mode(lv_obj_t * ta, lv_sb_mode_t mode)
+{
+    lv_page_set_sb_mode(ta, mode);
+}
+
+/**
+ * Enable the scroll propagation feature. If enabled then the Text area will move its parent if
+ * there is no more space to scroll.
+ * @param ta pointer to a Text area
+ * @param en true or false to enable/disable scroll propagation
+ */
+void lv_ta_set_scroll_propagation(lv_obj_t * ta, bool en)
+{
+    lv_page_set_scroll_propagation(ta, en);
+}
+
+/**
+ * Enable the edge flash effect. (Show an arc when the an edge is reached)
+ * @param page pointer to a Text Area
+ * @param en true or false to enable/disable end flash
+ */
+void lv_ta_set_edge_flash(lv_obj_t * ta, bool en)
+{
+    lv_page_set_edge_flash(ta, en);
+}
+
+/**
  * Set a style of a text area
  * @param ta pointer to a text area object
  * @param type which style should be set
@@ -1101,6 +1132,36 @@ uint16_t lv_ta_get_max_length(lv_obj_t * ta)
 
     lv_ta_ext_t * ext = lv_obj_get_ext_attr(ta);
     return ext->max_length;
+}
+
+/**
+ * Get the scroll bar mode of a text area
+ * @param ta pointer to a text area object
+ * @return scrollbar mode from 'lv_page_sb_mode_t' enum
+ */
+lv_sb_mode_t lv_ta_get_sb_mode(const lv_obj_t * ta)
+{
+    return lv_page_get_sb_mode(ta);
+}
+
+/**
+ * Get the scroll propagation property
+ * @param ta pointer to a Text area
+ * @return true or false
+ */
+bool lv_ta_get_scroll_propagation(lv_obj_t * ta)
+{
+    return lv_page_get_scroll_propagation(ta);
+}
+
+/**
+ * Get the scroll propagation property
+ * @param ta pointer to a Text area
+ * @return true or false
+ */
+bool lv_ta_get_edge_flash(lv_obj_t * ta)
+{
+    return lv_page_get_edge_flash(ta);
 }
 
 /**

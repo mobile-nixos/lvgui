@@ -168,6 +168,41 @@ void lv_cont_set_fit4(lv_obj_t * cont, lv_fit_t left, lv_fit_t right, lv_fit_t t
     cont->signal_cb(cont, LV_SIGNAL_CHILD_CHG, NULL);
 }
 
+/**
+ * Set the fit policy horizontally and vertically separately.
+ * It tells how to change the container's size automatically.
+ * @param cont pointer to a container object
+ * @param hor horizontal fit policy from `lv_fit_t`
+ * @param ver vertical fit policy from `lv_fit_t`
+ */
+void lv_cont_set_fit2(lv_obj_t * cont, lv_fit_t hor, lv_fit_t ver)
+{
+    lv_cont_set_fit4(cont, hor, hor, ver, ver);
+}
+
+/**
+ * Set the fit policy in all 4 direction at once.
+ * It tells how to change the container's size automatically.
+ * @param cont pointer to a container object
+ * @param fit fit policy from `lv_fit_t`
+ */
+void lv_cont_set_fit(lv_obj_t * cont, lv_fit_t fit)
+{
+    lv_cont_set_fit4(cont, fit, fit, fit, fit);
+}
+
+/**
+ * Set the style of a container
+ * @param cont pointer to a container object
+ * @param type which style should be set (can be only `LV_CONT_STYLE_MAIN`)
+ * @param style pointer to the new style
+ */
+void lv_cont_set_style(lv_obj_t * cont, lv_cont_style_t type, const lv_style_t * style)
+{
+    (void)type; /*Unused*/
+    lv_obj_set_style(cont, style);
+}
+
 /*=====================
  * Getter functions
  *====================*/
@@ -235,6 +270,18 @@ lv_fit_t lv_cont_get_fit_bottom(const lv_obj_t * cont)
 
     lv_cont_ext_t * ext = lv_obj_get_ext_attr(cont);
     return ext->fit_bottom;
+}
+
+/**
+ * Get the style of a container
+ * @param cont pointer to a container object
+ * @param type which style should be get (can be only `LV_CONT_STYLE_MAIN`)
+ * @return pointer to the container's style
+ */
+const lv_style_t * lv_cont_get_style(const lv_obj_t * cont, lv_cont_style_t type)
+{
+    (void)type; /*Unused*/
+    return lv_obj_get_style(cont);
 }
 
 /**********************

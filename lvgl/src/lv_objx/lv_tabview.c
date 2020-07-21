@@ -574,6 +574,16 @@ void lv_tabview_set_btns_hidden(lv_obj_t * tabview, bool en)
     tabview_realign(tabview);
 }
 
+/**
+ * Set the scroll bar mode of a tabview
+ * @param tabview pointer to a tabview object
+ * @param sb_mode the new mode from 'lv_page_sb_mode_t' enum
+ */
+void lv_tabview_set_sb_mode(lv_obj_t * tabview, lv_sb_mode_t mode)
+{
+    lv_page_set_sb_mode(tabview, mode);
+}
+
 /*=====================
  * Getter functions
  *====================*/

@@ -78,6 +78,120 @@ void lv_anim_init(lv_anim_t * a)
     a->end     = 100;
     a->path_cb = lv_anim_path_linear;
 }
+
+/**
+ * Set a variable to animate function to execute on `var`
+ * @param a pointer to an initialized `lv_anim_t` variable
+ * @param var pointer to a variable to animate
+ * @param exec_cb a function to execute.
+ *                LittelvGL's built-in functions can be used.
+ *                E.g. lv_obj_set_x
+ */
+void lv_anim_set_exec_cb(lv_anim_t * a, void * var, lv_anim_exec_xcb_t exec_cb)
+{
+    a->var     = var;
+    a->exec_cb = exec_cb;
+}
+
+/**
+ * Set the duration and delay of an animation
+ * @param a pointer to an initialized `lv_anim_t` variable
+ * @param duration duration of the animation in milliseconds
+ * @param delay delay before the animation in milliseconds
+ */
+void lv_anim_set_time(lv_anim_t * a, uint16_t duration, int16_t delay)
+{
+    a->time     = duration;
+    a->act_time = (int16_t)(-delay);
+}
+
+/**
+ * Set the start and end values of an animation
+ * @param a pointer to an initialized `lv_anim_t` variable
+ * @param start the start value
+ * @param end the end value
+ */
+void lv_anim_set_values(lv_anim_t * a, lv_anim_value_t start, lv_anim_value_t end)
+{
+    a->start = start;
+    a->end   = end;
+}
+
+/**
+ * Similar to `lv_anim_set_var_and_cb` but `lv_anim_custom_exec_cb_t` receives
+ * `lv_anim_t * ` as its first parameter instead of `void *`.
+ * This function might be used when LittlevGL is binded to other languages because
+ * it's more consistent to have `lv_anim_t *` as first parameter.
+ * @param a pointer to an initialized `lv_anim_t` variable
+ * @param exec_cb a function to execute.
+ */
+void lv_anim_set_custom_exec_cb(lv_anim_t * a, lv_anim_custom_exec_cb_t exec_cb)
+{
+    a->var     = a;
+    a->exec_cb = (lv_anim_exec_xcb_t)exec_cb;
+}
+
+/**
+ * Set the path (curve) of the animation.
+ * @param a pointer to an initialized `lv_anim_t` variable
+ * @param path_cb a function the get the current value of the animation.
+ *                The built in functions starts with `lv_anim_path_...`
+ */
+void lv_anim_set_path_cb(lv_anim_t * a, lv_anim_path_cb_t path_cb)
+{
+    a->path_cb = path_cb;
+}
+
+/**
+ * Set a function call when the animation is ready
+ * @param a pointer to an initialized `lv_anim_t` variable
+ * @param ready_cb a function call when the animation is ready
+ */
+void lv_anim_set_ready_cb(lv_anim_t * a, lv_anim_ready_cb_t ready_cb)
+{
+    a->ready_cb = ready_cb;
+}
+
+/**
+ * Make the animation to play back to when the forward direction is ready
+ * @param a pointer to an initialized `lv_anim_t` variable
+ * @param wait_time time in milliseconds to wait before starting the back direction
+ */
+void lv_anim_set_playback(lv_anim_t * a, uint16_t wait_time)
+{
+    a->playback       = 1;
+    a->playback_pause = wait_time;
+}
+
+/**
+ * Disable playback. (Disabled after `lv_anim_init()`)
+ * @param a pointer to an initialized `lv_anim_t` variable
+ */
+void lv_anim_clear_playback(lv_anim_t * a)
+{
+    a->playback = 0;
+}
+
+/**
+ * Make the animation to start again when ready.
+ * @param a pointer to an initialized `lv_anim_t` variable
+ * @param wait_time time in milliseconds to wait before starting the animation again
+ */
+void lv_anim_set_repeat(lv_anim_t * a, uint16_t wait_time)
+{
+    a->repeat       = 1;
+    a->repeat_pause = wait_time;
+}
+
+/**
+ * Disable repeat. (Disabled after `lv_anim_init()`)
+ * @param a pointer to an initialized `lv_anim_t` variable
+ */
+void lv_anim_clear_repeat(lv_anim_t * a)
+{
+    a->repeat = 0;
+}
+
 /**
  * Create an animation
  * @param a an initialized 'anim_t' variable. Not required after call.
@@ -136,6 +250,22 @@ bool lv_anim_del(void * var, lv_anim_exec_xcb_t exec_cb)
     }
 
     return del;
+}
+
+/**
+ * Delete an aniamation by getting the animated variable from `a`.
+ * Only animations with `exec_cb` will be deleted.
+ * This function exist becasue it's logical that all anim functions receives an
+ * `lv_anim_t` as their first parameter. It's not practical in C but might makes
+ * the API more conequent and makes easier to genrate bindings.
+ * @param a pointer to an animation.
+ * @param exec_cb a function pointer which is animating 'var',
+ *           or NULL to ignore it and delete all the animations of 'var
+ * @return true: at least 1 animation is deleted, false: no animation is deleted
+ */
+bool lv_anim_custom_del(lv_anim_t * a, lv_anim_custom_exec_cb_t exec_cb)
+{
+    return lv_anim_del(a->var, (lv_anim_exec_xcb_t)exec_cb);
 }
 
 /**

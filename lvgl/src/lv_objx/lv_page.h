@@ -173,10 +173,7 @@ void lv_page_set_edge_flash(lv_obj_t * page, bool en);
  * @param top bottom fit policy from `lv_fit_t`
  * @param bottom bottom fit policy from `lv_fit_t`
  */
-static inline void lv_page_set_scrl_fit4(lv_obj_t * page, lv_fit_t left, lv_fit_t right, lv_fit_t top, lv_fit_t bottom)
-{
-    lv_cont_set_fit4(lv_page_get_scrl(page), left, right, top, bottom);
-}
+void lv_page_set_scrl_fit4(lv_obj_t * page, lv_fit_t left, lv_fit_t right, lv_fit_t top, lv_fit_t bottom);
 
 /**
  * Set the fit policy horizontally and vertically separately.
@@ -185,10 +182,7 @@ static inline void lv_page_set_scrl_fit4(lv_obj_t * page, lv_fit_t left, lv_fit_
  * @param hot horizontal fit policy from `lv_fit_t`
  * @param ver vertical fit policy from `lv_fit_t`
  */
-static inline void lv_page_set_scrl_fit2(lv_obj_t * page, lv_fit_t hor, lv_fit_t ver)
-{
-    lv_cont_set_fit2(lv_page_get_scrl(page), hor, ver);
-}
+void lv_page_set_scrl_fit2(lv_obj_t * page, lv_fit_t hor, lv_fit_t ver);
 
 /**
  * Set the fit policyin all 4 direction at once.
@@ -196,40 +190,28 @@ static inline void lv_page_set_scrl_fit2(lv_obj_t * page, lv_fit_t hor, lv_fit_t
  * @param page pointer to a button object
  * @param fit fit policy from `lv_fit_t`
  */
-static inline void lv_page_set_scrl_fit(lv_obj_t * page, lv_fit_t fit)
-{
-    lv_cont_set_fit(lv_page_get_scrl(page), fit);
-}
+void lv_page_set_scrl_fit(lv_obj_t * page, lv_fit_t fit);
 
 /**
  * Set width of the scrollable part of a page
  * @param page pointer to a page object
  * @param w the new width of the scrollable (it ha no effect is horizontal fit is enabled)
  */
-static inline void lv_page_set_scrl_width(lv_obj_t * page, lv_coord_t w)
-{
-    lv_obj_set_width(lv_page_get_scrl(page), w);
-}
+void lv_page_set_scrl_width(lv_obj_t * page, lv_coord_t w);
 
 /**
  * Set height of the scrollable part of a page
  * @param page pointer to a page object
  * @param h the new height of the scrollable (it ha no effect is vertical fit is enabled)
  */
-static inline void lv_page_set_scrl_height(lv_obj_t * page, lv_coord_t h)
-{
-    lv_obj_set_height(lv_page_get_scrl(page), h);
-}
+void lv_page_set_scrl_height(lv_obj_t * page, lv_coord_t h);
 
 /**
  * Set the layout of the scrollable part of the page
  * @param page pointer to a page object
  * @param layout a layout from 'lv_cont_layout_t'
  */
-static inline void lv_page_set_scrl_layout(lv_obj_t * page, lv_layout_t layout)
-{
-    lv_cont_set_layout(lv_page_get_scrl(page), layout);
-}
+void lv_page_set_scrl_layout(lv_obj_t * page, lv_layout_t layout);
 
 /**
  * Set a style of a page
@@ -283,70 +265,49 @@ lv_coord_t lv_page_get_fit_height(lv_obj_t * page);
  * @param page pointer to a page object
  * @return the width of the scrollable
  */
-static inline lv_coord_t lv_page_get_scrl_width(const lv_obj_t * page)
-{
-    return lv_obj_get_width(lv_page_get_scrl(page));
-}
+lv_coord_t lv_page_get_scrl_width(const lv_obj_t * page);
 
 /**
  * Get height of the scrollable part of a page
  * @param page pointer to a page object
  * @return the height of the scrollable
  */
-static inline lv_coord_t lv_page_get_scrl_height(const lv_obj_t * page)
-{
-    return lv_obj_get_height(lv_page_get_scrl(page));
-}
+lv_coord_t lv_page_get_scrl_height(const lv_obj_t * page);
 
 /**
  * Get the layout of the scrollable part of a page
  * @param page pointer to page object
  * @return the layout from 'lv_cont_layout_t'
  */
-static inline lv_layout_t lv_page_get_scrl_layout(const lv_obj_t * page)
-{
-    return lv_cont_get_layout(lv_page_get_scrl(page));
-}
+lv_layout_t lv_page_get_scrl_layout(const lv_obj_t * page);
 
 /**
  * Get the left fit mode
  * @param page pointer to a page object
  * @return an element of `lv_fit_t`
  */
-static inline lv_fit_t lv_page_get_scrl_fit_left(const lv_obj_t * page)
-{
-    return lv_cont_get_fit_left(lv_page_get_scrl(page));
-}
+lv_fit_t lv_page_get_scrl_fit_left(const lv_obj_t * page);
 
 /**
  * Get the right fit mode
  * @param page pointer to a page object
  * @return an element of `lv_fit_t`
  */
-static inline lv_fit_t lv_page_get_scrl_fit_right(const lv_obj_t * page)
-{
-    return lv_cont_get_fit_right(lv_page_get_scrl(page));
-}
+lv_fit_t lv_page_get_scrl_fit_right(const lv_obj_t * page);
 
 /**
  * Get the top fit mode
  * @param page pointer to a page object
  * @return an element of `lv_fit_t`
  */
-static inline lv_fit_t lv_page_get_scrl_fit_top(const lv_obj_t * page)
-{
-    return lv_cont_get_fit_top(lv_page_get_scrl(page));
-}
+lv_fit_t lv_page_get_scrl_fit_top(const lv_obj_t * page);
 
 /**
  * Get the bottom fit mode
  * @param page pointer to a page object
  * @return an element of `lv_fit_t`
  */
-static inline lv_fit_t lv_page_get_scrl_fit_bottom(const lv_obj_t * page)
-{
-    return lv_cont_get_fit_bottom(lv_page_get_scrl(page));
-}
+lv_fit_t lv_page_get_scrl_fit_bottom(const lv_obj_t * page);
 
 /**
  * Get a style of a page

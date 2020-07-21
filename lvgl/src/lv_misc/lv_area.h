@@ -73,30 +73,21 @@ void lv_area_set(lv_area_t * area_p, lv_coord_t x1, lv_coord_t y1, lv_coord_t x2
  * @param dest pointer to the destination area
  * @param src pointer to the source area
  */
-inline static void lv_area_copy(lv_area_t * dest, const lv_area_t * src)
-{
-    memcpy(dest, src, sizeof(lv_area_t));
-}
+void lv_area_copy(lv_area_t * dest, const lv_area_t * src);
 
 /**
  * Get the width of an area
  * @param area_p pointer to an area
  * @return the width of the area (if x1 == x2 -> width = 1)
  */
-static inline lv_coord_t lv_area_get_width(const lv_area_t * area_p)
-{
-    return (lv_coord_t)(area_p->x2 - area_p->x1 + 1);
-}
+lv_coord_t lv_area_get_width(const lv_area_t * area_p);
 
 /**
  * Get the height of an area
  * @param area_p pointer to an area
  * @return the height of the area (if y1 == y2 -> height = 1)
  */
-static inline lv_coord_t lv_area_get_height(const lv_area_t * area_p)
-{
-    return (lv_coord_t)(area_p->y2 - area_p->y1 + 1);
-}
+lv_coord_t lv_area_get_height(const lv_area_t * area_p);
 
 /**
  * Set the width of an area

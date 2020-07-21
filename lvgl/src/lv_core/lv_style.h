@@ -196,68 +196,46 @@ void lv_style_anim_set_styles(lv_anim_t * a, lv_style_t * to_anim, const lv_styl
  * @param duration duration of the animation in milliseconds
  * @param delay delay before the animation in milliseconds
  */
-static inline void lv_style_anim_set_time(lv_anim_t * a, uint16_t duration, int16_t delay)
-{
-    lv_anim_set_time(a, duration, delay);
-}
+void lv_style_anim_set_time(lv_anim_t * a, uint16_t duration, int16_t delay);
 
 /**
  * Set a function call when the animation is ready
  * @param a pointer to an initialized `lv_anim_t` variable
  * @param ready_cb a function call when the animation is ready
  */
-static inline void lv_style_anim_set_ready_cb(lv_anim_t * a, lv_anim_ready_cb_t ready_cb)
-{
-    lv_style_anim_dsc_t * dsc = (lv_style_anim_dsc_t *)a->var;
-    dsc->ready_cb             = ready_cb;
-}
+void lv_style_anim_set_ready_cb(lv_anim_t * a, lv_anim_ready_cb_t ready_cb);
 
 /**
  * Make the animation to play back to when the forward direction is ready
  * @param a pointer to an initialized `lv_anim_t` variable
  * @param wait_time time in milliseconds to wait before starting the back direction
  */
-static inline void lv_style_anim_set_playback(lv_anim_t * a, uint16_t wait_time)
-{
-    lv_anim_set_playback(a, wait_time);
-}
+void lv_style_anim_set_playback(lv_anim_t * a, uint16_t wait_time);
 
 /**
  * Disable playback. (Disabled after `lv_anim_init()`)
  * @param a pointer to an initialized `lv_anim_t` variable
  */
-static inline void lv_style_anim_clear_playback(lv_anim_t * a)
-{
-    lv_anim_clear_playback(a);
-}
+void lv_style_anim_clear_playback(lv_anim_t * a);
 
 /**
  * Make the animation to start again when ready.
  * @param a pointer to an initialized `lv_anim_t` variable
  * @param wait_time time in milliseconds to wait before starting the animation again
  */
-static inline void lv_style_anim_set_repeat(lv_anim_t * a, uint16_t wait_time)
-{
-    lv_anim_set_repeat(a, wait_time);
-}
+void lv_style_anim_set_repeat(lv_anim_t * a, uint16_t wait_time);
 
 /**
  * Disable repeat. (Disabled after `lv_anim_init()`)
  * @param a pointer to an initialized `lv_anim_t` variable
  */
-static inline void lv_style_anim_clear_repeat(lv_anim_t * a)
-{
-    lv_anim_clear_repeat(a);
-}
+void lv_style_anim_clear_repeat(lv_anim_t * a);
 
 /**
  * Create an animation
  * @param a an initialized 'anim_t' variable. Not required after call.
  */
-static inline void lv_style_anim_create(lv_anim_t * a)
-{
-    lv_anim_create(a);
-}
+void lv_style_anim_create(lv_anim_t * a);
 
 #endif
 

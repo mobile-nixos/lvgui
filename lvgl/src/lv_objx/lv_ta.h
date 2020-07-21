@@ -236,10 +236,7 @@ void lv_ta_set_insert_replace(lv_obj_t * ta, const char * txt);
  * @param ta pointer to a text area object
  * @param sb_mode the new mode from 'lv_page_sb_mode_t' enum
  */
-static inline void lv_ta_set_sb_mode(lv_obj_t * ta, lv_sb_mode_t mode)
-{
-    lv_page_set_sb_mode(ta, mode);
-}
+void lv_ta_set_sb_mode(lv_obj_t * ta, lv_sb_mode_t mode);
 
 /**
  * Enable the scroll propagation feature. If enabled then the Text area will move its parent if
@@ -247,20 +244,14 @@ static inline void lv_ta_set_sb_mode(lv_obj_t * ta, lv_sb_mode_t mode)
  * @param ta pointer to a Text area
  * @param en true or false to enable/disable scroll propagation
  */
-static inline void lv_ta_set_scroll_propagation(lv_obj_t * ta, bool en)
-{
-    lv_page_set_scroll_propagation(ta, en);
-}
+void lv_ta_set_scroll_propagation(lv_obj_t * ta, bool en);
 
 /**
  * Enable the edge flash effect. (Show an arc when the an edge is reached)
  * @param page pointer to a Text Area
  * @param en true or false to enable/disable end flash
  */
-static inline void lv_ta_set_edge_flash(lv_obj_t * ta, bool en)
-{
-    lv_page_set_edge_flash(ta, en);
-}
+void lv_ta_set_edge_flash(lv_obj_t * ta, bool en);
 
 /**
  * Set a style of a text area
@@ -370,30 +361,21 @@ uint16_t lv_ta_get_max_length(lv_obj_t * ta);
  * @param ta pointer to a text area object
  * @return scrollbar mode from 'lv_page_sb_mode_t' enum
  */
-static inline lv_sb_mode_t lv_ta_get_sb_mode(const lv_obj_t * ta)
-{
-    return lv_page_get_sb_mode(ta);
-}
+lv_sb_mode_t lv_ta_get_sb_mode(const lv_obj_t * ta);
 
 /**
  * Get the scroll propagation property
  * @param ta pointer to a Text area
  * @return true or false
  */
-static inline bool lv_ta_get_scroll_propagation(lv_obj_t * ta)
-{
-    return lv_page_get_scroll_propagation(ta);
-}
+bool lv_ta_get_scroll_propagation(lv_obj_t * ta);
 
 /**
  * Get the scroll propagation property
  * @param ta pointer to a Text area
  * @return true or false
  */
-static inline bool lv_ta_get_edge_flash(lv_obj_t * ta)
-{
-    return lv_page_get_edge_flash(ta);
-}
+bool lv_ta_get_edge_flash(lv_obj_t * ta);
 
 /**
  * Get a style of a text area

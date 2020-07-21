@@ -198,11 +198,7 @@ void lv_label_set_anim_speed(lv_obj_t * label, uint16_t anim_speed);
  * @param type which style should be get (can be only `LV_LABEL_STYLE_MAIN`)
  * @param style pointer to a style
  */
-static inline void lv_label_set_style(lv_obj_t * label, lv_label_style_t type, const lv_style_t * style)
-{
-    (void)type; /*Unused*/
-    lv_obj_set_style(label, style);
-}
+void lv_label_set_style(lv_obj_t * label, lv_label_style_t type, const lv_style_t * style);
 
 /**
  * @brief Set the selection start index.
@@ -296,11 +292,7 @@ bool lv_label_is_char_under_pos(const lv_obj_t * label, lv_point_t * pos);
  * @param type which style should be get (can be only `LV_LABEL_STYLE_MAIN`)
  * @return pointer to the label's style
  */
-static inline const lv_style_t * lv_label_get_style(const lv_obj_t * label, lv_label_style_t type)
-{
-    (void)type; /*Unused*/
-    return lv_obj_get_style(label);
-}
+const lv_style_t * lv_label_get_style(const lv_obj_t * label, lv_label_style_t type);
 
 /**
  * @brief Get the selection start index.

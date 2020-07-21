@@ -115,6 +115,49 @@ lv_obj_t * lv_slider_create(lv_obj_t * par, const lv_obj_t * copy)
  *====================*/
 
 /**
+ * Set a new value on the slider
+ * @param slider pointer to a slider object
+ * @param value new value
+ * @param anim LV_ANIM_ON: set the value with an animation; LV_ANIM_OFF: change the value immediately
+ */
+void lv_slider_set_value(lv_obj_t * slider, int16_t value, lv_anim_enable_t anim)
+{
+    lv_bar_set_value(slider, value, anim);
+}
+
+/**
+ * Set minimum and the maximum values of a bar
+ * @param slider pointer to the slider object
+ * @param min minimum value
+ * @param max maximum value
+ */
+void lv_slider_set_range(lv_obj_t * slider, int16_t min, int16_t max)
+{
+    lv_bar_set_range(slider, min, max);
+}
+
+/**
+ * Set the animation time of the slider
+ * @param slider pointer to a bar object
+ * @param anim_time the animation time in milliseconds.
+ */
+void lv_slider_set_anim_time(lv_obj_t * slider, uint16_t anim_time)
+{
+    lv_bar_set_anim_time(slider, anim_time);
+}
+
+/**
+ * Make the slider symmetric to zero. The indicator will grow from zero instead of the minimum
+ * position.
+ * @param slider pointer to a slider object
+ * @param en true: enable disable symmetric behavior; false: disable
+ */
+void lv_slider_set_sym(lv_obj_t * slider, bool en)
+{
+    lv_bar_set_sym(slider, en);
+}
+
+/**
  * Set the 'knob in' attribute of a slider
  * @param slider pointer to slider object
  * @param in true: the knob is drawn always in the slider;
@@ -175,6 +218,26 @@ int16_t lv_slider_get_value(const lv_obj_t * slider)
 }
 
 /**
+ * Get the minimum value of a slider
+ * @param slider pointer to a slider object
+ * @return the minimum value of the slider
+ */
+int16_t lv_slider_get_min_value(const lv_obj_t * slider)
+{
+    return lv_bar_get_min_value(slider);
+}
+
+/**
+ * Get the maximum value of a slider
+ * @param slider pointer to a slider object
+ * @return the maximum value of the slider
+ */
+int16_t lv_slider_get_max_value(const lv_obj_t * slider)
+{
+    return lv_bar_get_max_value(slider);
+}
+
+/**
  * Give the slider is being dragged or not
  * @param slider pointer to a slider object
  * @return true: drag in progress false: not dragged
@@ -185,6 +248,26 @@ bool lv_slider_is_dragged(const lv_obj_t * slider)
 
     lv_slider_ext_t * ext = lv_obj_get_ext_attr(slider);
     return ext->drag_value == LV_SLIDER_NOT_PRESSED ? false : true;
+}
+
+/**
+ * Get the animation time of the slider
+ * @param slider pointer to a slider object
+ * @return the animation time in milliseconds.
+ */
+uint16_t lv_slider_get_anim_time(lv_obj_t * slider)
+{
+    return lv_bar_get_anim_time(slider);
+}
+
+/**
+ * Get whether the slider is symmetric or not.
+ * @param slider pointer to a bar object
+ * @return true: symmetric is enabled; false: disable
+ */
+bool lv_slider_get_sym(lv_obj_t * slider)
+{
+    return lv_bar_get_sym(slider);
 }
 
 /**

@@ -293,171 +293,22 @@ typedef struct
  *         Shift right with 5 - 3 = 2
  */
 
-static inline uint8_t lv_color_to1(lv_color_t color)
-{
-#if LV_COLOR_DEPTH == 1
-    return color.full;
-#elif LV_COLOR_DEPTH == 8
-    if((LV_COLOR_GET_R(color) & 0x4) || (LV_COLOR_GET_G(color) & 0x4) || (LV_COLOR_GET_B(color) & 0x2)) {
-        return 1;
-    } else {
-        return 0;
-    }
-#elif LV_COLOR_DEPTH == 16
-    if((LV_COLOR_GET_R(color) & 0x10) || (LV_COLOR_GET_G(color) & 0x20) || (LV_COLOR_GET_B(color) & 0x10)) {
-        return 1;
-    } else {
-        return 0;
-    }
-#elif LV_COLOR_DEPTH == 32
-    if((LV_COLOR_GET_R(color) & 0x80) || (LV_COLOR_GET_G(color) & 0x80) || (LV_COLOR_GET_B(color) & 0x80)) {
-        return 1;
-    } else {
-        return 0;
-    }
-#endif
-}
+uint8_t lv_color_to1(lv_color_t color);
 
-static inline uint8_t lv_color_to8(lv_color_t color)
-{
-#if LV_COLOR_DEPTH == 1
-    if(color.full == 0)
-        return 0;
-    else
-        return 0xFF;
-#elif LV_COLOR_DEPTH == 8
-    return color.full;
-#elif LV_COLOR_DEPTH == 16
-    lv_color8_t ret;
-    LV_COLOR_SET_R8(ret, LV_COLOR_GET_R(color) >> 2);   /* 5 - 3  = 2*/
-    LV_COLOR_SET_G8(ret, LV_COLOR_GET_G(color) >> 3); /* 6 - 3  = 3*/
-    LV_COLOR_SET_B8(ret, LV_COLOR_GET_B(color) >> 3);  /* 5 - 2  = 3*/
-    return ret.full;
-#elif LV_COLOR_DEPTH == 32
-    lv_color8_t ret;
-    LV_COLOR_SET_R8(ret, LV_COLOR_GET_R(color) >> 5);   /* 8 - 3  = 5*/
-    LV_COLOR_SET_G8(ret, LV_COLOR_GET_G(color) >> 5); /* 8 - 3  = 5*/
-    LV_COLOR_SET_B8(ret, LV_COLOR_GET_B(color) >> 6);  /* 8 - 2  = 6*/
-    return ret.full;
-#endif
-}
+uint8_t lv_color_to8(lv_color_t color);
 
-static inline uint16_t lv_color_to16(lv_color_t color)
-{
-#if LV_COLOR_DEPTH == 1
-    if(color.full == 0)
-        return 0;
-    else
-        return 0xFFFF;
-#elif LV_COLOR_DEPTH == 8
-    lv_color16_t ret;
-    LV_COLOR_SET_R16(ret, LV_COLOR_GET_R(color) * 4);     /*(2^5 - 1)/(2^3 - 1) = 31/7 = 4*/
-#if LV_COLOR_16_SWAP == 0
-    LV_COLOR_SET_G16(ret,  LV_COLOR_GET_G(color) * 9); /*(2^6 - 1)/(2^3 - 1) = 63/7 = 9*/
-#else
-    LV_COLOR_SET_G16_SWAP(ret, (LV_COLOR_GET_G(color) * 9)); /*(2^6 - 1)/(2^3 - 1) = 63/7 = 9*/
-#endif
-    LV_COLOR_SET_B16(ret, LV_COLOR_GET_B(color) * 10);  /*(2^5 - 1)/(2^2 - 1) = 31/3 = 10*/
-    return ret.full;
-#elif LV_COLOR_DEPTH == 16
-    return color.full;
-#elif LV_COLOR_DEPTH == 32
-    lv_color16_t ret;
-    LV_COLOR_SET_R16(ret, LV_COLOR_GET_R(color) >> 3);   /* 8 - 5  = 3*/
+uint16_t lv_color_to16(lv_color_t color);
 
-#if LV_COLOR_16_SWAP == 0
-    LV_COLOR_SET_G16(ret, LV_COLOR_GET_G(color) >> 2); /* 8 - 6  = 2*/
-#else
-    LV_COLOR_SET_G16_SWAP(ret, ret.ch.green_h = (LV_COLOR_GET_G(color) >> 2); /*(2^6 - 1)/(2^3 - 1) = 63/7 = 9*/
-#endif
-    LV_COLOR_SET_B16(ret, LV_COLOR_GET_B(color) >> 3);  /* 8 - 5  = 3*/
-    return ret.full;
-#endif                         
-}
+uint32_t lv_color_to32(lv_color_t color);
 
-static inline uint32_t lv_color_to32(lv_color_t color)
-{
-#if LV_COLOR_DEPTH == 1
-    if(color.full == 0)
-        return 0;
-    else
-        return 0xFFFFFFFF;
-#elif LV_COLOR_DEPTH == 8
-    lv_color32_t ret;
-    LV_COLOR_SET_R32(ret, LV_COLOR_GET_R(color) * 36);     /*(2^8 - 1)/(2^3 - 1) = 255/7 = 36*/
-    LV_COLOR_SET_G32(ret, LV_COLOR_GET_G(color) * 36); /*(2^8 - 1)/(2^3 - 1) = 255/7 = 36*/
-    LV_COLOR_SET_B32(ret, LV_COLOR_GET_B(color) * 85);   /*(2^8 - 1)/(2^2 - 1) = 255/3 = 85*/
-    LV_COLOR_SET_A32(ret, 0xFF);
-    return ret.full;
-#elif LV_COLOR_DEPTH == 16
-    /**
-     * The floating point math for conversion is:
-     *  valueto = valuefrom * ( (2^bitsto - 1) / (float)(2^bitsfrom - 1) )
-     * The faster integer math for conversion is:
-     *  valueto = ( valuefrom * multiplier + adder ) >> divisor
-     *   multiplier = FLOOR( ( (2^bitsto - 1) << divisor ) / (float)(2^bitsfrom - 1) )
-     * 
-     * Find the first divisor where ( adder >> divisor ) <= 0
-     * 
-     * 5-bit to 8-bit: ( 31 * multiplier + adder ) >> divisor = 255
-     * divisor  multiplier  adder  min (0)  max (31)
-     *       0           8      7        7       255
-     *       1          16     14        7       255
-     *       2          32     28        7       255
-     *       3          65     25        3       255
-     *       4         131     19        1       255
-     *       5         263      7        0       255
-     * 
-     * 6-bit to 8-bit: 255 = ( 63 * multiplier + adder ) >> divisor
-     * divisor  multiplier  adder  min (0)  max (63)
-     *       0           4      3        3       255
-     *       1           8      6        3       255
-     *       2          16     12        3       255
-     *       3          32     24        3       255
-     *       4          64     48        3       255
-     *       5         129     33        1       255
-     *       6         259      3        0       255
-     */
-    lv_color32_t ret;
-    LV_COLOR_SET_R32(ret, (LV_COLOR_GET_R(color) * 263 + 7 ) >> 5);
-    LV_COLOR_SET_G32(ret, (LV_COLOR_GET_G(color) * 259 + 3 ) >> 6);
-    LV_COLOR_SET_B32(ret, (LV_COLOR_GET_B(color) * 263 + 7 ) >> 5);
-    LV_COLOR_SET_A32(ret, 0xFF);
-    return ret.full;
-#elif LV_COLOR_DEPTH == 32
-    return color.full;
-#endif
-}
-
-static inline lv_color_t lv_color_mix(lv_color_t c1, lv_color_t c2, uint8_t mix)
-{
-    lv_color_t ret;
-#if LV_COLOR_DEPTH != 1
-    /*LV_COLOR_DEPTH == 8, 16 or 32*/
-    LV_COLOR_SET_R(ret, (uint16_t)((uint16_t) LV_COLOR_GET_R(c1) * mix + LV_COLOR_GET_R(c2) * (255 - mix)) >> 8);
-    LV_COLOR_SET_G(ret, (uint16_t)((uint16_t) LV_COLOR_GET_G(c1) * mix + LV_COLOR_GET_G(c2) * (255 - mix)) >> 8);
-    LV_COLOR_SET_B(ret, (uint16_t)((uint16_t) LV_COLOR_GET_B(c1) * mix + LV_COLOR_GET_B(c2) * (255 - mix)) >> 8);
-    LV_COLOR_SET_A(ret, 0xFF);
-#else
-    /*LV_COLOR_DEPTH == 1*/
-    ret.full = mix > LV_OPA_50 ? c1.full : c2.full;
-#endif
-
-    return ret;
-}
+lv_color_t lv_color_mix(lv_color_t c1, lv_color_t c2, uint8_t mix);
 
 /**
  * Get the brightness of a color
  * @param color a color
  * @return the brightness [0..255]
  */
-static inline uint8_t lv_color_brightness(lv_color_t color)
-{
-    lv_color32_t c32;
-    c32.full        = lv_color_to32(color);
-    uint16_t bright = (uint16_t)(3u * LV_COLOR_GET_R32(c32) + LV_COLOR_GET_B32(c32) + 4u * LV_COLOR_GET_G32(c32));
-    return (uint8_t)(bright >> 3);
-}
+uint8_t lv_color_brightness(lv_color_t color);
 
 /* The most simple macro to create a color from R,G and B values */
 #if LV_COLOR_DEPTH == 1
@@ -474,21 +325,11 @@ static inline uint8_t lv_color_brightness(lv_color_t color)
 #define LV_COLOR_MAKE(r8, g8, b8) ((lv_color_t){{b8, g8, r8, 0xff}}) /*Fix 0xff alpha*/
 #endif
 
-static inline lv_color_t lv_color_make(uint8_t r, uint8_t g, uint8_t b)
-{
-    return LV_COLOR_MAKE(r, g, b);
-}
+lv_color_t lv_color_make(uint8_t r, uint8_t g, uint8_t b);
 
-static inline lv_color_t lv_color_hex(uint32_t c)
-{
-    return lv_color_make((uint8_t)((c >> 16) & 0xFF), (uint8_t)((c >> 8) & 0xFF), (uint8_t)(c & 0xFF));
-}
+lv_color_t lv_color_hex(uint32_t c);
 
-static inline lv_color_t lv_color_hex3(uint32_t c)
-{
-    return lv_color_make((uint8_t)(((c >> 4) & 0xF0) | ((c >> 8) & 0xF)), (uint8_t)((c & 0xF0) | ((c & 0xF0) >> 4)),
-                         (uint8_t)((c & 0xF) | ((c & 0xF) << 4)));
-}
+lv_color_t lv_color_hex3(uint32_t c);
 
 /**
  * Convert a HSV color to RGB
