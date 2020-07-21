@@ -349,6 +349,12 @@ static void indev_pointer_proc(lv_indev_t * i, lv_indev_data_t * data)
             data->point.x + i->cursor_offset.x,
             data->point.y + i->cursor_offset.y
         );
+        lv_obj_set_hidden(i->cursor, false);
+
+        // When it unclutters itself, restart the animation.
+        if (i->cursor_unclutter_animation) {
+            lv_anim_create(i->cursor_unclutter_animation);
+        }
     }
 
     i->proc.types.pointer.act_point.x = data->point.x;
