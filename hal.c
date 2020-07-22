@@ -14,6 +14,7 @@ int mn_hal_default_dpi;
 lv_disp_drv_t disp_drv;
 static lv_obj_t * lvgui_cursor_obj;
 static lv_obj_t * lvgui_touch_obj;
+static lv_group_t * lvgui_focus_group;
 
 void hal_preinit(void);
 void hal_set_dpi(void);
@@ -183,6 +184,16 @@ void hal_init(void)
 	lv_disp_drv_register(&disp_drv);
 
 	{
+	// Prepare the "main" focus group
+	lvgui_focus_group = lv_group_create();
+	// By default, clicking will not change the focus.
+	// This is so the unsightly focus mark does not show up uselessly
+	// on touch devices without keyboards...
+	// Anyways, the focus mark is not the main way to use the apps.
+	lv_group_set_click_focus(lvgui_focus_group, false);
+	}
+
+	{
 	lvgui_cursor_obj = lv_img_create(lv_scr_act(), NULL);
 	lv_img_set_src(lvgui_cursor_obj, &lvgui_cursor);
 	lv_obj_set_click(lvgui_cursor_obj, false);
@@ -254,4 +265,9 @@ uint32_t custom_tick_get(void)
 
 	uint32_t time_ms = now_ms - start_ms;
 	return time_ms;
+}
+
+lv_group_t * lvgui_get_focus_group()
+{
+	return lvgui_focus_group;
 }
