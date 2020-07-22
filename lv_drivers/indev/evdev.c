@@ -356,17 +356,19 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 					case KEY_ENTER:
 						data->key = LV_KEY_ENTER;
 						break;
-					case KEY_UP:
-						data->key = LV_KEY_UP;
-						break;
-					case KEY_LEFT:
-						data->key = LV_KEY_PREV;
-						break;
-					case KEY_RIGHT:
+					case KEY_TAB:
 						data->key = LV_KEY_NEXT;
 						break;
-					case KEY_DOWN:
-						data->key = LV_KEY_DOWN;
+
+					// Phone compat
+					case KEY_VOLUMEUP:
+						data->key = LV_KEY_PREV;
+						break;
+					case KEY_VOLUMEDOWN:
+						data->key = LV_KEY_NEXT;
+						break;
+					case KEY_POWER:
+						data->key = LV_KEY_ENTER;
 						break;
 					default:
 						data->key = 0;
