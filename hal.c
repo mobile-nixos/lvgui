@@ -160,6 +160,9 @@ static void init_evdev(char* name)
 		lv_anim_set_values(a, 255, 0);
 		lv_anim_set_path_cb(a, lv_anim_path_ease_in);
 	}
+
+	// Link the input device to the main focus group.
+	lv_indev_set_group(indev, lvgui_focus_group);
 }
 #endif
 
@@ -231,7 +234,9 @@ void hal_init(void)
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = mouse_read;
-	lv_indev_drv_register(&indev_drv);
+	lv_indev_t * indev = lv_indev_drv_register(&indev_drv);
+	// Link the input device to the main focus group.
+	lv_indev_set_group(indev, lvgui_focus_group);
 	}
 #endif
 #if USE_KEYBOARD
@@ -241,7 +246,9 @@ void hal_init(void)
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_KEYBOARD;
     indev_drv.read_cb = keyboard_read;
-	lv_indev_drv_register(&indev_drv);
+	lv_indev_t * indev = lv_indev_drv_register(&indev_drv);
+	// Link the input device to the main focus group.
+	lv_indev_set_group(indev, lvgui_focus_group);
 	}
 #endif
 
