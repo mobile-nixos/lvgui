@@ -374,20 +374,6 @@ static void roller_init(void)
 #endif
 }
 
-static void tabview_init(void)
-{
-#if LV_USE_TABVIEW != 0
-
-    theme.style.tabview.bg          = &light_frame;
-    theme.style.tabview.indic       = &light_plain;
-    theme.style.tabview.btn.bg      = &lv_style_transp_fit;
-    theme.style.tabview.btn.rel     = &light_frame;
-    theme.style.tabview.btn.pr      = &dark_frame;
-    theme.style.tabview.btn.tgl_rel = &dark_frame;
-    theme.style.tabview.btn.tgl_pr  = &light_frame;
-#endif
-}
-
 static void win_init(void)
 {
 #if LV_USE_WIN != 0
@@ -492,7 +478,6 @@ lv_theme_t * lv_theme_mono_init(uint16_t hue, lv_font_t * font)
     list_init();
     ddlist_init();
     roller_init();
-    tabview_init();
     win_init();
 
     theme.group.style_mod_xcb      = style_mod;

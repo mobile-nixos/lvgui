@@ -296,20 +296,6 @@ static void roller_init(void)
 #endif
 }
 
-static void tabview_init(void)
-{
-#if LV_USE_TABVIEW != 0
-
-    theme.style.tabview.bg          = &def;
-    theme.style.tabview.indic       = &def;
-    theme.style.tabview.btn.bg      = &def;
-    theme.style.tabview.btn.rel     = &def;
-    theme.style.tabview.btn.pr      = &def;
-    theme.style.tabview.btn.tgl_rel = &def;
-    theme.style.tabview.btn.tgl_pr  = &def;
-#endif
-}
-
 static void table_init(void)
 {
 #if LV_USE_TABLE != 0
@@ -429,7 +415,6 @@ lv_theme_t * lv_theme_templ_init(uint16_t hue, lv_font_t * font)
     list_init();
     ddlist_init();
     roller_init();
-    tabview_init();
     table_init();
     win_init();
 

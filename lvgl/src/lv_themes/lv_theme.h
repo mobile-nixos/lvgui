@@ -266,22 +266,6 @@ typedef struct
         } roller;
 #endif
 
-#if LV_USE_TABVIEW != 0
-        struct
-        {
-            lv_style_t * bg;
-            lv_style_t * indic;
-            struct
-            {
-                lv_style_t * bg;
-                lv_style_t * rel;
-                lv_style_t * pr;
-                lv_style_t * tgl_rel;
-                lv_style_t * tgl_pr;
-            } btn;
-        } tabview;
-#endif
-
 #if LV_USE_TILEVIEW != 0
         struct
         {

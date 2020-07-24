@@ -639,48 +639,6 @@ static void roller_init(void)
 #endif
 }
 
-static void tabview_init(void)
-{
-#if LV_USE_TABVIEW != 0
-    static lv_style_t btn_bg, indic, rel, pr, tgl_rel, tgl_pr;
-
-    lv_style_copy(&btn_bg, &def);
-    btn_bg.body.opa          = LV_OPA_TRANSP;
-    btn_bg.body.border.width = 2;
-    btn_bg.body.border.part  = LV_BORDER_BOTTOM;
-    btn_bg.body.border.color = lv_color_hsv_to_rgb(_hue, 10, 90);
-
-    lv_style_copy(&indic, &def);
-    indic.body.padding.inner = LV_DPI / 16;
-    indic.body.border.width  = 0;
-    indic.body.radius        = LV_RADIUS_CIRCLE;
-    indic.body.main_color    = lv_color_hsv_to_rgb(_hue, 50, 80);
-    indic.body.grad_color    = indic.body.main_color;
-
-    lv_style_copy(&rel, &def);
-    rel.body.opa          = LV_OPA_TRANSP;
-    rel.body.border.width = 0;
-    rel.text.color        = lv_color_hex3(0x999);
-
-    lv_style_copy(&pr, &rel);
-    pr.text.color = lv_color_hex3(0x777);
-
-    lv_style_copy(&tgl_rel, &rel);
-    tgl_rel.text.color = lv_color_hsv_to_rgb(_hue, 50, 80);
-
-    lv_style_copy(&tgl_pr, &rel);
-    tgl_pr.text.color = lv_color_hsv_to_rgb(_hue, 50, 70);
-
-    theme.style.tabview.bg          = theme.style.bg;
-    theme.style.tabview.indic       = &indic;
-    theme.style.tabview.btn.bg      = &btn_bg;
-    theme.style.tabview.btn.rel     = &rel;
-    theme.style.tabview.btn.pr      = &pr;
-    theme.style.tabview.btn.tgl_rel = &tgl_rel;
-    theme.style.tabview.btn.tgl_pr  = &tgl_pr;
-#endif
-}
-
 static void tileview_init(void)
 {
 #if LV_USE_TILEVIEW != 0
@@ -834,7 +792,6 @@ lv_theme_t * lv_theme_zen_init(uint16_t hue, lv_font_t * font)
     list_init();
     ddlist_init();
     roller_init();
-    tabview_init();
     tileview_init();
     table_init();
     win_init();

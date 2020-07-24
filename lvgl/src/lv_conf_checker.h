@@ -798,17 +798,6 @@
 #endif
 #endif
 
-/*Tab (dependencies: lv_page, lv_btnm)*/
-#ifndef LV_USE_TABVIEW
-#define LV_USE_TABVIEW      1
-#endif
-#  if LV_USE_TABVIEW != 0
-/*Time of slide animation [ms] (0: no animation)*/
-#ifndef LV_TABVIEW_DEF_ANIM_TIME
-#  define LV_TABVIEW_DEF_ANIM_TIME    300
-#endif
-#endif
-
 /*Tileview (dependencies: lv_page) */
 #ifndef LV_USE_TILEVIEW
 #define LV_USE_TILEVIEW     1

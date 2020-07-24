@@ -646,76 +646,6 @@ static void roller_init(void)
 #endif
 }
 
-static void tabview_init(void)
-{
-#if LV_USE_TABVIEW != 0
-    static lv_style_t indic, btn_bg, rel, pr, tgl_rel, tgl_pr;
-
-    lv_style_copy(&indic, &def);
-    indic.body.main_color    = lv_color_hsv_to_rgb(_hue, 90, 70);
-    indic.body.grad_color    = indic.body.main_color;
-    indic.body.radius        = 0;
-    indic.body.border.width  = 0;
-    indic.body.padding.inner = LV_DPI / 20;
-
-    lv_style_copy(&btn_bg, &def);
-    btn_bg.body.main_color     = lv_color_hex3(0xccc);
-    btn_bg.body.grad_color     = btn_bg.body.main_color;
-    btn_bg.body.radius         = 0;
-    btn_bg.body.border.width   = 1;
-    btn_bg.body.border.color   = lv_color_hex3(0x888);
-    btn_bg.body.border.part    = LV_BORDER_BOTTOM;
-    btn_bg.body.border.opa     = LV_OPA_COVER;
-    btn_bg.body.shadow.width   = 5;
-    btn_bg.body.shadow.color   = DEF_SHADOW_COLOR;
-    btn_bg.body.shadow.type    = LV_SHADOW_BOTTOM;
-    btn_bg.body.padding.inner  = 0;
-    btn_bg.body.padding.left   = 0;
-    btn_bg.body.padding.right  = 0;
-    btn_bg.body.padding.top    = 0;
-    btn_bg.body.padding.bottom = 0;
-    btn_bg.text.color          = lv_color_hex3(0x333);
-
-    lv_style_copy(&rel, &lv_style_transp);
-    rel.body.padding.top    = LV_DPI / 8;
-    rel.body.padding.bottom = LV_DPI / 8;
-    rel.text.font           = _font;
-
-    lv_style_copy(&pr, &def);
-    pr.body.main_color   = lv_color_hex3(0xbbb);
-    pr.body.grad_color   = pr.body.main_color;
-    pr.body.border.width = 0;
-    pr.body.opa          = LV_OPA_COVER;
-    pr.body.radius       = 0;
-    pr.body.border.width = 1;
-    pr.body.border.color = lv_color_hex3(0x888);
-    pr.body.border.part  = LV_BORDER_BOTTOM;
-    pr.body.border.opa   = LV_OPA_COVER;
-    pr.text.color        = lv_color_hex3(0x111);
-
-    lv_style_copy(&tgl_rel, &lv_style_transp);
-    tgl_rel.glass      = 0;
-    tgl_rel.text.font  = _font;
-    tgl_rel.text.color = lv_color_hsv_to_rgb(_hue, 90, 70);
-
-    lv_style_copy(&tgl_pr, &def);
-    tgl_pr.body.main_color   = lv_color_hsv_to_rgb(_hue, 15, 85);
-    tgl_pr.body.grad_color   = tgl_pr.body.main_color;
-    tgl_pr.body.border.width = 0;
-    tgl_pr.body.opa          = LV_OPA_COVER;
-    tgl_pr.body.radius       = 0;
-    tgl_pr.text.color        = lv_color_hsv_to_rgb(_hue, 90, 60);
-
-    theme.style.tabview.bg          = theme.style.bg;
-    theme.style.tabview.indic       = &indic;
-    theme.style.tabview.btn.bg      = &btn_bg;
-    theme.style.tabview.btn.rel     = &rel;
-    theme.style.tabview.btn.pr      = &pr;
-    theme.style.tabview.btn.tgl_rel = &tgl_rel;
-    theme.style.tabview.btn.tgl_pr  = &tgl_pr;
-#endif
-}
-
 static void tileview_init(void)
 {
 #if LV_USE_TILEVIEW != 0
@@ -882,7 +812,6 @@ lv_theme_t * lv_theme_material_init(uint16_t hue, lv_font_t * font)
     list_init();
     ddlist_init();
     roller_init();
-    tabview_init();
     tileview_init();
     table_init();
     win_init();
