@@ -304,19 +304,6 @@ static void table_init(void)
 #endif
 }
 
-static void win_init(void)
-{
-#if LV_USE_WIN != 0
-
-    theme.style.win.bg      = &def;
-    theme.style.win.sb      = &def;
-    theme.style.win.header  = &def;
-    theme.style.win.content = &def;
-    theme.style.win.btn.rel = &def;
-    theme.style.win.btn.pr  = &def;
-#endif
-}
-
 static void style_mod(lv_group_t * group, lv_style_t * style)
 {
     (void)group; /*Unused*/
@@ -416,7 +403,6 @@ lv_theme_t * lv_theme_templ_init(uint16_t hue, lv_font_t * font)
     ddlist_init();
     roller_init();
     table_init();
-    win_init();
 
     theme.group.style_mod_xcb      = style_mod;
     theme.group.style_mod_edit_xcb = style_mod_edit;

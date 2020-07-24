@@ -568,9 +568,6 @@ typedef void * lv_obj_user_data_t;
 #  define LV_TILEVIEW_DEF_ANIM_TIME   300
 #endif
 
-/*Window (dependencies: lv_cont, lv_btn, lv_label, lv_img, lv_page)*/
-#define LV_USE_WIN      1
-
 /*==================
  * Non-user section
  *==================*/

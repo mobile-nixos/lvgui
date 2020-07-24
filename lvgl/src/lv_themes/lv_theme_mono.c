@@ -374,25 +374,6 @@ static void roller_init(void)
 #endif
 }
 
-static void win_init(void)
-{
-#if LV_USE_WIN != 0
-    static lv_style_t win_header;
-    lv_style_copy(&win_header, &dark_plain);
-    win_header.body.padding.left   = LV_DPI / 30;
-    win_header.body.padding.right  = LV_DPI / 30;
-    win_header.body.padding.top    = LV_DPI / 30;
-    win_header.body.padding.bottom = LV_DPI / 30;
-
-    theme.style.win.bg      = &light_frame;
-    theme.style.win.sb      = &dark_frame;
-    theme.style.win.header  = &win_header;
-    theme.style.win.content = &lv_style_transp;
-    theme.style.win.btn.rel = &light_frame;
-    theme.style.win.btn.pr  = &dark_frame;
-#endif
-}
-
 static void style_mod(lv_group_t * group, lv_style_t * style)
 {
     (void)group; /*Unused*/
@@ -478,7 +459,6 @@ lv_theme_t * lv_theme_mono_init(uint16_t hue, lv_font_t * font)
     list_init();
     ddlist_init();
     roller_init();
-    win_init();
 
     theme.group.style_mod_xcb      = style_mod;
     theme.group.style_mod_edit_xcb = style_mod_edit;

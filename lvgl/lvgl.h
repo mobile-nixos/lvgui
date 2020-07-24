@@ -59,7 +59,6 @@ extern "C" {
 #include "src/lv_objx/lv_roller.h"
 #include "src/lv_objx/lv_ta.h"
 #include "src/lv_objx/lv_canvas.h"
-#include "src/lv_objx/lv_win.h"
 #include "src/lv_objx/lv_tileview.h"
 #include "src/lv_objx/lv_gauge.h"
 #include "src/lv_objx/lv_lmeter.h"

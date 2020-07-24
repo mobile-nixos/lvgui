@@ -729,35 +729,6 @@ static void table_init(void)
 #endif
 }
 
-static void win_init(void)
-{
-#if LV_USE_WIN != 0
-    static lv_style_t header;
-
-    lv_style_copy(&header, &def);
-    header.body.radius         = 0;
-    header.body.padding.left   = LV_DPI / 12;
-    header.body.padding.right  = LV_DPI / 12;
-    header.body.padding.top    = LV_DPI / 20;
-    header.body.padding.bottom = LV_DPI / 20;
-    header.body.main_color     = lv_color_hsv_to_rgb(_hue, 30, 60);
-    header.body.grad_color     = header.body.main_color;
-    header.body.border.opa     = panel.body.border.opa;
-    header.body.border.width   = panel.body.border.width;
-    header.body.border.color   = lv_color_hsv_to_rgb(_hue, 20, 80);
-    header.body.border.part    = LV_BORDER_BOTTOM;
-    header.text.color          = lv_color_hsv_to_rgb(_hue, 5, 100);
-    header.image.color         = lv_color_hsv_to_rgb(_hue, 5, 100);
-
-    theme.style.win.bg      = &bg;
-    theme.style.win.sb      = &sb;
-    theme.style.win.header  = &header;
-    theme.style.win.content = &lv_style_transp;
-    theme.style.win.btn.rel = &btn_rel;
-    theme.style.win.btn.pr  = &btn_pr;
-#endif
-}
-
 static void style_mod(lv_group_t * group, lv_style_t * style)
 {
     (void)group; /*Unused*/
@@ -847,7 +818,6 @@ lv_theme_t * lv_theme_alien_init(uint16_t hue, lv_font_t * font)
     roller_init();
     tileview_init();
     table_init();
-    win_init();
 
     theme.group.style_mod_xcb      = style_mod;
     theme.group.style_mod_edit_xcb = style_mod_edit;

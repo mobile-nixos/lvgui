@@ -809,11 +809,6 @@
 #endif
 #endif
 
-/*Window (dependencies: lv_cont, lv_btn, lv_label, lv_img, lv_page)*/
-#ifndef LV_USE_WIN
-#define LV_USE_WIN      1
-#endif
-
 /*==================
  * Non-user section
  *==================*/

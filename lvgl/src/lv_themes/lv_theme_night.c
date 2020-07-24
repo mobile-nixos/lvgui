@@ -663,40 +663,6 @@ static void table_init(void)
 #endif
 }
 
-static void win_init(void)
-{
-#if LV_USE_WIN != 0
-    static lv_style_t win_bg;
-    lv_style_copy(&win_bg, &bg);
-    win_bg.body.border.color = lv_color_hex3(0x333);
-    win_bg.body.border.width = 1;
-
-    static lv_style_t win_header;
-    lv_style_copy(&win_header, &win_bg);
-    win_header.body.main_color     = lv_color_hsv_to_rgb(_hue, 10, 20);
-    win_header.body.grad_color     = lv_color_hsv_to_rgb(_hue, 10, 20);
-    win_header.body.radius         = 0;
-    win_header.body.padding.left   = 0;
-    win_header.body.padding.right  = 0;
-    win_header.body.padding.top    = 0;
-    win_header.body.padding.bottom = 0;
-
-    static lv_style_t win_btn_pr;
-    lv_style_copy(&win_btn_pr, &def);
-    win_btn_pr.body.main_color = lv_color_hsv_to_rgb(_hue, 10, 10);
-    win_btn_pr.body.grad_color = lv_color_hsv_to_rgb(_hue, 10, 10);
-    win_btn_pr.text.color      = lv_color_hex3(0xaaa);
-    win_btn_pr.image.color     = lv_color_hex3(0xaaa);
-
-    theme.style.win.bg      = &win_bg;
-    theme.style.win.sb      = &sb;
-    theme.style.win.header  = &win_header;
-    theme.style.win.content = &lv_style_transp;
-    theme.style.win.btn.rel = &lv_style_transp;
-    theme.style.win.btn.pr  = &win_btn_pr;
-#endif
-}
-
 static void style_mod(lv_group_t * group, lv_style_t * style)
 {
     (void)group; /*Unused*/
@@ -783,7 +749,6 @@ lv_theme_t * lv_theme_night_init(uint16_t hue, lv_font_t * font)
     roller_init();
     tileview_init();
     table_init();
-    win_init();
 
     theme.group.style_mod_xcb      = style_mod;
     theme.group.style_mod_edit_xcb = style_mod_edit;

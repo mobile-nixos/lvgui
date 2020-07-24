@@ -282,21 +282,6 @@ typedef struct
             lv_style_t * cell;
         } table;
 #endif
-
-#if LV_USE_WIN != 0
-        struct
-        {
-            lv_style_t * bg;
-            lv_style_t * sb;
-            lv_style_t * header;
-            lv_style_t * content;
-            struct
-            {
-                lv_style_t * rel;
-                lv_style_t * pr;
-            } btn;
-        } win;
-#endif
     } style;
 
     struct

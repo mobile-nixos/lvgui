@@ -701,31 +701,6 @@ static void table_init(void)
 #endif
 }
 
-static void win_init(void)
-{
-#if LV_USE_WIN != 0
-    static lv_style_t win_header;
-
-    lv_style_copy(&win_header, &panel);
-    win_header.body.radius         = 0;
-    win_header.body.padding.left   = LV_DPI / 12;
-    win_header.body.padding.right  = LV_DPI / 12;
-    win_header.body.padding.top    = LV_DPI / 20;
-    win_header.body.padding.bottom = LV_DPI / 20;
-    win_header.body.border.opa     = panel.body.border.opa;
-    win_header.body.border.width   = panel.body.border.width;
-    win_header.body.border.color   = lv_color_hsv_to_rgb(_hue, 20, 80);
-    win_header.text.color          = lv_color_hsv_to_rgb(_hue, 5, 100);
-
-    theme.style.win.bg      = &bg;
-    theme.style.win.sb      = &sb;
-    theme.style.win.header  = &win_header;
-    theme.style.win.content = &lv_style_transp;
-    theme.style.win.btn.rel = &btn_rel;
-    theme.style.win.btn.pr  = &btn_pr;
-#endif
-}
-
 static void style_mod(lv_group_t * group, lv_style_t * style)
 {
     (void)group; /*Unused*/
@@ -818,7 +793,6 @@ lv_theme_t * lv_theme_nemo_init(uint16_t hue, lv_font_t * font)
     roller_init();
     tileview_init();
     table_init();
-    win_init();
 
     theme.group.style_mod_xcb      = style_mod;
     theme.group.style_mod_edit_xcb = style_mod_edit;

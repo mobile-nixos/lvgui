@@ -666,41 +666,6 @@ static void table_init(void)
 #endif
 }
 
-static void win_init(void)
-{
-#if LV_USE_WIN != 0
-    static lv_style_t header, rel, pr;
-
-    lv_style_copy(&header, &def);
-    header.body.opa            = LV_OPA_TRANSP;
-    header.body.border.width   = 2;
-    header.body.border.part    = LV_BORDER_BOTTOM;
-    header.body.border.color   = lv_color_hsv_to_rgb(_hue, 10, 90);
-    header.text.color          = lv_color_hex3(0x666);
-    header.image.color         = lv_color_hex3(0x666);
-    header.body.padding.top    = 0;
-    header.body.padding.bottom = 0;
-    header.body.padding.inner  = 0;
-
-    lv_style_copy(&rel, &def);
-    rel.body.opa          = LV_OPA_TRANSP;
-    rel.body.border.width = 0;
-    rel.text.color        = lv_color_hex3(0x666);
-    rel.image.color       = lv_color_hex3(0x666);
-
-    lv_style_copy(&pr, &rel);
-    pr.text.color  = lv_color_hex3(0x333);
-    pr.image.color = lv_color_hex3(0x333);
-
-    theme.style.win.bg      = theme.style.panel;
-    theme.style.win.sb      = &sb;
-    theme.style.win.header  = &header;
-    theme.style.win.content = &lv_style_transp;
-    theme.style.win.btn.rel = &rel;
-    theme.style.win.btn.pr  = &pr;
-#endif
-}
-
 static void style_mod(lv_group_t * group, lv_style_t * style)
 {
     (void)group; /*Unused*/
@@ -794,7 +759,6 @@ lv_theme_t * lv_theme_zen_init(uint16_t hue, lv_font_t * font)
     roller_init();
     tileview_init();
     table_init();
-    win_init();
 
     theme.group.style_mod_xcb      = style_mod;
     theme.group.style_mod_edit_xcb = style_mod_edit;
