@@ -370,9 +370,6 @@ static bool lv_slider_design(lv_obj_t * slider, const lv_area_t * mask, lv_desig
             area_bg.y2 -= slider_w > slider_h ? pad_bottom_bg : 0; /*Pad only for horizontal slider*/
         }
 
-#if LV_USE_GROUP == 0
-        lv_draw_rect(&area_bg, mask, style_bg, lv_obj_get_opa_scale(slider));
-#else
         /* Draw the borders later if the slider is focused.
          * At value = 100% the indicator can cover to whole background and the focused style won't
          * be visible*/
@@ -384,7 +381,6 @@ static bool lv_slider_design(lv_obj_t * slider, const lv_area_t * mask, lv_desig
         } else {
             lv_draw_rect(&area_bg, mask, style_bg, opa_scale);
         }
-#endif
 
         /*Draw the indicator*/
         lv_area_t area_indic;
@@ -493,7 +489,6 @@ static bool lv_slider_design(lv_obj_t * slider, const lv_area_t * mask, lv_desig
         }
 
         /*Before the knob add the border if required*/
-#if LV_USE_GROUP
         /* Draw the borders later if the bar is focused.
          * At value = 100% the indicator can cover to whole background and the focused style won't
          * be visible*/
@@ -504,7 +499,6 @@ static bool lv_slider_design(lv_obj_t * slider, const lv_area_t * mask, lv_desig
             style_tmp.body.shadow.width = 0;
             lv_draw_rect(&area_bg, mask, &style_tmp, opa_scale);
         }
-#endif
 
         /*Draw the knob*/
         lv_area_t knob_area;
@@ -711,7 +705,6 @@ static lv_res_t lv_slider_signal(lv_obj_t * slider, lv_signal_t sign, void * par
         if(ext->drag_value != LV_SLIDER_NOT_PRESSED) lv_slider_set_value(slider, ext->drag_value, false);
         ext->drag_value = LV_SLIDER_NOT_PRESSED;
 
-#if LV_USE_GROUP
         /*Leave edit mode if released. (No need to wait for LONG_PRESS) */
         lv_group_t * g             = lv_obj_get_group(slider);
         bool editing               = lv_group_get_editing(g);
@@ -719,7 +712,6 @@ static lv_res_t lv_slider_signal(lv_obj_t * slider, lv_signal_t sign, void * par
         if(indev_type == LV_INDEV_TYPE_ENCODER) {
             if(editing) lv_group_set_editing(g, false);
         }
-#endif
 
     } else if(sign == LV_SIGNAL_CORD_CHG) {
         /* The knob size depends on slider size.

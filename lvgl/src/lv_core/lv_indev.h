@@ -80,14 +80,12 @@ void lv_indev_enable(lv_indev_t * indev, bool en);
  */
 void lv_indev_set_cursor(lv_indev_t * indev, lv_obj_t * cur_obj);
 
-#if LV_USE_GROUP
 /**
- * Set a destination group for a keypad input device (for LV_INDEV_TYPE_KEYPAD)
+ * Set a destination group for a keyboard input device (for LV_INDEV_TYPE_KEYBOARD)
  * @param indev pointer to an input device
  * @param group point to a group
  */
 void lv_indev_set_group(lv_indev_t * indev, lv_group_t * group);
-#endif
 
 /**
  * Set the an array of points for LV_INDEV_TYPE_BUTTON.
@@ -105,7 +103,7 @@ void lv_indev_set_button_points(lv_indev_t * indev, const lv_point_t points[]);
 void lv_indev_get_point(const lv_indev_t * indev, lv_point_t * point);
 
 /**
- * Get the last pressed key of an input device (for LV_INDEV_TYPE_KEYPAD)
+ * Get the last pressed key of an input device (for LV_INDEV_TYPE_KEYBOARD)
  * @param indev pointer to an input device
  * @return the last pressed key (0 on error)
  */

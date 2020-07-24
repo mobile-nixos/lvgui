@@ -1572,7 +1572,6 @@ static lv_res_t lv_ta_signal(lv_obj_t * ta, lv_signal_t sign, void * param)
         cur_type = lv_ta_get_cursor_type(ta);
         lv_ta_set_cursor_type(ta, cur_type | LV_CURSOR_HIDDEN);
     } else if(sign == LV_SIGNAL_FOCUS) {
-#if LV_USE_GROUP
         lv_cursor_type_t cur_type;
         cur_type                   = lv_ta_get_cursor_type(ta);
         lv_group_t * g             = lv_obj_get_group(ta);
@@ -1588,7 +1587,6 @@ static lv_res_t lv_ta_signal(lv_obj_t * ta, lv_signal_t sign, void * param)
         } else {
             lv_ta_set_cursor_type(ta, cur_type & (~LV_CURSOR_HIDDEN));
         }
-#endif
     } else if(sign == LV_SIGNAL_PRESSED || sign == LV_SIGNAL_PRESSING || sign == LV_SIGNAL_PRESS_LOST ||
               sign == LV_SIGNAL_RELEASED) {
         update_cursor_position_on_click(ta, sign, (lv_indev_t *)param);
@@ -1906,7 +1904,7 @@ static void update_cursor_position_on_click(lv_obj_t * ta, lv_signal_t sign, lv_
     if(ext->cursor.click_pos == 0) return;
     if(ext->cursor.type == LV_CURSOR_NONE) return;
 
-    if(lv_indev_get_type(click_source) == LV_INDEV_TYPE_KEYPAD ||
+    if(lv_indev_get_type(click_source) == LV_INDEV_TYPE_KEYBOARD ||
        lv_indev_get_type(click_source) == LV_INDEV_TYPE_ENCODER) {
         return;
     }
@@ -1918,7 +1916,7 @@ static void update_cursor_position_on_click(lv_obj_t * ta, lv_signal_t sign, lv_
     lv_indev_get_point(click_source, &point_act);
     lv_indev_get_vect(click_source, &vect_act);
 
-    if(point_act.x < 0 || point_act.y < 0) return; /*Ignore event from keypad*/
+    if(point_act.x < 0 || point_act.y < 0) return; /*Ignore event from keyboard*/
     lv_point_t rel_pos;
     rel_pos.x = point_act.x - label_coords.x1;
     rel_pos.y = point_act.y - label_coords.y1;

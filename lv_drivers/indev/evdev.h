@@ -62,6 +62,7 @@ typedef struct {
 	bool is_mouse;
 	bool is_touchscreen;
 	bool is_touchpad;
+	bool is_keyboard;
 
 	// Used only by touchpad emulation.
 	bool is_touched;

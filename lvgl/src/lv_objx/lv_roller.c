@@ -495,7 +495,6 @@ static lv_res_t lv_roller_signal(lv_obj_t * roller, lv_signal_t sign, void * par
             refr_position(roller, false);
         }
     } else if(sign == LV_SIGNAL_FOCUS) {
-#if LV_USE_GROUP
         lv_group_t * g             = lv_obj_get_group(roller);
         bool editing               = lv_group_get_editing(g);
         lv_indev_type_t indev_type = lv_indev_get_type(lv_indev_get_act());
@@ -517,15 +516,12 @@ static lv_res_t lv_roller_signal(lv_obj_t * roller, lv_signal_t sign, void * par
             ext->ddlist.sel_opt_id_ori = ext->ddlist.sel_opt_id; /*Save the current value. Used to revert this state if
                                                                     ENER wont't be pressed*/
         }
-#endif
     } else if(sign == LV_SIGNAL_DEFOCUS) {
-#if LV_USE_GROUP
         /*Revert the original state*/
         if(ext->ddlist.sel_opt_id != ext->ddlist.sel_opt_id_ori) {
             ext->ddlist.sel_opt_id = ext->ddlist.sel_opt_id_ori;
             refr_position(roller, true);
         }
-#endif
     } else if(sign == LV_SIGNAL_CONTROL) {
         char c = *((char *)param);
         if(c == LV_KEY_RIGHT || c == LV_KEY_DOWN) {
@@ -595,12 +591,10 @@ static lv_res_t lv_roller_scrl_signal(lv_obj_t * roller_scrl, lv_signal_t sign, 
     else if(sign == LV_SIGNAL_RELEASED) {
         if(!lv_indev_is_dragging(indev)) {
             id = ext->ddlist.sel_opt_id;
-#if LV_USE_GROUP
             /*In edit mode go to navigate mode if an option is selected*/
             lv_group_t * g = lv_obj_get_group(roller);
             bool editing   = lv_group_get_editing(g);
             if(editing) lv_group_set_editing(g, false);
-#endif
         }
     } else if(sign == LV_SIGNAL_PRESSED) {
 #if LV_USE_ANIMATION

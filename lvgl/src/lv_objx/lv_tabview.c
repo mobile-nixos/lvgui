@@ -756,16 +756,14 @@ static lv_res_t lv_tabview_signal(lv_obj_t * tabview, lv_signal_t sign, void * p
             tabview_realign(tabview);
         }
     } else if(sign == LV_SIGNAL_RELEASED) {
-#if LV_USE_GROUP
-        /*If released by a KEYPAD or ENCODER then really the tab buttons should be released.
+        /*If released by a KEYBOARD or ENCODER then really the tab buttons should be released.
          * So simulate a CLICK on the tab buttons*/
         lv_indev_t * indev         = lv_indev_get_act();
         lv_indev_type_t indev_type = lv_indev_get_type(indev);
-        if(indev_type == LV_INDEV_TYPE_KEYPAD ||
+        if(indev_type == LV_INDEV_TYPE_KEYBOARD ||
            (indev_type == LV_INDEV_TYPE_ENCODER && lv_group_get_editing(lv_obj_get_group(tabview)))) {
             lv_event_send(ext->btns, LV_EVENT_CLICKED, lv_event_get_data());
         }
-#endif
     } else if(sign == LV_SIGNAL_FOCUS || sign == LV_SIGNAL_DEFOCUS || sign == LV_SIGNAL_CONTROL) {
         /* The button matrix is not in a group (the tab view is in it) but it should handle the
          * group signals. So propagate the related signals to the button matrix manually*/
@@ -782,12 +780,10 @@ static lv_res_t lv_tabview_signal(lv_obj_t * tabview, lv_signal_t sign, void * p
 
             /*With ENCODER select the first button only in edit mode*/
             if(indev_type == LV_INDEV_TYPE_ENCODER) {
-#if LV_USE_GROUP
                 lv_group_t * g = lv_obj_get_group(tabview);
                 if(lv_group_get_editing(g)) {
                     lv_btnm_set_pressed(ext->btns, ext->tab_cur);
                 }
-#endif
             } else {
                 lv_btnm_set_pressed(ext->btns, ext->tab_cur);
             }

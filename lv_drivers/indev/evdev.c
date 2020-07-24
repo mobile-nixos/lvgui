@@ -79,6 +79,19 @@ static bool evdev_drv_device_is_mouse(char* dev_name)
 	return system(cmd) == 0;
 }
 
+/* See the previous function's comment.
+ * Same pitfalls, same reasoning.
+ */
+static bool evdev_drv_device_is_keyboard(char* dev_name)
+{
+	char cmd[1024];
+	// gpio-keys is ID_INPUT_KEY, while ID_INPUT_KEYBOARD applies to keyboards.
+	snprintf(cmd, 1024, "udevadm info '%s' | grep 'ID_INPUT_KEY\\(BOARD\\)\\?=1$' > /dev/null", dev_name);
+
+	/* :( */
+	return system(cmd) == 0;
+}
+
 /**
  * Initialize the evdev interface
  */
@@ -127,17 +140,31 @@ evdev_drv_instance* evdev_init(char* dev_name)
 			instance->evdev_abs_y_max
 		  );
 
+	if (evdev_drv_device_is_keyboard(dev_name)) {
+		instance->lv_indev_drv_type = LV_INDEV_TYPE_KEYBOARD;
+		instance->is_keyboard = true;
+		printf("  - is a keyboard\n");
+	}
+
+	// If a device is a keyboard *and* one of the following, for now
+	// we're assuming the pointer-type input is more important.
+	// The solution (FIXME) will be to handle all event types regardless
+	// of the lv_indev_drv_type.
+
 	if (evdev_drv_device_is_touchscreen(dev_name)) {
+		instance->lv_indev_drv_type = LV_INDEV_TYPE_POINTER;
 		instance->is_touchscreen = true;
 		printf("  - is a touchscreen\n");
 	}
 
 	if (evdev_drv_device_is_touchpad(dev_name)) {
+		instance->lv_indev_drv_type = LV_INDEV_TYPE_POINTER;
 		instance->is_touchpad = true;
 		printf("  - is a touchpad\n");
 	}
 
 	if (evdev_drv_device_is_mouse(dev_name)) {
+		instance->lv_indev_drv_type = LV_INDEV_TYPE_POINTER;
 		instance->is_mouse = true;
 		printf("  - is a mouse\n");
 	}
@@ -320,7 +347,7 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 					instance->evdev_button = LV_INDEV_STATE_REL;
 				else if(in.value == 1)
 					instance->evdev_button = LV_INDEV_STATE_PR;
-			} else if(drv->type == LV_INDEV_TYPE_KEYPAD) {
+			} else if(drv->type == LV_INDEV_TYPE_KEYBOARD) {
 				data->state = (in.value) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
 				switch(in.code) {
 					case KEY_BACKSPACE:
@@ -329,17 +356,19 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 					case KEY_ENTER:
 						data->key = LV_KEY_ENTER;
 						break;
-					case KEY_UP:
-						data->key = LV_KEY_UP;
-						break;
-					case KEY_LEFT:
-						data->key = LV_KEY_PREV;
-						break;
-					case KEY_RIGHT:
+					case KEY_TAB:
 						data->key = LV_KEY_NEXT;
 						break;
-					case KEY_DOWN:
-						data->key = LV_KEY_DOWN;
+
+					// Phone compat
+					case KEY_VOLUMEUP:
+						data->key = LV_KEY_PREV;
+						break;
+					case KEY_VOLUMEDOWN:
+						data->key = LV_KEY_NEXT;
+						break;
+					case KEY_POWER:
+						data->key = LV_KEY_ENTER;
 						break;
 					default:
 						data->key = 0;
@@ -352,7 +381,7 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 		}
 	}
 
-	if(drv->type == LV_INDEV_TYPE_KEYPAD) {
+	if(drv->type == LV_INDEV_TYPE_KEYBOARD) {
 		/* No data retrieved */
 		data->key = instance->evdev_key_val;
 		data->state = instance->evdev_button;

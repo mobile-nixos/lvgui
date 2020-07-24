@@ -725,7 +725,6 @@ static lv_res_t lv_ddlist_signal(lv_obj_t * ddlist, lv_signal_t sign, void * par
     } else if(sign == LV_SIGNAL_CLEANUP) {
         ext->label = NULL;
     } else if(sign == LV_SIGNAL_FOCUS) {
-#if LV_USE_GROUP
         lv_group_t * g             = lv_obj_get_group(ddlist);
         bool editing               = lv_group_get_editing(g);
         lv_indev_type_t indev_type = lv_indev_get_type(lv_indev_get_act());
@@ -753,7 +752,6 @@ static lv_res_t lv_ddlist_signal(lv_obj_t * ddlist, lv_signal_t sign, void * par
                 lv_ddlist_refr_size(ddlist, true);
             }
         }
-#endif
     } else if(sign == LV_SIGNAL_RELEASED) {
         release_handler(ddlist);
     } else if(sign == LV_SIGNAL_DEFOCUS) {
@@ -857,7 +855,6 @@ static lv_res_t release_handler(lv_obj_t * ddlist)
     } else {
 
         lv_indev_t * indev = lv_indev_get_act();
-#if LV_USE_GROUP
         /*Leave edit mode once a new item is selected*/
         if(lv_indev_get_type(indev) == LV_INDEV_TYPE_ENCODER) {
             ext->sel_opt_id_ori = ext->sel_opt_id;
@@ -866,9 +863,8 @@ static lv_res_t release_handler(lv_obj_t * ddlist)
                 lv_group_set_editing(g, false);
             }
         }
-#endif
 
-        /*Search the clicked option (For KEYPAD and ENCODER the new value should be already set)*/
+        /*Search the clicked option (For KEYBOARD and ENCODER the new value should be already set)*/
         if(lv_indev_get_type(indev) == LV_INDEV_TYPE_POINTER || lv_indev_get_type(indev) == LV_INDEV_TYPE_BUTTON) {
             lv_point_t p;
             lv_indev_get_point(indev, &p);

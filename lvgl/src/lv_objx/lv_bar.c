@@ -383,9 +383,6 @@ static bool lv_bar_design(lv_obj_t * bar, const lv_area_t * mask, lv_design_mode
     } else if(mode == LV_DESIGN_DRAW_MAIN) {
         lv_opa_t opa_scale = lv_obj_get_opa_scale(bar);
 
-#if LV_USE_GROUP == 0
-        ancestor_design_f(bar, mask, mode);
-#else
         /* Draw the borders later if the bar is focused.
          * At value = 100% the indicator can cover to whole background and the focused style won't
          * be visible*/
@@ -398,7 +395,6 @@ static bool lv_bar_design(lv_obj_t * bar, const lv_area_t * mask, lv_design_mode
         } else {
             ancestor_design_f(bar, mask, mode);
         }
-#endif
         lv_bar_ext_t * ext = lv_obj_get_ext_attr(bar);
 
         if(ext->cur_value != ext->min_value || ext->sym
@@ -489,7 +485,6 @@ static bool lv_bar_design(lv_obj_t * bar, const lv_area_t * mask, lv_design_mode
             lv_draw_rect(&indic_area, mask, style_indic, opa_scale);
         }
     } else if(mode == LV_DESIGN_DRAW_POST) {
-#if LV_USE_GROUP
         /*Draw the border*/
         if(lv_obj_is_focused(bar)) {
             lv_opa_t opa_scale          = lv_obj_get_opa_scale(bar);
@@ -500,7 +495,6 @@ static bool lv_bar_design(lv_obj_t * bar, const lv_area_t * mask, lv_design_mode
             style_tmp.body.shadow.width = 0;
             lv_draw_rect(&bar->coords, mask, &style_tmp, opa_scale);
         }
-#endif
     }
     return true;
 }

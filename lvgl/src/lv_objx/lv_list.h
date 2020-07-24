@@ -58,13 +58,11 @@ typedef struct
 
     uint8_t single_mode : 1; /* whether single selected mode is enabled */
 
-#if LV_USE_GROUP
     lv_obj_t * last_sel;     /* The last selected button. It will be reverted when the list is focused again */
     lv_obj_t * selected_btn; /* The button is currently being selected*/
     /*Used to make the last clicked button pressed (selected) when the list become focused and
      * `click_focus == 1`*/
     lv_obj_t * last_clicked_btn;
-#endif
 } lv_list_ext_t;
 
 /** List styles. */
@@ -132,8 +130,6 @@ bool lv_list_remove(const lv_obj_t * list, uint16_t index);
  */
 void lv_list_set_single_mode(lv_obj_t * list, bool mode);
 
-#if LV_USE_GROUP
-
 /**
  * Make a button selected
  * @param list pointer to a list object
@@ -141,7 +137,6 @@ void lv_list_set_single_mode(lv_obj_t * list, bool mode);
  *            NULL to not select any buttons
  */
 void lv_list_set_btn_selected(lv_obj_t * list, lv_obj_t * btn);
-#endif
 
 /**
  * Set the scroll bar mode of a list
@@ -248,14 +243,12 @@ int32_t lv_list_get_btn_index(const lv_obj_t * list, const lv_obj_t * btn);
  */
 uint16_t lv_list_get_size(const lv_obj_t * list);
 
-#if LV_USE_GROUP
 /**
- * Get the currently selected button. Can be used while navigating in the list with a keypad.
+ * Get the currently selected button. Can be used while navigating in the list with a keyboard.
  * @param list pointer to a list object
  * @return pointer to the selected button
  */
 lv_obj_t * lv_list_get_btn_selected(const lv_obj_t * list);
-#endif
 
 /**
  * Get layout of a list

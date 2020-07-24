@@ -44,7 +44,7 @@ struct _lv_indev_drv_t;
 enum {
     LV_INDEV_TYPE_NONE,    /**< Uninitialized state*/
     LV_INDEV_TYPE_POINTER, /**< Touch pad, mouse, external button*/
-    LV_INDEV_TYPE_KEYPAD,  /**< Keypad or keyboard*/
+    LV_INDEV_TYPE_KEYBOARD,/**< Keyboard */
     LV_INDEV_TYPE_BUTTON,  /**< External (hardware button) which is assigned to a specific point of the
                               screen*/
     LV_INDEV_TYPE_ENCODER, /**< Encoder with only Left, Right turn and a Button*/
@@ -59,7 +59,7 @@ typedef uint8_t lv_indev_state_t;
 typedef struct
 {
     lv_point_t point; /**< For LV_INDEV_TYPE_POINTER the currently pressed point*/
-    uint32_t key;     /**< For LV_INDEV_TYPE_KEYPAD the currently pressed key*/
+    uint32_t key;     /**< For LV_INDEV_TYPE_KEYBOARD the currently pressed key*/
     uint32_t btn_id;  /**< For LV_INDEV_TYPE_BUTTON the currently pressed button*/
     int16_t enc_diff; /**< For LV_INDEV_TYPE_ENCODER number of steps since the previous read*/
 
@@ -130,10 +130,10 @@ typedef struct _lv_indev_proc_t
             uint8_t drag_in_prog : 1;
         } pointer;
         struct
-        { /*Keypad data*/
+        { /*Keyboard data*/
             lv_indev_state_t last_state;
             uint32_t last_key;
-        } keypad;
+        } keyboard;
     } types;
 
     uint32_t pr_timestamp;         /**< Pressed time stamp*/
@@ -156,7 +156,7 @@ typedef struct _lv_indev_t
 	lv_indev_drv_t driver;
 	lv_indev_proc_t proc;
 	struct _lv_obj_t * cursor;       /**< Cursor for LV_INPUT_TYPE_POINTER*/
-	struct _lv_group_t * group;      /**< Keypad destination group*/
+	struct _lv_group_t * group;      /**< Keyboard destination group*/
 	const lv_point_t * btn_points;   /**< Array points assigned to the button ()screen will be pressed
 	                                      here by the buttons*/
 	lv_point_t cursor_offset; /**< Offset to apply to the cursor */

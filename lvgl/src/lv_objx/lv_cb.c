@@ -310,7 +310,6 @@ static bool lv_bullet_design(lv_obj_t * bullet, const lv_area_t * mask, lv_desig
     if(mode == LV_DESIGN_COVER_CHK) {
         return ancestor_bullet_design(bullet, mask, mode);
     } else if(mode == LV_DESIGN_DRAW_MAIN) {
-#if LV_USE_GROUP
         /* If the check box is the active in a group and
          * the background is not visible (transparent)
          * then activate the style of the bullet*/
@@ -325,12 +324,9 @@ static bool lv_bullet_design(lv_obj_t * bullet, const lv_area_t * mask, lv_desig
                 bullet->style_p = style_mod; /*Temporally change the style to the activated */
             }
         }
-#endif
         ancestor_bullet_design(bullet, mask, mode);
 
-#if LV_USE_GROUP
         bullet->style_p = style_ori; /*Revert the style*/
-#endif
     } else if(mode == LV_DESIGN_DRAW_POST) {
         ancestor_bullet_design(bullet, mask, mode);
     }

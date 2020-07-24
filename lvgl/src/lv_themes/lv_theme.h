@@ -328,7 +328,6 @@ typedef struct
 #endif
     } style;
 
-#if LV_USE_GROUP
     struct
     {
         /* The `x` in the names inidicates that inconsistence becasue
@@ -336,7 +335,6 @@ typedef struct
         lv_group_style_mod_cb_t style_mod_xcb;
         lv_group_style_mod_cb_t style_mod_edit_xcb;
     } group;
-#endif
 } lv_theme_t;
 
 /**********************

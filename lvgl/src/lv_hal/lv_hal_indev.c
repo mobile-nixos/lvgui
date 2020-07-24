@@ -141,8 +141,8 @@ bool lv_indev_read(lv_indev_t * indev, lv_indev_data_t * data)
         data->point.y = indev->proc.types.pointer.act_point.y;
     }
     /*Similarly set at least the last key in case of the  the user doesn't set it  on release*/
-    else if(indev->driver.type == LV_INDEV_TYPE_KEYPAD) {
-        data->key = indev->proc.types.keypad.last_key;
+    else if(indev->driver.type == LV_INDEV_TYPE_KEYBOARD) {
+        data->key = indev->proc.types.keyboard.last_key;
     }
 
     if(indev->driver.read_cb) {

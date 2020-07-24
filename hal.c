@@ -14,6 +14,7 @@ int mn_hal_default_dpi;
 lv_disp_drv_t disp_drv;
 static lv_obj_t * lvgui_cursor_obj;
 static lv_obj_t * lvgui_touch_obj;
+static lv_group_t * lvgui_focus_group;
 
 void hal_preinit(void);
 void hal_set_dpi(void);
@@ -159,6 +160,9 @@ static void init_evdev(char* name)
 		lv_anim_set_values(a, 255, 0);
 		lv_anim_set_path_cb(a, lv_anim_path_ease_in);
 	}
+
+	// Link the input device to the main focus group.
+	lv_indev_set_group(indev, lvgui_focus_group);
 }
 #endif
 
@@ -181,6 +185,16 @@ void hal_init(void)
 	LV_LOG_INFO("HAL begins");
 
 	lv_disp_drv_register(&disp_drv);
+
+	{
+	// Prepare the "main" focus group
+	lvgui_focus_group = lv_group_create();
+	// By default, clicking will not change the focus.
+	// This is so the unsightly focus mark does not show up uselessly
+	// on touch devices without keyboards...
+	// Anyways, the focus mark is not the main way to use the apps.
+	lv_group_set_click_focus(lvgui_focus_group, false);
+	}
 
 	{
 	lvgui_cursor_obj = lv_img_create(lv_scr_act(), NULL);
@@ -220,7 +234,9 @@ void hal_init(void)
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = mouse_read;
-	lv_indev_drv_register(&indev_drv);
+	lv_indev_t * indev = lv_indev_drv_register(&indev_drv);
+	// Link the input device to the main focus group.
+	lv_indev_set_group(indev, lvgui_focus_group);
 	}
 #endif
 #if USE_KEYBOARD
@@ -228,9 +244,11 @@ void hal_init(void)
 	{
     lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
-    indev_drv.type = LV_INDEV_TYPE_KEYPAD;
+    indev_drv.type = LV_INDEV_TYPE_KEYBOARD;
     indev_drv.read_cb = keyboard_read;
-	lv_indev_drv_register(&indev_drv);
+	lv_indev_t * indev = lv_indev_drv_register(&indev_drv);
+	// Link the input device to the main focus group.
+	lv_indev_set_group(indev, lvgui_focus_group);
 	}
 #endif
 
@@ -254,4 +272,9 @@ uint32_t custom_tick_get(void)
 
 	uint32_t time_ms = now_ms - start_ms;
 	return time_ms;
+}
+
+lv_group_t * lvgui_get_focus_group()
+{
+	return lvgui_focus_group;
 }

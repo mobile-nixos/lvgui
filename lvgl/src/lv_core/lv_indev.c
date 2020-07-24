@@ -33,7 +33,7 @@
  **********************/
 
 static void indev_pointer_proc(lv_indev_t * i, lv_indev_data_t * data);
-static void indev_keypad_proc(lv_indev_t * i, lv_indev_data_t * data);
+static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data);
 static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data);
 static void indev_button_proc(lv_indev_t * i, lv_indev_data_t * data);
 static void indev_proc_press(lv_indev_proc_t * proc);
@@ -105,8 +105,8 @@ void lv_indev_read_task(lv_task_t * task)
 
         if(indev_act->driver.type == LV_INDEV_TYPE_POINTER) {
             indev_pointer_proc(indev_act, &data);
-        } else if(indev_act->driver.type == LV_INDEV_TYPE_KEYPAD) {
-            indev_keypad_proc(indev_act, &data);
+        } else if(indev_act->driver.type == LV_INDEV_TYPE_KEYBOARD) {
+            indev_keyboard_proc(indev_act, &data);
         } else if(indev_act->driver.type == LV_INDEV_TYPE_ENCODER) {
             indev_encoder_proc(indev_act, &data);
         } else if(indev_act->driver.type == LV_INDEV_TYPE_BUTTON) {
@@ -203,19 +203,17 @@ void lv_indev_set_cursor(lv_indev_t * indev, lv_obj_t * cur_obj)
     );
 }
 
-#if LV_USE_GROUP
 /**
- * Set a destination group for a keypad input device (for LV_INDEV_TYPE_KEYPAD)
+ * Set a destination group for a keyboard input device (for LV_INDEV_TYPE_KEYBOARD)
  * @param indev pointer to an input device
  * @param group point to a group
  */
 void lv_indev_set_group(lv_indev_t * indev, lv_group_t * group)
 {
-    if(indev->driver.type == LV_INDEV_TYPE_KEYPAD || indev->driver.type == LV_INDEV_TYPE_ENCODER) {
+    if(indev->driver.type == LV_INDEV_TYPE_KEYBOARD || indev->driver.type == LV_INDEV_TYPE_ENCODER) {
         indev->group = group;
     }
 }
-#endif
 
 /**
  * Set the an array of points for LV_INDEV_TYPE_BUTTON.
@@ -247,16 +245,16 @@ void lv_indev_get_point(const lv_indev_t * indev, lv_point_t * point)
 }
 
 /**
- * Get the last pressed key of an input device (for LV_INDEV_TYPE_KEYPAD)
+ * Get the last pressed key of an input device (for LV_INDEV_TYPE_KEYBOARD)
  * @param indev pointer to an input device
  * @return the last pressed key (0 on error)
  */
 uint32_t lv_indev_get_key(const lv_indev_t * indev)
 {
-    if(indev->driver.type != LV_INDEV_TYPE_KEYPAD)
+    if(indev->driver.type != LV_INDEV_TYPE_KEYBOARD)
         return 0;
     else
-        return indev->proc.types.keypad.last_key;
+        return indev->proc.types.keyboard.last_key;
 }
 
 /**
@@ -371,20 +369,19 @@ static void indev_pointer_proc(lv_indev_t * i, lv_indev_data_t * data)
 }
 
 /**
- * Process a new point from LV_INDEV_TYPE_KEYPAD input device
+ * Process a new event from LV_INDEV_TYPE_KEYBOARD input device
  * @param i pointer to an input device
  * @param data pointer to the data read from the input device
  */
-static void indev_keypad_proc(lv_indev_t * i, lv_indev_data_t * data)
+static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
 {
-#if LV_USE_GROUP
     if(data->state == LV_INDEV_STATE_PR && i->proc.wait_until_release) return;
 
     if(i->proc.wait_until_release) {
         i->proc.wait_until_release      = 0;
         i->proc.pr_timestamp            = 0;
         i->proc.long_pr_sent            = 0;
-        i->proc.types.keypad.last_state = LV_INDEV_STATE_REL; /*To skip the processing of release*/
+        i->proc.types.keyboard.last_state = LV_INDEV_STATE_REL; /*To skip the processing of release*/
     }
 
     lv_group_t * g = i->group;
@@ -394,17 +391,17 @@ static void indev_keypad_proc(lv_indev_t * i, lv_indev_data_t * data)
     if(indev_obj_act == NULL) return;
 
     /*Save the last key to compare it with the current latter on RELEASE*/
-    uint32_t prev_key = i->proc.types.keypad.last_key;
+    uint32_t prev_key = i->proc.types.keyboard.last_key;
 
     /* Save the last key.
      * It must be done here else `lv_indev_get_key` will return the last key in events and signals*/
-    i->proc.types.keypad.last_key = data->key;
+    i->proc.types.keyboard.last_key = data->key;
 
     /* Save the previous state so we can detect state changes below and also set the last state now
      * so if any signal/event handler on the way returns `LV_RES_INV` the last state is remembered
      * for the next time*/
-    uint32_t prev_state             = i->proc.types.keypad.last_state;
-    i->proc.types.keypad.last_state = data->state;
+    uint32_t prev_state             = i->proc.types.keyboard.last_state;
+    i->proc.types.keyboard.last_state = data->state;
 
     /*Key press happened*/
     if(data->state == LV_INDEV_STATE_PR && prev_state == LV_INDEV_STATE_REL) {
@@ -428,13 +425,13 @@ static void indev_keypad_proc(lv_indev_t * i, lv_indev_data_t * data)
         }
         /*Move the focus on NEXT*/
         else if(data->key == LV_KEY_NEXT) {
-            lv_group_set_editing(g, false); /*Editing is not used by KEYPAD is be sure it is disabled*/
+            lv_group_set_editing(g, false); /*Editing is not used by KEYBOARD is be sure it is disabled*/
             lv_group_focus_next(g);
             if(indev_reset_check(&i->proc)) return;
         }
         /*Move the focus on PREV*/
         else if(data->key == LV_KEY_PREV) {
-            lv_group_set_editing(g, false); /*Editing is not used by KEYPAD is be sure it is disabled*/
+            lv_group_set_editing(g, false); /*Editing is not used by KEYBOARD is be sure it is disabled*/
             lv_group_focus_prev(g);
             if(indev_reset_check(&i->proc)) return;
         }
@@ -471,17 +468,17 @@ static void indev_keypad_proc(lv_indev_t * i, lv_indev_data_t * data)
             }
             /*Move the focus on NEXT again*/
             else if(data->key == LV_KEY_NEXT) {
-                lv_group_set_editing(g, false); /*Editing is not used by KEYPAD is be sure it is disabled*/
+                lv_group_set_editing(g, false); /*Editing is not used by KEYBOARD is be sure it is disabled*/
                 lv_group_focus_next(g);
                 if(indev_reset_check(&i->proc)) return;
             }
             /*Move the focus on PREV again*/
             else if(data->key == LV_KEY_PREV) {
-                lv_group_set_editing(g, false); /*Editing is not used by KEYPAD is be sure it is disabled*/
+                lv_group_set_editing(g, false); /*Editing is not used by KEYBOARD is be sure it is disabled*/
                 lv_group_focus_prev(g);
                 if(indev_reset_check(&i->proc)) return;
             }
-            /*Just send other keys again to the object (e.g. 'A' or `LV_GORUP_KEY_RIGHT)*/
+            /*Just send other keys again to the object (e.g. 'A' or `LV_GROUP_KEY_RIGHT)*/
             else {
                 lv_group_send_data(g, data->key);
                 if(indev_reset_check(&i->proc)) return;
@@ -512,10 +509,6 @@ static void indev_keypad_proc(lv_indev_t * i, lv_indev_data_t * data)
         i->proc.long_pr_sent = 0;
     }
     indev_obj_act = NULL;
-#else
-    (void)data; /*Unused*/
-    (void)i;    /*Unused*/
-#endif
 }
 
 /**
@@ -525,22 +518,20 @@ static void indev_keypad_proc(lv_indev_t * i, lv_indev_data_t * data)
  */
 static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
 {
-#if LV_USE_GROUP
-
     if(data->state == LV_INDEV_STATE_PR && i->proc.wait_until_release) return;
 
     if(i->proc.wait_until_release) {
         i->proc.wait_until_release      = 0;
         i->proc.pr_timestamp            = 0;
         i->proc.long_pr_sent            = 0;
-        i->proc.types.keypad.last_state = LV_INDEV_STATE_REL; /*To skip the processing of release*/
+        i->proc.types.keyboard.last_state = LV_INDEV_STATE_REL; /*To skip the processing of release*/
     }
 
     /* Save the last keys before anything else.
      * They need to be already saved if the the function returns for any reason*/
-    lv_indev_state_t last_state     = i->proc.types.keypad.last_state;
-    i->proc.types.keypad.last_state = data->state;
-    i->proc.types.keypad.last_key   = data->key;
+    lv_indev_state_t last_state     = i->proc.types.keyboard.last_state;
+    i->proc.types.keyboard.last_state = data->state;
+    i->proc.types.keyboard.last_key   = data->key;
 
     lv_group_t * g = i->group;
     if(g == NULL) return;
@@ -660,10 +651,6 @@ static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
         i->proc.long_pr_sent = 0;
     }
     indev_obj_act = NULL;
-#else
-    (void)data; /*Unused*/
-    (void)i;    /*Unused*/
-#endif
 }
 
 /**
@@ -697,7 +684,7 @@ static void indev_button_proc(lv_indev_t * i, lv_indev_data_t * data)
 }
 
 /**
- * Process the pressed state of LV_INDEV_TYPE_POINER input devices
+ * Process the pressed state of LV_INDEV_TYPE_POINTER input devices
  * @param indev pointer to an input device 'proc'
  * @return LV_RES_OK: no indev reset required; LV_RES_INV: indev reset is required
  */
@@ -851,7 +838,7 @@ static void indev_proc_press(lv_indev_proc_t * proc)
 }
 
 /**
- * Process the released state of LV_INDEV_TYPE_POINER input devices
+ * Process the released state of LV_INDEV_TYPE_POINTER input devices
  * @param proc pointer to an input device 'proc'
  */
 static void indev_proc_release(lv_indev_proc_t * proc)
@@ -912,7 +899,7 @@ static void indev_proc_release(lv_indev_proc_t * proc)
 
         /*Handle click focus*/
         bool click_focus_sent = false;
-#if LV_USE_GROUP
+
         lv_group_t * g = lv_obj_get_group(indev_obj_act);
 
         /*Check, if the parent is in a group and focus on it.*/
@@ -941,7 +928,6 @@ static void indev_proc_release(lv_indev_proc_t * proc)
                 }
             }
         }
-#endif
 
         /* Send defocus to the lastly "active" object and foucus to the new one.
          * DO not sent the events if they was sent by the click focus*/
