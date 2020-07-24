@@ -252,17 +252,6 @@ static void kb_init(void)
 #endif
 }
 
-static void mbox_init(void)
-{
-#if LV_USE_MBOX
-
-    theme.style.mbox.bg      = &lv_style_pretty;
-    theme.style.mbox.btn.bg  = &lv_style_transp;
-    theme.style.mbox.btn.rel = &lv_style_btn_rel;
-    theme.style.mbox.btn.pr  = &lv_style_btn_tgl_pr;
-#endif
-}
-
 static void page_init(void)
 {
 #if LV_USE_PAGE
@@ -439,7 +428,6 @@ lv_theme_t * lv_theme_default_init(uint16_t hue, lv_font_t * font)
     cb_init();
     btnm_init();
     kb_init();
-    mbox_init();
     page_init();
     ta_init();
     list_init();

@@ -514,40 +514,6 @@ static void kb_init(void)
 #endif
 }
 
-static void mbox_init(void)
-{
-#if LV_USE_MBOX
-    static lv_style_t bg, rel, pr;
-    lv_style_copy(&bg, theme.style.panel);
-    bg.body.main_color = lv_color_hsv_to_rgb(_hue, 10, 95);
-    bg.body.grad_color = bg.body.main_color;
-    bg.text.color      = lv_color_hsv_to_rgb(_hue, 40, 25);
-
-    lv_style_copy(&rel, &def);
-    rel.body.main_color     = lv_color_hsv_to_rgb(_hue, 25, 85);
-    rel.body.grad_color     = rel.body.main_color;
-    rel.body.radius         = LV_RADIUS_CIRCLE;
-    rel.body.border.width   = 2;
-    rel.body.border.color   = lv_color_hsv_to_rgb(_hue, 30, 70);
-    rel.body.padding.left   = LV_DPI / 4;
-    rel.body.padding.right  = LV_DPI / 4;
-    rel.body.padding.top    = LV_DPI / 8;
-    rel.body.padding.bottom = LV_DPI / 8;
-    rel.text.color          = bg.text.color;
-
-    lv_style_copy(&pr, &rel);
-    pr.body.border.color = lv_color_hsv_to_rgb(_hue, 30, 90);
-    pr.text.color        = lv_color_hsv_to_rgb(_hue, 40, 40);
-    pr.body.main_color   = lv_color_hsv_to_rgb(_hue, 20, 85);
-    pr.body.grad_color   = pr.body.main_color;
-
-    theme.style.mbox.bg      = &bg;
-    theme.style.mbox.btn.bg  = &lv_style_transp;
-    theme.style.mbox.btn.rel = &rel;
-    theme.style.mbox.btn.pr  = &pr;
-#endif
-}
-
 static void page_init(void)
 {
 #if LV_USE_PAGE
@@ -862,7 +828,6 @@ lv_theme_t * lv_theme_zen_init(uint16_t hue, lv_font_t * font)
     cb_init();
     btnm_init();
     kb_init();
-    mbox_init();
     page_init();
     ta_init();
     spinbox_init();

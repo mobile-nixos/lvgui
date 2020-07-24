@@ -204,19 +204,6 @@ typedef struct
         } kb;
 #endif
 
-#if LV_USE_MBOX != 0
-        struct
-        {
-            lv_style_t * bg;
-            struct
-            {
-                lv_style_t * bg;
-                lv_style_t * rel;
-                lv_style_t * pr;
-            } btn;
-        } mbox;
-#endif
-
 #if LV_USE_PAGE != 0
         struct
         {

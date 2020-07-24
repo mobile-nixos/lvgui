@@ -5,7 +5,6 @@ CSRCS += lv_cpicker.c
 CSRCS += lv_ddlist.c
 CSRCS += lv_kb.c
 CSRCS += lv_line.c
-CSRCS += lv_mbox.c
 CSRCS += lv_preload.c
 CSRCS += lv_roller.c
 CSRCS += lv_table.c

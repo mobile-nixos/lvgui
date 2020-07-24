@@ -503,26 +503,6 @@ static void kb_init(void)
 #endif
 }
 
-static void mbox_init(void)
-{
-#if LV_USE_MBOX
-    static lv_style_t pr, rel;
-
-    lv_style_copy(&rel, &lv_style_transp);
-    rel.glass      = 0;
-    rel.text.font  = _font;
-    rel.text.color = lv_color_hsv_to_rgb(_hue, 85, 75);
-
-    lv_style_copy(&pr, theme.style.btnm.btn.pr);
-    pr.text.color = lv_color_hsv_to_rgb(_hue, 85, 60);
-
-    theme.style.mbox.bg      = theme.style.panel;
-    theme.style.mbox.btn.bg  = &lv_style_transp;
-    theme.style.mbox.btn.rel = &rel;
-    theme.style.mbox.btn.pr  = &pr;
-#endif
-}
-
 static void page_init(void)
 {
 #if LV_USE_PAGE
@@ -896,7 +876,6 @@ lv_theme_t * lv_theme_material_init(uint16_t hue, lv_font_t * font)
     cb_init();
     btnm_init();
     kb_init();
-    mbox_init();
     page_init();
     ta_init();
     spinbox_init();

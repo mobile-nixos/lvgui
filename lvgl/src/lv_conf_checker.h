@@ -717,11 +717,6 @@
 #define LV_USE_LMETER   1
 #endif
 
-/*Message box (dependencies: lv_rect, lv_btnm, lv_label)*/
-#ifndef LV_USE_MBOX
-#define LV_USE_MBOX     1
-#endif
-
 /*Page (dependencies: lv_cont)*/
 #ifndef LV_USE_PAGE
 #define LV_USE_PAGE     1

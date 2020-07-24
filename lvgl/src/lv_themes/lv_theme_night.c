@@ -502,25 +502,6 @@ static void kb_init(void)
 #endif
 }
 
-static void mbox_init(void)
-{
-#if LV_USE_MBOX
-    static lv_style_t mbox_bg;
-    lv_style_copy(&mbox_bg, &bg);
-    mbox_bg.body.main_color   = lv_color_hsv_to_rgb(_hue, 30, 30);
-    mbox_bg.body.grad_color   = lv_color_hsv_to_rgb(_hue, 30, 30);
-    mbox_bg.body.border.color = lv_color_hsv_to_rgb(_hue, 11, 20);
-    mbox_bg.body.border.width = 1;
-    mbox_bg.body.shadow.width = LV_DPI / 10;
-    mbox_bg.body.shadow.color = lv_color_hex3(0x222);
-    mbox_bg.body.radius       = LV_DPI / 20;
-    theme.style.mbox.bg       = &mbox_bg;
-    theme.style.mbox.btn.bg   = &lv_style_transp;
-    theme.style.mbox.btn.rel  = theme.style.btn.rel;
-    theme.style.mbox.btn.pr   = theme.style.btn.pr;
-#endif
-}
-
 static void page_init(void)
 {
 #if LV_USE_PAGE
@@ -807,7 +788,6 @@ lv_theme_t * lv_theme_night_init(uint16_t hue, lv_font_t * font)
     cb_init();
     btnm_init();
     kb_init();
-    mbox_init();
     page_init();
     ta_init();
     spinbox_init();
