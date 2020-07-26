@@ -502,25 +502,6 @@ static void kb_init(void)
 #endif
 }
 
-static void mbox_init(void)
-{
-#if LV_USE_MBOX
-    static lv_style_t mbox_bg;
-    lv_style_copy(&mbox_bg, &bg);
-    mbox_bg.body.main_color   = lv_color_hsv_to_rgb(_hue, 30, 30);
-    mbox_bg.body.grad_color   = lv_color_hsv_to_rgb(_hue, 30, 30);
-    mbox_bg.body.border.color = lv_color_hsv_to_rgb(_hue, 11, 20);
-    mbox_bg.body.border.width = 1;
-    mbox_bg.body.shadow.width = LV_DPI / 10;
-    mbox_bg.body.shadow.color = lv_color_hex3(0x222);
-    mbox_bg.body.radius       = LV_DPI / 20;
-    theme.style.mbox.bg       = &mbox_bg;
-    theme.style.mbox.btn.bg   = &lv_style_transp;
-    theme.style.mbox.btn.rel  = theme.style.btn.rel;
-    theme.style.mbox.btn.pr   = theme.style.btn.pr;
-#endif
-}
-
 static void page_init(void)
 {
 #if LV_USE_PAGE
@@ -656,19 +637,6 @@ static void roller_init(void)
 #endif
 }
 
-static void tabview_init(void)
-{
-#if LV_USE_TABVIEW != 0
-    theme.style.tabview.bg          = &bg;
-    theme.style.tabview.indic       = &lv_style_transp;
-    theme.style.tabview.btn.bg      = &lv_style_transp;
-    theme.style.tabview.btn.rel     = theme.style.btn.rel;
-    theme.style.tabview.btn.pr      = theme.style.btn.pr;
-    theme.style.tabview.btn.tgl_rel = theme.style.btn.tgl_rel;
-    theme.style.tabview.btn.tgl_pr  = theme.style.btn.tgl_pr;
-#endif
-}
-
 static void tileview_init(void)
 {
 #if LV_USE_TILEVIEW != 0
@@ -692,40 +660,6 @@ static void table_init(void)
 
     theme.style.table.bg   = &lv_style_transp_tight;
     theme.style.table.cell = &cell;
-#endif
-}
-
-static void win_init(void)
-{
-#if LV_USE_WIN != 0
-    static lv_style_t win_bg;
-    lv_style_copy(&win_bg, &bg);
-    win_bg.body.border.color = lv_color_hex3(0x333);
-    win_bg.body.border.width = 1;
-
-    static lv_style_t win_header;
-    lv_style_copy(&win_header, &win_bg);
-    win_header.body.main_color     = lv_color_hsv_to_rgb(_hue, 10, 20);
-    win_header.body.grad_color     = lv_color_hsv_to_rgb(_hue, 10, 20);
-    win_header.body.radius         = 0;
-    win_header.body.padding.left   = 0;
-    win_header.body.padding.right  = 0;
-    win_header.body.padding.top    = 0;
-    win_header.body.padding.bottom = 0;
-
-    static lv_style_t win_btn_pr;
-    lv_style_copy(&win_btn_pr, &def);
-    win_btn_pr.body.main_color = lv_color_hsv_to_rgb(_hue, 10, 10);
-    win_btn_pr.body.grad_color = lv_color_hsv_to_rgb(_hue, 10, 10);
-    win_btn_pr.text.color      = lv_color_hex3(0xaaa);
-    win_btn_pr.image.color     = lv_color_hex3(0xaaa);
-
-    theme.style.win.bg      = &win_bg;
-    theme.style.win.sb      = &sb;
-    theme.style.win.header  = &win_header;
-    theme.style.win.content = &lv_style_transp;
-    theme.style.win.btn.rel = &lv_style_transp;
-    theme.style.win.btn.pr  = &win_btn_pr;
 #endif
 }
 
@@ -807,17 +741,14 @@ lv_theme_t * lv_theme_night_init(uint16_t hue, lv_font_t * font)
     cb_init();
     btnm_init();
     kb_init();
-    mbox_init();
     page_init();
     ta_init();
     spinbox_init();
     list_init();
     ddlist_init();
     roller_init();
-    tabview_init();
     tileview_init();
     table_init();
-    win_init();
 
     theme.group.style_mod_xcb      = style_mod;
     theme.group.style_mod_edit_xcb = style_mod_edit;

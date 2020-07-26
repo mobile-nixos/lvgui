@@ -252,17 +252,6 @@ static void kb_init(void)
 #endif
 }
 
-static void mbox_init(void)
-{
-#if LV_USE_MBOX
-
-    theme.style.mbox.bg      = &lv_style_pretty;
-    theme.style.mbox.btn.bg  = &lv_style_transp;
-    theme.style.mbox.btn.rel = &lv_style_btn_rel;
-    theme.style.mbox.btn.pr  = &lv_style_btn_tgl_pr;
-#endif
-}
-
 static void page_init(void)
 {
 #if LV_USE_PAGE
@@ -318,38 +307,11 @@ static void roller_init(void)
 #endif
 }
 
-static void tabview_init(void)
-{
-#if LV_USE_TABVIEW != 0
-
-    theme.style.tabview.bg          = &plain_bordered;
-    theme.style.tabview.indic       = &lv_style_plain_color;
-    theme.style.tabview.btn.bg      = &lv_style_transp;
-    theme.style.tabview.btn.rel     = &lv_style_btn_rel;
-    theme.style.tabview.btn.pr      = &lv_style_btn_pr;
-    theme.style.tabview.btn.tgl_rel = &lv_style_btn_tgl_rel;
-    theme.style.tabview.btn.tgl_pr  = &lv_style_btn_tgl_pr;
-#endif
-}
-
 static void table_init(void)
 {
 #if LV_USE_TABLE != 0
     theme.style.table.bg   = &lv_style_transp_tight;
     theme.style.table.cell = &lv_style_plain;
-#endif
-}
-
-static void win_init(void)
-{
-#if LV_USE_WIN != 0
-
-    theme.style.win.bg      = &plain_bordered;
-    theme.style.win.sb      = &sb;
-    theme.style.win.header  = &lv_style_plain_color;
-    theme.style.win.content = &lv_style_transp;
-    theme.style.win.btn.rel = &lv_style_btn_rel;
-    theme.style.win.btn.pr  = &lv_style_btn_pr;
 #endif
 }
 
@@ -439,15 +401,12 @@ lv_theme_t * lv_theme_default_init(uint16_t hue, lv_font_t * font)
     cb_init();
     btnm_init();
     kb_init();
-    mbox_init();
     page_init();
     ta_init();
     list_init();
     ddlist_init();
     roller_init();
-    tabview_init();
     table_init();
-    win_init();
 
     theme.group.style_mod_xcb      = style_mod;
     theme.group.style_mod_edit_xcb = style_mod_edit;

@@ -514,9 +514,6 @@ typedef void * lv_obj_user_data_t;
 /*Line meter (dependencies: *;)*/
 #define LV_USE_LMETER   1
 
-/*Message box (dependencies: lv_rect, lv_btnm, lv_label)*/
-#define LV_USE_MBOX     1
-
 /*Page (dependencies: lv_cont)*/
 #define LV_USE_PAGE     1
 #if LV_USE_PAGE != 0
@@ -564,22 +561,12 @@ typedef void * lv_obj_user_data_t;
 #  define LV_TABLE_COL_MAX    12
 #endif
 
-/*Tab (dependencies: lv_page, lv_btnm)*/
-#define LV_USE_TABVIEW      1
-#  if LV_USE_TABVIEW != 0
-/*Time of slide animation [ms] (0: no animation)*/
-#  define LV_TABVIEW_DEF_ANIM_TIME    300
-#endif
-
 /*Tileview (dependencies: lv_page) */
 #define LV_USE_TILEVIEW     1
 #if LV_USE_TILEVIEW
 /*Time of slide animation [ms] (0: no animation)*/
 #  define LV_TILEVIEW_DEF_ANIM_TIME   300
 #endif
-
-/*Window (dependencies: lv_cont, lv_btn, lv_label, lv_img, lv_page)*/
-#define LV_USE_WIN      1
 
 /*==================
  * Non-user section

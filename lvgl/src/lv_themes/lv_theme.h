@@ -204,19 +204,6 @@ typedef struct
         } kb;
 #endif
 
-#if LV_USE_MBOX != 0
-        struct
-        {
-            lv_style_t * bg;
-            struct
-            {
-                lv_style_t * bg;
-                lv_style_t * rel;
-                lv_style_t * pr;
-            } btn;
-        } mbox;
-#endif
-
 #if LV_USE_PAGE != 0
         struct
         {
@@ -279,22 +266,6 @@ typedef struct
         } roller;
 #endif
 
-#if LV_USE_TABVIEW != 0
-        struct
-        {
-            lv_style_t * bg;
-            lv_style_t * indic;
-            struct
-            {
-                lv_style_t * bg;
-                lv_style_t * rel;
-                lv_style_t * pr;
-                lv_style_t * tgl_rel;
-                lv_style_t * tgl_pr;
-            } btn;
-        } tabview;
-#endif
-
 #if LV_USE_TILEVIEW != 0
         struct
         {
@@ -310,21 +281,6 @@ typedef struct
             lv_style_t * bg;
             lv_style_t * cell;
         } table;
-#endif
-
-#if LV_USE_WIN != 0
-        struct
-        {
-            lv_style_t * bg;
-            lv_style_t * sb;
-            lv_style_t * header;
-            lv_style_t * content;
-            struct
-            {
-                lv_style_t * rel;
-                lv_style_t * pr;
-            } btn;
-        } win;
 #endif
     } style;
 

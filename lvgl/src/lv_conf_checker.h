@@ -717,11 +717,6 @@
 #define LV_USE_LMETER   1
 #endif
 
-/*Message box (dependencies: lv_rect, lv_btnm, lv_label)*/
-#ifndef LV_USE_MBOX
-#define LV_USE_MBOX     1
-#endif
-
 /*Page (dependencies: lv_cont)*/
 #ifndef LV_USE_PAGE
 #define LV_USE_PAGE     1
@@ -803,17 +798,6 @@
 #endif
 #endif
 
-/*Tab (dependencies: lv_page, lv_btnm)*/
-#ifndef LV_USE_TABVIEW
-#define LV_USE_TABVIEW      1
-#endif
-#  if LV_USE_TABVIEW != 0
-/*Time of slide animation [ms] (0: no animation)*/
-#ifndef LV_TABVIEW_DEF_ANIM_TIME
-#  define LV_TABVIEW_DEF_ANIM_TIME    300
-#endif
-#endif
-
 /*Tileview (dependencies: lv_page) */
 #ifndef LV_USE_TILEVIEW
 #define LV_USE_TILEVIEW     1
@@ -823,11 +807,6 @@
 #ifndef LV_TILEVIEW_DEF_ANIM_TIME
 #  define LV_TILEVIEW_DEF_ANIM_TIME   300
 #endif
-#endif
-
-/*Window (dependencies: lv_cont, lv_btn, lv_label, lv_img, lv_page)*/
-#ifndef LV_USE_WIN
-#define LV_USE_WIN      1
 #endif
 
 /*==================

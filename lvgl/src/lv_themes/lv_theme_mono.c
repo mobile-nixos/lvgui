@@ -304,17 +304,6 @@ static void kb_init(void)
 #endif
 }
 
-static void mbox_init(void)
-{
-#if LV_USE_MBOX
-
-    theme.style.mbox.bg      = &dark_frame;
-    theme.style.mbox.btn.bg  = &lv_style_transp_fit;
-    theme.style.mbox.btn.rel = &light_frame;
-    theme.style.mbox.btn.pr  = &dark_frame;
-#endif
-}
-
 static void page_init(void)
 {
 #if LV_USE_PAGE
@@ -382,39 +371,6 @@ static void roller_init(void)
 
     theme.style.roller.bg  = &bg;
     theme.style.roller.sel = &dark_frame;
-#endif
-}
-
-static void tabview_init(void)
-{
-#if LV_USE_TABVIEW != 0
-
-    theme.style.tabview.bg          = &light_frame;
-    theme.style.tabview.indic       = &light_plain;
-    theme.style.tabview.btn.bg      = &lv_style_transp_fit;
-    theme.style.tabview.btn.rel     = &light_frame;
-    theme.style.tabview.btn.pr      = &dark_frame;
-    theme.style.tabview.btn.tgl_rel = &dark_frame;
-    theme.style.tabview.btn.tgl_pr  = &light_frame;
-#endif
-}
-
-static void win_init(void)
-{
-#if LV_USE_WIN != 0
-    static lv_style_t win_header;
-    lv_style_copy(&win_header, &dark_plain);
-    win_header.body.padding.left   = LV_DPI / 30;
-    win_header.body.padding.right  = LV_DPI / 30;
-    win_header.body.padding.top    = LV_DPI / 30;
-    win_header.body.padding.bottom = LV_DPI / 30;
-
-    theme.style.win.bg      = &light_frame;
-    theme.style.win.sb      = &dark_frame;
-    theme.style.win.header  = &win_header;
-    theme.style.win.content = &lv_style_transp;
-    theme.style.win.btn.rel = &light_frame;
-    theme.style.win.btn.pr  = &dark_frame;
 #endif
 }
 
@@ -497,15 +453,12 @@ lv_theme_t * lv_theme_mono_init(uint16_t hue, lv_font_t * font)
     cb_init();
     btnm_init();
     kb_init();
-    mbox_init();
     page_init();
     ta_init();
     spinbox_init();
     list_init();
     ddlist_init();
     roller_init();
-    tabview_init();
-    win_init();
 
     theme.group.style_mod_xcb      = style_mod;
     theme.group.style_mod_edit_xcb = style_mod_edit;

@@ -1768,6 +1768,28 @@ uint16_t lv_obj_count_children_recursive(const lv_obj_t * obj)
     return cnt;
 }
 
+/**
+ * Checks, recursively, to see if `target` is a children of `obj`.
+ * @param obj pointer to an object to search into
+ * @param target pointer to an object to compare against
+ * @return whether target is children of obj.
+ */
+bool lv_obj_is_children(const lv_obj_t * obj, const lv_obj_t * target)
+{
+    LV_ASSERT_OBJ(obj, LV_OBJX_NAME);
+
+    lv_obj_t * i;
+
+    LV_LL_READ(obj->child_ll, i)
+    {
+        if (i == target || lv_obj_is_children(i, target)) {
+			return true;
+		}
+    }
+
+    return false;
+}
+
 /*---------------------
  * Coordinate get
  *--------------------*/

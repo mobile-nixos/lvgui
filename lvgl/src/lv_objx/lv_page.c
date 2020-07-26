@@ -617,6 +617,9 @@ void lv_page_glue_obj(lv_obj_t * obj, bool glue)
  */
 void lv_page_focus(lv_obj_t * page, const lv_obj_t * obj, lv_anim_enable_t anim_en)
 {
+	/* Makes no sense to "focus" on something that isn't in the page. */
+	if (!lv_obj_is_children(page, obj)) { return; }
+
     lv_page_ext_t * ext = lv_obj_get_ext_attr(page);
 
 #if LV_USE_ANIMATION
