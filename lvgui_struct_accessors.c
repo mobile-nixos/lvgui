@@ -214,3 +214,7 @@ uint8_t lvgui_get_lv_style__line_rounded(lv_style_t * s) {
 void lvgui_set_lv_style__line_rounded(lv_style_t * s, uint8_t value) {
   s->line.rounded = value;
 }
+
+lv_anim_t * lvgui_allocate_lv_anim() {
+  return malloc(sizeof(lv_anim_t));
+}
