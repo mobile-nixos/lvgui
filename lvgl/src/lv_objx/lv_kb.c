@@ -35,49 +35,77 @@ static lv_res_t lv_kb_signal(lv_obj_t * kb, lv_signal_t sign, void * param);
  **********************/
 static lv_signal_cb_t ancestor_signal;
 /* clang-format off */
-static const char * kb_map_lc[] = {"1#", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", LV_SYMBOL_BACKSPACE, "\n",
-                                   "ABC", "a", "s", "d", "f", "g", "h", "j", "k", "l", LV_SYMBOL_NEW_LINE, "\n",
-                                   "_", "-", "z", "x", "c", "v", "b", "n", "m", ".", ",", ":", "\n",
-                                   LV_SYMBOL_CLOSE, LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, LV_SYMBOL_OK, ""};
+
+#define LOWER_ROW_KEYS "[dummy]", " ", LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, ""
+#define LOWER_ROW_CTRL LV_BTNM_CTRL_HIDDEN | 2, 7, 1, 1
+
+// TODO: icons for caps and shift
+
+static const char * kb_map_lc[] = {
+	"`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", LV_SYMBOL_BACKSPACE, "\n",
+	"TAB", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\", "\n",
+	"CAPS", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", LV_SYMBOL_NEW_LINE, "\n",
+	"SHIFT", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "SHIFT", "\n",
+	LOWER_ROW_KEYS
+};
 
 static const lv_btnm_ctrl_t kb_ctrl_lc_map[] = {
-    LV_KB_CTRL_BTN_FLAGS | 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 7,
-    LV_KB_CTRL_BTN_FLAGS | 6, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    LV_KB_CTRL_BTN_FLAGS | 2, 2, 6, 2, LV_KB_CTRL_BTN_FLAGS | 2};
+	/* 012335 */ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7,
+	/* qwerty */ LV_BTNM_CTRL_HIDDEN | 5, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,
+	/* asdfgh */ LV_KB_CTRL_BTN_FLAGS | 6, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7,
+	/* zxcvbn */ LV_KB_CTRL_BTN_FLAGS | 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, LV_KB_CTRL_BTN_FLAGS | 3,
+	LOWER_ROW_CTRL
+};
 
-static const char * kb_map_uc[] = {"1#", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", LV_SYMBOL_BACKSPACE, "\n",
-                                   "abc", "A", "S", "D", "F", "G", "H", "J", "K", "L", LV_SYMBOL_NEW_LINE, "\n",
-                                   "_", "-", "Z", "X", "C", "V", "B", "N", "M", ".", ",", ":", "\n",
-                                   LV_SYMBOL_CLOSE, LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, LV_SYMBOL_OK, ""};
+static const char * kb_map_uc[] = {
+	"~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+", LV_SYMBOL_BACKSPACE, "\n",
+	"TAB", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "{", "}", "|", "\n",
+	"caps", "A", "S", "D", "F", "G", "H", "J", "K", "L", ":", "\"", LV_SYMBOL_NEW_LINE, "\n",
+	"shift", "Z", "X", "C", "V", "B", "N", "M", "<", ">", "?", "shift", "\n",
+	LOWER_ROW_KEYS
+};
 
 static const lv_btnm_ctrl_t kb_ctrl_uc_map[] = {
-    LV_KB_CTRL_BTN_FLAGS | 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 7,
-    LV_KB_CTRL_BTN_FLAGS | 6, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    LV_KB_CTRL_BTN_FLAGS | 2, 2, 6, 2, LV_KB_CTRL_BTN_FLAGS | 2};
+	/* 012335 */ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7,
+	/* qwerty */ LV_BTNM_CTRL_HIDDEN | 5, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,
+	/* asdfgh */ LV_KB_CTRL_BTN_FLAGS | 6, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7,
+	/* zxcvbn */ LV_KB_CTRL_BTN_FLAGS | 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, LV_KB_CTRL_BTN_FLAGS | 3,
+	LOWER_ROW_CTRL
+};
 
-static const char * kb_map_spec[] = {"0", "1", "2", "3", "4" ,"5", "6", "7", "8", "9", LV_SYMBOL_BACKSPACE, "\n",
-                                     "abc", "+", "-", "/", "*", "=", "%", "!", "?", "#", "<", ">", "\n",
-                                     "\\",  "@", "$", "(", ")", "{", "}", "[", "]", ";", "\"", "'", "\n",
-                                     LV_SYMBOL_CLOSE, LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, LV_SYMBOL_OK, ""};
+// Special characters keyboard (unused for the time being) [1#]
+// FIXME: instead, 3rd layer (Alt Gr) support?
+
+static const char * kb_map_spec[] = {
+	"0", "1", "2", "3", "4" ,"5", "6", "7", "8", "9", LV_SYMBOL_BACKSPACE, "\n",
+	"abc", "+", "-", "/", "*", "=", "%", "!", "?", "#", "<", ">", "\n",
+	"\\",  "@", "$", "(", ")", "{", "}", "[", "]", ";", "\"", "'", "\n",
+	LV_SYMBOL_CLOSE, LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, LV_SYMBOL_OK, ""
+};
 
 static const lv_btnm_ctrl_t kb_ctrl_spec_map[] = {
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, LV_KB_CTRL_BTN_FLAGS | 2,
-    LV_KB_CTRL_BTN_FLAGS | 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    LV_KB_CTRL_BTN_FLAGS | 2, 2, 6, 2, LV_KB_CTRL_BTN_FLAGS | 2};
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, LV_KB_CTRL_BTN_FLAGS | 2,
+	LV_KB_CTRL_BTN_FLAGS | 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	LV_KB_CTRL_BTN_FLAGS | 2, 2, 6, 2, LV_KB_CTRL_BTN_FLAGS | 2
+};
 
-static const char * kb_map_num[] = {"1", "2", "3", LV_SYMBOL_CLOSE, "\n",
-                                    "4", "5", "6", LV_SYMBOL_OK, "\n",
-                                    "7", "8", "9", LV_SYMBOL_BACKSPACE, "\n",
-                                    "+/-", "0", ".", LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, ""};
+
+// Numeric-only keypad
+
+static const char * kb_map_num[] = {
+	"1", "2", "3", LV_SYMBOL_CLOSE, "\n",
+	"4", "5", "6", LV_SYMBOL_OK, "\n",
+	"7", "8", "9", LV_SYMBOL_BACKSPACE, "\n",
+	"+/-", "0", ".", LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, ""
+};
 
 static const lv_btnm_ctrl_t kb_ctrl_num_map[] = {
-        1, 1, 1, LV_KB_CTRL_BTN_FLAGS | 2,
-        1, 1, 1, LV_KB_CTRL_BTN_FLAGS | 2,
-        1, 1, 1, 2,
-        1, 1, 1, 1, 1};
+	1, 1, 1, LV_KB_CTRL_BTN_FLAGS | 2,
+	1, 1, 1, LV_KB_CTRL_BTN_FLAGS | 2,
+	1, 1, 1, 2,
+	1, 1, 1, 1, 1
+};
 /* clang-format on */
 
 /**********************
@@ -395,11 +423,12 @@ void lv_kb_def_event_cb(lv_obj_t * kb, lv_event_t event)
     if(txt == NULL) return;
 
     /*Do the corresponding action according to the text of the button*/
-    if(strcmp(txt, "abc") == 0) {
+    if(strcmp(txt, "caps") == 0 || strcmp(txt, "shift") == 0) {
         lv_btnm_set_map(kb, kb_map_lc);
         lv_btnm_set_ctrl_map(kb, kb_ctrl_lc_map);
         return;
-    } else if(strcmp(txt, "ABC") == 0) {
+    } else if(strcmp(txt, "CAPS") == 0 || strcmp(txt, "SHIFT") == 0) {
+		// TODO: if capslock flag
         lv_btnm_set_map(kb, kb_map_uc);
         lv_btnm_set_ctrl_map(kb, kb_ctrl_uc_map);
         return;
@@ -459,6 +488,7 @@ void lv_kb_def_event_cb(lv_obj_t * kb, lv_event_t event)
     } else {
         lv_ta_add_text(ext->ta, txt);
     }
+	// TODO: if capslock flag is off, and keyboard is upper, go back to small caps
 }
 
 /**********************
