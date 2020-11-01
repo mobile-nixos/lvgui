@@ -34,6 +34,7 @@ static lv_res_t lv_kb_signal(lv_obj_t * kb, lv_signal_t sign, void * param);
  *  STATIC VARIABLES
  **********************/
 static lv_signal_cb_t ancestor_signal;
+static bool lv_kb_capslock = false;
 /* clang-format off */
 
 #define LOWER_ROW_KEYS "[dummy]", " ", LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, ""
@@ -422,6 +423,13 @@ void lv_kb_def_event_cb(lv_obj_t * kb, lv_event_t event)
     const char * txt = lv_btnm_get_active_btn_text(kb);
     if(txt == NULL) return;
 
+	if(strcmp(txt, "CAPS") == 0) {
+		lv_kb_capslock = true;
+	}
+	if(strcmp(txt, "caps") == 0) {
+		lv_kb_capslock = false;
+	}
+
     /*Do the corresponding action according to the text of the button*/
     if(strcmp(txt, "caps") == 0 || strcmp(txt, "shift") == 0) {
         lv_btnm_set_map(kb, kb_map_lc);
@@ -488,7 +496,20 @@ void lv_kb_def_event_cb(lv_obj_t * kb, lv_event_t event)
     } else {
         lv_ta_add_text(ext->ta, txt);
     }
-	// TODO: if capslock flag is off, and keyboard is upper, go back to small caps
+
+	if (lv_kb_capslock) {
+		// Capslock is on;
+		// Unshift if we were shifted.
+		if (lv_kb_get_map_array(kb) == kb_map_lc) {
+			lv_btnm_set_map(kb, kb_map_uc);
+			lv_btnm_set_ctrl_map(kb, kb_ctrl_uc_map);
+		}
+	}
+	else {
+		// Capslock flag is off, go back to small caps
+		lv_btnm_set_map(kb, kb_map_lc);
+		lv_btnm_set_ctrl_map(kb, kb_ctrl_lc_map);
+	}
 }
 
 /**********************
