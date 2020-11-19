@@ -342,6 +342,7 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 #endif
 			}
 		} else if(in.type == EV_KEY) {
+			data->key = 0;
 			if(in.code == BTN_MOUSE || in.code == BTN_TOUCH || in.code == BTN_LEFT) {
 				if(in.value == 0)
 					instance->evdev_button = LV_INDEV_STATE_REL;
@@ -358,6 +359,29 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 						break;
 					case KEY_TAB:
 						data->key = LV_KEY_NEXT;
+						break;
+
+					case KEY_DELETE:
+						data->key = LV_KEY_DEL;
+						break;
+					case KEY_HOME:
+						data->key = LV_KEY_HOME;
+						break;
+					case KEY_END:
+						data->key = LV_KEY_END;
+						break;
+
+					case KEY_RIGHT:
+						data->key = LV_KEY_RIGHT;
+						break;
+					case KEY_LEFT:
+						data->key = LV_KEY_LEFT;
+						break;
+					case KEY_UP:
+						data->key = LV_KEY_UP;
+						break;
+					case KEY_DOWN:
+						data->key = LV_KEY_DOWN;
 						break;
 
 					// Phone compat
