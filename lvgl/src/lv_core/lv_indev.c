@@ -410,7 +410,7 @@ static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
         /*Simulate a press on the object if ENTER was pressed*/
         if(data->key == LV_KEY_ENTER) {
             /*Send the ENTER as a normal KEY*/
-            lv_group_send_data(g, LV_KEY_ENTER);
+            lv_group_send_key(g, LV_KEY_ENTER);
 
             indev_obj_act->signal_cb(indev_obj_act, LV_SIGNAL_PRESSED, NULL);
             if(indev_reset_check(&i->proc)) return;
@@ -418,7 +418,7 @@ static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
             if(indev_reset_check(&i->proc)) return;
         } else if(data->key == LV_KEY_ESC) {
             /*Send the ESC as a normal KEY*/
-            lv_group_send_data(g, LV_KEY_ESC);
+            lv_group_send_key(g, LV_KEY_ESC);
 
             lv_event_send(indev_obj_act, LV_EVENT_CANCEL, NULL);
             if(indev_reset_check(&i->proc)) return;
@@ -437,7 +437,7 @@ static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
         }
         /*Just send other keys to the object (e.g. 'A' or `LV_GROUP_KEY_RIGHT`)*/
         else {
-            lv_group_send_data(g, data->key);
+            lv_group_send_data(g, data);
         }
     }
     /*Pressing*/
@@ -480,7 +480,7 @@ static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
             }
             /*Just send other keys again to the object (e.g. 'A' or `LV_GROUP_KEY_RIGHT)*/
             else {
-                lv_group_send_data(g, data->key);
+                lv_group_send_data(g, data);
                 if(indev_reset_check(&i->proc)) return;
             }
         }
@@ -545,9 +545,9 @@ static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
         if(lv_group_get_editing(g)) {
             int32_t s;
             if(data->enc_diff < 0) {
-                for(s = 0; s < -data->enc_diff; s++) lv_group_send_data(g, LV_KEY_LEFT);
+                for(s = 0; s < -data->enc_diff; s++) lv_group_send_key(g, LV_KEY_LEFT);
             } else if(data->enc_diff > 0) {
-                for(s = 0; s < data->enc_diff; s++) lv_group_send_data(g, LV_KEY_RIGHT);
+                for(s = 0; s < data->enc_diff; s++) lv_group_send_key(g, LV_KEY_RIGHT);
             }
         }
         /*In navigate mode focus on the next/prev objects*/
@@ -638,7 +638,7 @@ static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
                 lv_event_send(indev_obj_act, LV_EVENT_RELEASED, NULL);
                 if(indev_reset_check(&i->proc)) return;
 
-                lv_group_send_data(g, LV_KEY_ENTER);
+                lv_group_send_key(g, LV_KEY_ENTER);
             }
         }
         /*If the focused object is editable and now in navigate mode then on enter switch edit
