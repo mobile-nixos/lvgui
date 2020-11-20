@@ -273,7 +273,7 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 	struct input_event in;
 	int evdev_fd = instance->evdev_fd;
 
-	while(read(evdev_fd, &in, sizeof(struct input_event)) > 0) {
+	if (read(evdev_fd, &in, sizeof(struct input_event)) > 0) {
 		if(in.type == EV_REL) {
 			if(in.code == REL_X)
 #if EVDEV_SWAP_AXES
@@ -403,12 +403,12 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 				return false;
 			}
 		}
+		return true;
 	}
 
-	if(drv->type == LV_INDEV_TYPE_KEYBOARD) {
-		/* No data retrieved */
-		data->key = instance->evdev_key_val;
-		data->state = instance->evdev_button;
+	if (drv->type == LV_INDEV_TYPE_KEYBOARD) {
+		// All events were previously "pumped" out.
+		// If we're here, there is no event anymore.
 		return false;
 	}
 	if(drv->type != LV_INDEV_TYPE_POINTER)
