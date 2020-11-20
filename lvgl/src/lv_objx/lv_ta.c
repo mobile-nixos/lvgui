@@ -1544,7 +1544,8 @@ static lv_res_t lv_ta_signal(lv_obj_t * ta, lv_signal_t sign, void * param)
             }
         }
     } else if(sign == LV_SIGNAL_CONTROL) {
-        uint32_t c = *((uint32_t *)param); /*uint32_t because can be UTF-8*/
+        lv_indev_data_t * data = (lv_indev_data_t *)param;
+        uint32_t c = (data->key); /*uint32_t because can be UTF-8*/
         if(c == LV_KEY_RIGHT)
             lv_ta_cursor_right(ta);
         else if(c == LV_KEY_LEFT)
@@ -1561,8 +1562,13 @@ static lv_res_t lv_ta_signal(lv_obj_t * ta, lv_signal_t sign, void * param)
             lv_ta_set_cursor_pos(ta, 0);
         else if(c == LV_KEY_END)
             lv_ta_set_cursor_pos(ta, LV_TA_CURSOR_LAST);
-        else {
+        else if(c) {
+            // Append a char if it's been given.
             lv_ta_add_char(ta, c);
+        }
+        else {
+            // Otherwise, append the string given.
+            lv_ta_add_text(ta, data->string);
         }
     } else if(sign == LV_SIGNAL_GET_EDITABLE) {
         bool * editable = (bool *)param;

@@ -3,6 +3,7 @@
 , fetchFromGitHub
 , pkg-config
 , libevdev
+, libxkbcommon
 , nix-gitignore
 , SDL2
 , withSimulator ? false
@@ -26,6 +27,7 @@ in
 
     buildInputs = [
       libevdev
+      libxkbcommon
     ]
     ++ optionals withSimulator simulatorDeps
     ;

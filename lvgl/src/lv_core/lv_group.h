@@ -147,12 +147,20 @@ void lv_group_focus_prev(lv_group_t * group);
 void lv_group_focus_freeze(lv_group_t * group, bool en);
 
 /**
- * Send a control character to the focuses object of a group
+ * Send a control character to the focused object of a group
  * @param group pointer to a group
  * @param c a character (use LV_KEY_.. to navigate)
  * @return result of focused object in group.
  */
-lv_res_t lv_group_send_data(lv_group_t * group, uint32_t c);
+lv_res_t lv_group_send_key(lv_group_t * group, uint32_t c);
+
+/**
+ * Send an input event data to the focused object of a group
+ * @param group pointer to a group
+ * @param data pointer to the indev data
+ * @return result of focused object in group.
+ */
+lv_res_t lv_group_send_data(lv_group_t * group, lv_indev_data_t * data);
 
 /**
  * Set a function for a group which will modify the object's style if it is in focus
