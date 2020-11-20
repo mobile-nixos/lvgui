@@ -70,6 +70,7 @@ else
 CFLAGS += $(shell $(PKG_CONFIG) --cflags libevdev)
 LDFLAGS += $(shell $(PKG_CONFIG) --libs libevdev)
 LDFLAGS += -lpthread
+LDFLAGS += -lxkbcommon
 REQUIRES += libevdev
 endif
 
