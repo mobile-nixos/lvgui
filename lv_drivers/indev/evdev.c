@@ -8,7 +8,20 @@
 #include <linux/input.h>
 #include <libevdev/libevdev.h>
 
+#include <xkbcommon/xkbcommon.h>
+#include <xkbcommon/xkbcommon-compose.h>
+
 #define FUDGE_FACTOR 0.5
+
+/* https://github.com/xkbcommon/libxkbcommon/blob/9caa4128c2534cfbd46fc73768ef6202f813eb53/tools/interactive-evdev.c#L57 */
+#define EVDEV_OFFSET 8
+
+/* The meaning of the input_event 'value' field. */
+enum {
+    KEY_STATE_RELEASE = 0,
+    KEY_STATE_PRESS = 1,
+    KEY_STATE_REPEAT = 2,
+};
 
 /**
  * Read: https://www.kernel.org/doc/Documentation/input/event-codes.txt
@@ -18,6 +31,11 @@ int map(int x, int in_min, int in_max, int out_min, int out_max);
 inline static int clamp(int value, int min, int max);
 evdev_drv_instance* evdev_drv_instance_new(void);
 void evdev_drv_instance_destroy(evdev_drv_instance* instance);
+
+static struct xkb_keymap *our_xkb_keymap = NULL;
+static struct xkb_state  *our_xkb_state = NULL;
+static struct xkb_compose_state *our_xkb_compose_state = NULL;
+static int handle_xkbcommon_input(int keycode, int direction, char *key_character, int key_character_length);
 
 evdev_drv_instance* evdev_drv_instance_new()
 {
@@ -90,6 +108,65 @@ static bool evdev_drv_device_is_keyboard(char* dev_name)
 
 	/* :( */
 	return system(cmd) == 0;
+}
+
+int xkbcommon_init() {
+	// Assume it was initialized.
+	if (our_xkb_keymap) {
+		return 0;
+	}
+
+	struct xkb_context *ctx;
+	ctx = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+	if (!ctx) {
+		printf("error: Could not create xkb_context.\n");
+		return 1;
+	}
+
+	// FIXME: allow configuring during runtime
+	//         -> it should also affect lv_keyboard!!
+	// For now we're showing the same keyboard as lv_keyboard does.
+	struct xkb_rule_names names = {
+		.layout = "us",
+	};
+
+	our_xkb_keymap = xkb_keymap_new_from_names(ctx, &names,
+			XKB_KEYMAP_COMPILE_NO_FLAGS);
+	if (!our_xkb_keymap) {
+		printf("error: Could not create xkb_keymap.\n");
+		return 1;
+	}
+
+	our_xkb_state = xkb_state_new(our_xkb_keymap);
+	if (!our_xkb_state) {
+		printf("error: Could not create xkb_state\n");
+		return 1;
+	}
+
+	const char *locale;
+	locale = getenv("LC_ALL");
+	if (!locale || !*locale)
+		locale = getenv("LC_CTYPE");
+	if (!locale || !*locale)
+		locale = getenv("LANG");
+	if (!locale || !*locale)
+		locale = "C";
+
+	// Try setting up compose_state, but DON'T fail if it fails.
+	// We can probably continue without one, though dead keys won't work.
+	struct xkb_compose_table *compose_table;
+	compose_table = xkb_compose_table_new_from_locale(ctx, locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
+
+	if (!compose_table) {
+		printf("warning: Could not create xkb_compose_table.\n");
+	}
+	else {
+		//printf("Configured locale and xkb_compose_table\n");
+
+		our_xkb_compose_state = xkb_compose_state_new(compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
+	}
+
+	return 0;
 }
 
 /**
@@ -168,6 +245,9 @@ evdev_drv_instance* evdev_init(char* dev_name)
 		instance->is_mouse = true;
 		printf("  - is a mouse\n");
 	}
+
+	// Initialize xkbcommon
+	xkbcommon_init();
 
 	return instance;
 }
@@ -364,12 +444,13 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 					case KEY_DELETE:
 						data->key = LV_KEY_DEL;
 						break;
-					case KEY_HOME:
-						data->key = LV_KEY_HOME;
-						break;
-					case KEY_END:
-						data->key = LV_KEY_END;
-						break;
+					// Does not actually work :/
+					//case KEY_HOME:
+					//	data->key = LV_KEY_HOME;
+					//	break;
+					//case KEY_END:
+					//	data->key = LV_KEY_END;
+					//	break;
 
 					case KEY_RIGHT:
 						data->key = LV_KEY_RIGHT;
@@ -394,23 +475,38 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 					case KEY_POWER:
 						data->key = LV_KEY_ENTER;
 						break;
+
+					// Here we handle converting to a useful value
 					default:
-						data->key = 0;
+						{
+							// We don't handle evdev key repeats; LVGL apparently does that for us.
+							if (in.value == KEY_STATE_RELEASE || in.value == KEY_STATE_PRESS) {
+								char input_string[64] = "";
+
+								handle_xkbcommon_input(
+									in.code + EVDEV_OFFSET,
+									(in.value == KEY_STATE_RELEASE ? XKB_KEY_UP : XKB_KEY_DOWN),
+									input_string,
+									64
+								);
+
+								strncpy(data->string, input_string, 64);
+							}
+
+							// Ensures control characters aren't thrown about.
+							if (data-> key < 10) {
+								data->key = 0;
+							}
+						}
 						break;
 				}
 				instance->evdev_key_val = data->key;
 				instance->evdev_button = data->state;
-				return false;
 			}
 		}
 		return true;
 	}
 
-	if (drv->type == LV_INDEV_TYPE_KEYBOARD) {
-		// All events were previously "pumped" out.
-		// If we're here, there is no event anymore.
-		return false;
-	}
 	if(drv->type != LV_INDEV_TYPE_POINTER)
 		return false;
 	/*Store the collected data*/
@@ -459,4 +555,60 @@ inline static int clamp(int value, int min, int max)
 	}
 	return value;
 }
+
+/**
+ * @return 0: when no character has been produced (e.g. in compose or non-character key)
+ * @return char len when a character has been produced.
+ */
+static int handle_xkbcommon_input(int keycode, int direction, char *key_character, int key_character_length)
+{
+	if (!our_xkb_state) {
+		return 0;
+	}
+
+	int ret = 0;
+	xkb_keysym_t keysym;
+	char keysym_name[64];
+
+	// Record the change
+	xkb_state_update_key(our_xkb_state, keycode, direction);
+
+	// Get information
+	keysym = xkb_state_key_get_one_sym(our_xkb_state, keycode);
+
+	// Get the current character string
+	xkb_state_key_get_utf8(our_xkb_state, keycode, key_character, key_character_length);
+	ret = xkb_state_key_get_utf8(our_xkb_state, keycode, NULL, 0);
+
+	// Get keysym name
+	xkb_keysym_get_name(keysym, keysym_name, sizeof(keysym_name));
+
+	//printf(":: -> key code 0x%02x direction %1d; %s\n", keycode, direction, keysym_name);
+
+	// Maybe override keysym and current character string from compose
+	if (direction == XKB_KEY_UP) {
+		if (our_xkb_compose_state) {
+			xkb_compose_state_feed(our_xkb_compose_state, keysym);
+
+			int result = 0;
+			result = xkb_compose_state_get_status(our_xkb_compose_state);
+			if (result == XKB_COMPOSE_COMPOSED) {
+				xkb_compose_state_get_utf8(our_xkb_compose_state, key_character, key_character_length);
+				ret = xkb_compose_state_get_utf8(our_xkb_compose_state, NULL, 0);
+				keysym = xkb_compose_state_get_one_sym(our_xkb_compose_state);
+			}
+		}
+
+		// Get keysym name
+		xkb_keysym_get_name(keysym, keysym_name, sizeof(keysym_name));
+
+		// Use the character we got
+		if (strcmp(key_character, "")) {
+			//printf(":: -> Char entered: [%s] key name: '%s'; ret = %d\n", key_character, keysym_name, ret);
+		}
+	}
+
+	return ret;
+}
+
 #endif
