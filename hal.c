@@ -278,3 +278,13 @@ lv_group_t * lvgui_get_focus_group()
 {
 	return lvgui_focus_group;
 }
+
+void lvgui_style_mod_noop(struct _lv_group_t *g, lv_style_t *t)
+{
+}
+
+void lvgui_focus_ring_disable()
+{
+	lv_group_set_style_mod_cb(lvgui_focus_group, lvgui_style_mod_noop);
+	lv_group_set_style_mod_edit_cb(lvgui_focus_group, lvgui_style_mod_noop);
+}
