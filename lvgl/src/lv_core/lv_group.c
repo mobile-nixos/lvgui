@@ -288,23 +288,34 @@ void lv_group_focus_freeze(lv_group_t * group, bool en)
         group->frozen = 1;
 }
 
+lv_res_t lv_group_send_key(lv_group_t * group, uint32_t c)
+{
+	lv_res_t res;
+	lv_indev_data_t * data = lv_mem_alloc(sizeof(lv_indev_data_t));
+	data->key = c;
+	res = lv_group_send_data(group, data);
+	lv_mem_free(data);
+
+	return res;
+}
+
 /**
- * Send a control character to the focuses object of a group
+ * Send an input event data to the focused object of a group
  * @param group pointer to a group
- * @param c a character (use LV_KEY_.. to navigate)
+ * @param data pointer to the indev data
  * @return result of focused object in group.
  */
-lv_res_t lv_group_send_data(lv_group_t * group, uint32_t c)
+lv_res_t lv_group_send_data(lv_group_t * group, lv_indev_data_t * data)
 {
     lv_obj_t * act = lv_group_get_focused(group);
     if(act == NULL) return LV_RES_OK;
 
     lv_res_t res;
 
-    res = act->signal_cb(act, LV_SIGNAL_CONTROL, &c);
+    res = act->signal_cb(act, LV_SIGNAL_CONTROL, data);
     if(res != LV_RES_OK) return res;
 
-    res = lv_event_send(act, LV_EVENT_KEY, &c);
+    res = lv_event_send(act, LV_EVENT_KEY, data);
     if(res != LV_RES_OK) return res;
 
     return res;
