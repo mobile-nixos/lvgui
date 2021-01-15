@@ -28,6 +28,10 @@ void hal_setup_display(void);
 #	include "lv_drivers/indev/evdev.h"
 #endif
 
+#if USE_LIBINPUT
+#	include "lv_drivers/indev/libinput_drv.h"
+#endif
+
 #if USE_MONITOR
 #	include "lv_drivers/display/monitor.h"
 #endif
@@ -166,6 +170,60 @@ static void init_evdev(char* name)
 }
 #endif
 
+#if USE_LIBINPUT
+static void hal_add_libinput_device(char* dev_path)
+{
+	libinput_drv_instance* instance = libinput_init_drv(dev_path);
+
+	if (instance == NULL) {
+		return;
+	}
+
+	lv_indev_drv_t indev_drv;
+	lv_indev_drv_init(&indev_drv);
+
+	indev_drv.type = instance->lv_indev_drv_type;
+	indev_drv.read_cb = libinput_read;
+	indev_drv.user_data = instance;
+	lv_indev_t * indev = lv_indev_drv_register(&indev_drv);
+
+	// Add a "regular" cursor for touchpads and mice.
+	if (instance->is_pointer) {
+		lv_indev_set_cursor(indev, lvgui_cursor_obj);
+		lv_obj_set_hidden(lvgui_cursor_obj, true);
+	}
+
+	// For touchscreen, a helpful indicator of where the touch happens.
+	// This will be useful to detect display orientation or calibration that
+	// does not match with the expected.
+	if (instance->is_touchscreen) {
+		// The cursor should be offset so the center of the cursor is the
+		// x,y point of the touch.
+		indev->cursor_offset.x = -1 * lvgui_touch.header.w/2;
+		indev->cursor_offset.y = -1 * lvgui_touch.header.h/2;
+
+		lv_indev_set_cursor(indev, lvgui_touch_obj);
+		// Start hidden, there may be a touchscreen that never gets used.
+		// Additionally helps with "one-shot" uses like for splash screens.
+		lv_obj_set_hidden(lvgui_touch_obj, true);
+
+		// Setup an animation to "unclutter" (make the cursor disappear)
+		lv_anim_t * a;
+		a = lv_mem_alloc(sizeof(lv_anim_t));
+		indev->cursor_unclutter_animation = a;
+		lv_anim_init(a);
+		lv_anim_set_exec_cb(a, lvgui_touch_obj, (lv_anim_exec_xcb_t)lv_obj_set_opa_scale);
+		// 400ms after the move, take 500ms to disappear.
+		lv_anim_set_time(a, 300, 500);
+		lv_anim_set_values(a, 255, 0);
+		lv_anim_set_path_cb(a, lv_anim_path_ease_in);
+	}
+
+	// Link the input device to the main focus group.
+	lv_indev_set_group(indev, lvgui_focus_group);
+}
+#endif
+
 void hal_preinit()
 {
 	hal_setup_display();
@@ -223,6 +281,18 @@ void hal_init(void)
 		glob("/dev/input/event*", 0, NULL, &globbuf);
 		for (filename = globbuf.gl_pathv, cnt = globbuf.gl_pathc; cnt; filename++, cnt--) {
 			init_evdev(*filename);
+		}
+	}
+#endif
+
+#if USE_LIBINPUT
+	{
+		char **dev_path;
+		size_t cnt;
+		glob_t globbuf;
+		glob("/dev/input/event*", 0, NULL, &globbuf);
+		for (dev_path = globbuf.gl_pathv, cnt = globbuf.gl_pathc; cnt; dev_path++, cnt--) {
+			hal_add_libinput_device(*dev_path);
 		}
 	}
 #endif

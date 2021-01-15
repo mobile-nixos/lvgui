@@ -1,8 +1,3 @@
-/**
- * @file libinput.h
- *
- */
-
 #ifndef LVGL_LIBINPUT_H
 #define LVGL_LIBINPUT_H
 
@@ -29,9 +24,44 @@ extern "C" {
 #include "lvgl/lvgl.h"
 #endif
 
+#include <libinput.h>
+#include <poll.h>
+
 /*********************
  *      DEFINES
  *********************/
+
+typedef struct {
+	// Configure this input driver to be a specific LVGL input type.
+	int lv_indev_drv_type;
+
+	// One context per input device.
+	// This is because LVGL's input handling wants to *own* one loop per
+	// device; sharing context means sharing input FDs.
+	struct libinput *libinput_context;
+
+	// The "tangible" libinput opaque type.
+	struct libinput_device *libinput_device;
+
+	// The file descriptors to poll() on
+	struct pollfd fds[1];
+
+	// Properties of the input, shouldn't change.
+	bool is_pointer;
+	bool is_touchscreen;
+	bool is_keyboard;
+
+	// Starting from here, properties used to keep track of the state between
+	// calls.
+
+	// Pressed or released
+	int state;
+	// Keyboard key being pressed (or released)
+	int key;
+	// Coordinates for a pointer
+	int root_x;
+	int root_y;
+} libinput_drv_instance;
 
 /**********************
  *      TYPEDEFS
@@ -42,21 +72,14 @@ extern "C" {
  **********************/
 
 /**
- * Initialize the libinput
+ * Initialize a new libinput device instance
  */
-void libinput_init(void);
-/**
- * reconfigure the device file for libinput
- * @param dev_name set the libinput device filename
- * @return true: the device file set complete
- *         false: the device file doesn't exist current system
- */
-bool libinput_set_file(char* dev_name);
+libinput_drv_instance* libinput_init_drv(char* dev_name);
+
 /**
  * Get the current position and state of the libinput
  * @param indev_drv driver object itself
  * @param data store the libinput data here
- * @return false: because the points are not buffered, so no more data to be read
  */
 bool libinput_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
 
