@@ -12,7 +12,14 @@
 #include <stdbool.h>
 #include <linux/input.h>
 
+#include <xkbcommon/xkbcommon.h>
+#include <xkbcommon/xkbcommon-compose.h>
+
 #define DRV_DEBUG
+
+// I'd like a better source for the requirement than the *evdev* example, but eh, it _is_ needed.
+// https://github.com/xkbcommon/libxkbcommon/blob/9caa4128c2534cfbd46fc73768ef6202f813eb53/tools/interactive-evdev.c#L57
+#define EVDEV_OFFSET 8
 
 /*********************
  *      DEFINES
@@ -41,6 +48,8 @@ static libinput_drv_instance* libinput_drv_instance_new();
  */
 static void libinput_drv_instance_destroy(libinput_drv_instance* instance);
 
+static int xkbcommon_init();
+
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -50,6 +59,11 @@ static const struct libinput_interface drv_libinput_interface = {
   .open_restricted = open_restricted,
   .close_restricted = close_restricted,
 };
+
+static struct xkb_keymap *our_xkb_keymap = NULL;
+static struct xkb_state  *our_xkb_state = NULL;
+static struct xkb_compose_state *our_xkb_compose_state = NULL;
+static int handle_xkbcommon_input(int keycode, int direction, char *key_character, int key_character_length);
 
 /**********************
  *      MACROS
@@ -147,6 +161,9 @@ libinput_drv_instance* libinput_init_drv(char* dev_name)
 #ifdef DRV_DEBUG
 	printf("[indev/libinput]: done with '%s'...\n", dev_name);
 #endif
+
+	// Initialize xkbcommon
+	xkbcommon_init();
 
 	return instance;
 }
@@ -380,8 +397,22 @@ static void libinput_drv_handle_keyboard_input(libinput_drv_instance* instance, 
 
 		default:
 			// Here we handle converting to a useful value
-			// TODO: handle using xkbcommon
-			data->key = instance->key;
+			{
+				char input_string[64] = "";
+
+				handle_xkbcommon_input(
+					instance->key + EVDEV_OFFSET,
+					(instance->state == LIBINPUT_KEY_STATE_RELEASED ? XKB_KEY_UP : XKB_KEY_DOWN),
+					input_string,
+					64
+				);
+
+				strncpy(data->string, input_string, 64);
+
+				// Ensures control characters aren't thrown about.
+				if (data-> key < 10) {
+					data->key = 0;
+				}
 			}
 			break;
 	}
@@ -396,6 +427,126 @@ static void libinput_drv_handle_keyboard_input(libinput_drv_instance* instance, 
 
 	// Don't forget to cleanup!
 	libinput_event_destroy(event);
+}
+
+static int xkbcommon_init() {
+	// Assume it was initialized.
+	if (our_xkb_keymap) {
+		return 0;
+	}
+
+	struct xkb_context *ctx;
+	ctx = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+	if (!ctx) {
+		printf("error: Could not create xkb_context.\n");
+		return 1;
+	}
+
+	// TODO: allow configuring during runtime
+	//         -> it should also affect lv_keyboard!!
+	// For now we're showing the same keyboard as lv_keyboard does.
+	// (Sync-up with the displayed keyboard)
+	struct xkb_rule_names names = {
+		.layout = "us",
+	};
+
+	our_xkb_keymap = xkb_keymap_new_from_names(ctx, &names,
+			XKB_KEYMAP_COMPILE_NO_FLAGS);
+	if (!our_xkb_keymap) {
+		printf("error: Could not create xkb_keymap.\n");
+		return 1;
+	}
+
+	our_xkb_state = xkb_state_new(our_xkb_keymap);
+	if (!our_xkb_state) {
+		printf("error: Could not create xkb_state\n");
+		return 1;
+	}
+
+	const char *locale;
+	locale = getenv("LC_ALL");
+	if (!locale || !*locale)
+		locale = getenv("LC_CTYPE");
+	if (!locale || !*locale)
+		locale = getenv("LANG");
+	if (!locale || !*locale)
+		locale = "C";
+
+	// Try setting up compose_state, but DON'T fail if it fails.
+	// We can probably continue without one, though dead keys won't work.
+	struct xkb_compose_table *compose_table;
+	compose_table = xkb_compose_table_new_from_locale(ctx, locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
+
+	if (!compose_table) {
+		printf("warning: Could not create xkb_compose_table.\n");
+	}
+	else {
+#ifdef DRV_DEBUG
+		printf("Configured locale and xkb_compose_table\n");
+#endif
+
+		our_xkb_compose_state = xkb_compose_state_new(compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
+	}
+
+	return 0;
+}
+
+/**
+ * @return 0: when no character has been produced (e.g. in compose or non-character key)
+ * @return char len when a character has been produced.
+ */
+static int handle_xkbcommon_input(int keycode, int direction, char *key_character, int key_character_length)
+{
+	if (!our_xkb_state) {
+		return 0;
+	}
+
+	int ret = 0;
+	xkb_keysym_t keysym;
+	char keysym_name[64];
+
+	// Record the change
+	xkb_state_update_key(our_xkb_state, keycode, direction);
+
+	// Get information
+	keysym = xkb_state_key_get_one_sym(our_xkb_state, keycode);
+
+	// Get the current character string
+	xkb_state_key_get_utf8(our_xkb_state, keycode, key_character, key_character_length);
+	ret = xkb_state_key_get_utf8(our_xkb_state, keycode, NULL, 0);
+
+	// Get keysym name
+	xkb_keysym_get_name(keysym, keysym_name, sizeof(keysym_name));
+
+#ifdef DRV_DEBUG
+	printf("[indev/libinput]: key code 0x%02x direction %1d; %s\n", keycode, direction, keysym_name);
+#endif
+
+	// Maybe override keysym and current character string from compose
+	if (direction == XKB_KEY_UP) {
+		if (our_xkb_compose_state) {
+			xkb_compose_state_feed(our_xkb_compose_state, keysym);
+
+			int result = 0;
+			result = xkb_compose_state_get_status(our_xkb_compose_state);
+			if (result == XKB_COMPOSE_COMPOSED) {
+				xkb_compose_state_get_utf8(our_xkb_compose_state, key_character, key_character_length);
+				ret = xkb_compose_state_get_utf8(our_xkb_compose_state, NULL, 0);
+				keysym = xkb_compose_state_get_one_sym(our_xkb_compose_state);
+			}
+		}
+
+		// Get keysym name
+		xkb_keysym_get_name(keysym, keysym_name, sizeof(keysym_name));
+
+#ifdef DRV_DEBUG
+		if (strcmp(key_character, "")) {
+			printf("[indev/libinput]: Char entered: [%s] key name: '%s'; ret = %d\n", key_character, keysym_name, ret);
+		}
+#endif
+	}
+
+	return ret;
 }
 
 #endif
