@@ -660,7 +660,7 @@ static int drm_allocate_dumb(struct drm_buffer *buf)
 	ret = drmModeAddFB2(drm_dev.fd, drm_dev.width, drm_dev.height, drm_dev.fourcc,
 			    handles, pitches, offsets, &buf->fb_handle, 0);
 	if (ret) {
-		err("drmModeAddFB fail");
+		err("drmModeAddFB fail (%d)", ret);
 		return -1;
 	}
 
@@ -714,6 +714,11 @@ void drm_wait_vsync(lv_disp_drv_t *disp_drv)
 
 void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
+	if (drm_dev.fd < 0) {
+		err("drm_flush called when DRM device is not initialized properly.");
+
+		return;
+	}
 	struct drm_buffer *fbuf = drm_dev.cur_bufs[1];
 	lv_coord_t w = (area->x2 - area->x1 + 1);
 	lv_coord_t h = (area->y2 - area->y1 + 1);
@@ -775,6 +780,7 @@ void drm_get_sizes(lv_coord_t *width, lv_coord_t *height, uint32_t *dpi)
 void drm_init(void)
 {
 	int ret;
+	info("Starting DRM subsystem...");
 
 	ret = drm_setup(DRM_FOURCC);
 	if (ret) {
