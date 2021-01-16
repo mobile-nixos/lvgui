@@ -1,6 +1,9 @@
 /**
- * @file drm.c
+ * Original author:
+ * © 2020 Neil Armstrong <narmstrong@baylibre.com>
  *
+ * Continued development:
+ * © 2021 Samuel Dionne-Riel <samuel@dionne-riel.com>
  */
 
 /*********************
