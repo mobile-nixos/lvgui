@@ -102,19 +102,7 @@ void hal_setup_display()
 	lv_disp_drv_init(&disp_drv);
 	disp_drv.buffer = &disp_buf;
 
-
-#if USE_FBDEV
-	fbdev_init();
-    fbdev_set_resolution(&disp_drv);
-#endif
-#if USE_DRM
-	drm_init(&disp_drv);
-#endif
-#if USE_MONITOR
-    monitor_init();
-    monitor_set_resolution(&disp_drv);
-#endif
-
+	// Configure the flush callback first...
 #if USE_FBDEV
 	disp_drv.flush_cb = fbdev_flush;
 #endif
@@ -123,6 +111,18 @@ void hal_setup_display()
 #endif
 #if USE_MONITOR
     disp_drv.flush_cb = monitor_flush;
+#endif
+
+	// As it's possible the driver re-configures it...
+#if USE_FBDEV
+	fbdev_init(&disp_drv);
+#endif
+#if USE_DRM
+	drm_init(&disp_drv);
+#endif
+#if USE_MONITOR
+    monitor_init();
+    monitor_set_resolution(&disp_drv);
 #endif
 }
 
