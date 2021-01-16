@@ -525,7 +525,7 @@ err:
 	return -1;
 }
 
-static int drm_setup(unsigned int fourcc)
+static int drm_setup(unsigned int fourcc, lv_disp_drv_t* drv)
 {
 	int ret;
 
@@ -597,6 +597,9 @@ static int drm_setup(unsigned int fourcc)
 	info("drm: %dx%d (%dmm X% dmm) pixel format %c%c%c%c",
 	     drm_dev.width, drm_dev.height, drm_dev.mmWidth, drm_dev.mmHeight,
 	     (fourcc>>0)&0xff, (fourcc>>8)&0xff, (fourcc>>16)&0xff, (fourcc>>24)&0xff);
+
+	drv->hor_res = drm_dev.width;
+	drv->ver_res = drm_dev.height;
 
 	return 0;
 
