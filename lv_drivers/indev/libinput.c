@@ -232,8 +232,14 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 			case LIBINPUT_EVENT_POINTER_BUTTON:
 				pointer_event = libinput_event_get_pointer_event(event);
 				in_button = libinput_event_pointer_get_button(pointer_event);
+#ifdef DRV_DEBUG
+				printf(
+					"[indev/libinput]: Pointer button button = %d;\n",
+					in_button
+				);
+#endif
 				if (in_button == BTN_LEFT) {
-					if (libinput_event_pointer_get_button(pointer_event) == LIBINPUT_BUTTON_STATE_PRESSED) {
+					if (libinput_event_pointer_get_button_state(pointer_event) == LIBINPUT_BUTTON_STATE_PRESSED) {
 						instance->state = LV_INDEV_STATE_PR;
 					}
 					else {
