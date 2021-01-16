@@ -15,7 +15,7 @@
 #include <xkbcommon/xkbcommon.h>
 #include <xkbcommon/xkbcommon-compose.h>
 
-#define DRV_DEBUG
+// #define DRV_DEBUG
 
 // I'd like a better source for the requirement than the *evdev* example, but eh, it _is_ needed.
 // https://github.com/xkbcommon/libxkbcommon/blob/9caa4128c2534cfbd46fc73768ef6202f813eb53/tools/interactive-evdev.c#L57
