@@ -213,6 +213,22 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 				instance->root_y = libinput_event_pointer_get_absolute_y_transformed(pointer_event, LV_VER_RES);
 				break;
 
+			case LIBINPUT_EVENT_POINTER_MOTION:
+				pointer_event = libinput_event_get_pointer_event(event);
+				instance->root_x += libinput_event_pointer_get_dx(pointer_event);
+				instance->root_y += libinput_event_pointer_get_dy(pointer_event);
+
+#ifdef DRV_DEBUG
+				printf(
+					"[indev/libinput]: Relative move: dx = %f, dy = %f, x = %f, y = %f;\n",
+					libinput_event_pointer_get_dx(pointer_event),
+					libinput_event_pointer_get_dy(pointer_event),
+					instance->root_x,
+					instance->root_y
+				);
+#endif
+				break;
+
 			case LIBINPUT_EVENT_POINTER_BUTTON:
 				pointer_event = libinput_event_get_pointer_event(event);
 				in_button = libinput_event_pointer_get_button(pointer_event);
@@ -263,7 +279,6 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 				printf("[indev/libinput]: Unexpected LIBINPUT_EVENT_NONE.\n");
 				break;
 
-			case LIBINPUT_EVENT_POINTER_MOTION:
 			case LIBINPUT_EVENT_TOUCH_CANCEL:
 			case LIBINPUT_EVENT_TOUCH_FRAME:
 			default:
@@ -283,14 +298,22 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 		data->point.y = instance->root_y;
 
 		// Clamp values, mostly useful for relative moves.
-		if(data->point.x < 0)
+		if(data->point.x < 0) {
 			data->point.x = 0;
-		if(data->point.y < 0)
+			instance->root_x = 0;
+		}
+		if(data->point.y < 0) {
 			data->point.y = 0;
-		if(data->point.x >= lv_disp_get_hor_res(drv->disp))
+			instance->root_y = 0;
+		}
+
+		if(data->point.x >= lv_disp_get_hor_res(drv->disp)) {
 			data->point.x = lv_disp_get_hor_res(drv->disp) - 1;
-		if(data->point.y >= lv_disp_get_ver_res(drv->disp))
-			data->point.y = lv_disp_get_ver_res(drv->disp) - 1;
+			instance->root_x = lv_disp_get_hor_res(drv->disp) - 1;
+		}
+		if(data->point.y >= lv_disp_get_ver_res(drv->disp)) {
+			instance->root_y = lv_disp_get_ver_res(drv->disp) - 1;
+		}
 
 #ifdef DRV_DEBUG
 		printf(

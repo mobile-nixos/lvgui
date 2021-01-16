@@ -59,8 +59,8 @@ typedef struct {
 	// Keyboard key being pressed (or released)
 	int key;
 	// Coordinates for a pointer
-	int root_x;
-	int root_y;
+	double root_x;
+	double root_y;
 } libinput_drv_instance;
 
 /**********************
