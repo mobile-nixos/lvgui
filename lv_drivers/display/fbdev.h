@@ -21,7 +21,7 @@ extern "C" {
 #endif
 #endif
 
-#if USE_FBDEV || USE_BSD_FBDEV
+#if USE_FBDEV || USE_BSD_FBDEV || USE_DRM
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
 #include "lvgl.h"
@@ -40,11 +40,9 @@ extern "C" {
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-void fbdev_init(void);
+void fbdev_init(lv_disp_drv_t* disp_drv);
 void fbdev_exit(void);
 void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_p);
-void fbdev_set_resolution(lv_disp_drv_t* disp_drv);
-
 
 /**********************
  *      MACROS

@@ -30,6 +30,8 @@
 #include <xf86drmMode.h>
 #include <drm_fourcc.h>
 
+#include "lv_drivers/display/fbdev.h"
+
 #define DBG_TAG "drm"
 
 #define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
@@ -793,7 +795,7 @@ void drm_init(lv_disp_drv_t* drv)
 	if (ret) {
 		close(drm_dev.fd);
 		drm_dev.fd = -1;
-		return;
+		goto err;
 	}
 
 	ret = drm_setup_buffers();
@@ -801,9 +803,16 @@ void drm_init(lv_disp_drv_t* drv)
 		err("DRM buffer allocation failed");
 		close(drm_dev.fd);
 		drm_dev.fd = -1;
-		return;
+		goto err;
 	}
 
+	goto ok;
+err:
+	err("(falling back to fbdev...)");
+	fbdev_init(drv);
+	drv->flush_cb = fbdev_flush;
+
+ok:
 	info("DRM subsystem and buffer mapped successfully");
 }
 

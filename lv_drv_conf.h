@@ -201,7 +201,7 @@ extern int monitor_height;
 #  define USE_FBDEV           0
 #endif
 
-#if USE_FBDEV
+#if USE_FBDEV || USE_DRM
 #  define FBDEV_PATH          "/dev/fb0"
 #endif
 
