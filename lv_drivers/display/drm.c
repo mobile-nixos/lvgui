@@ -777,12 +777,12 @@ void drm_get_sizes(lv_coord_t *width, lv_coord_t *height, uint32_t *dpi)
 		*dpi = DIV_ROUND_UP(drm_dev.width * 25400, drm_dev.mmWidth * 1000);
 }
 
-void drm_init(void)
+void drm_init(lv_disp_drv_t* drv)
 {
 	int ret;
 	info("Starting DRM subsystem...");
 
-	ret = drm_setup(DRM_FOURCC);
+	ret = drm_setup(DRM_FOURCC, drv);
 	if (ret) {
 		close(drm_dev.fd);
 		drm_dev.fd = -1;
