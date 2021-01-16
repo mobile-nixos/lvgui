@@ -24,6 +24,10 @@ void hal_setup_display(void);
 #	include "lv_drivers/display/fbdev.h"
 #endif
 
+#if USE_DRM
+#	include "lv_drivers/display/drm.h"
+#endif
+
 #if USE_EVDEV
 #	include "lv_drivers/indev/evdev.h"
 #endif
@@ -103,6 +107,9 @@ void hal_setup_display()
 	fbdev_init();
     fbdev_set_resolution(&disp_drv);
 #endif
+#if USE_DRM
+	drm_init(&disp_drv);
+#endif
 #if USE_MONITOR
     monitor_init();
     monitor_set_resolution(&disp_drv);
@@ -110,6 +117,9 @@ void hal_setup_display()
 
 #if USE_FBDEV
 	disp_drv.flush_cb = fbdev_flush;
+#endif
+#if USE_DRM
+	disp_drv.flush_cb = drm_flush;
 #endif
 #if USE_MONITOR
     disp_drv.flush_cb = monitor_flush;
