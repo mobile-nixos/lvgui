@@ -29,6 +29,10 @@ static int open_restricted(const char *path, int flags, void *user_data);
 static void close_restricted(int fd, void *user_data);
 
 /**
+ * Handles keyboard inputs
+ */
+static void libinput_drv_handle_keyboard_input(libinput_drv_instance* instance, struct libinput_event* event, lv_indev_data_t * data);
+/**
  * Manages memory allocation for libinput_drv_instance
  */
 static libinput_drv_instance* libinput_drv_instance_new();
@@ -156,12 +160,9 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 {
 	struct libinput_event *event = NULL;
 
-	struct libinput_event_keyboard *keyboard_event = NULL;
 	struct libinput_event_pointer *pointer_event = NULL;
 	struct libinput_event_touch *touch_event = NULL;
 	uint32_t in_button = 0;
-	uint32_t in_state = 0;
-	uint32_t in_key = 0;
 
 	bool changed = false;
 
@@ -209,6 +210,14 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 				break;
 
 			case LIBINPUT_EVENT_KEYBOARD_KEY:
+				if (instance->lv_indev_drv_type == LV_INDEV_TYPE_KEYBOARD) {
+					libinput_drv_handle_keyboard_input(instance, event, data);
+
+					// Whatever happens, we have to send the current key event.
+					// Otherwise multiple events in the queue will be lost.
+					return true;
+				}
+				break;
 
 			case LIBINPUT_EVENT_DEVICE_ADDED:
 			case LIBINPUT_EVENT_DEVICE_REMOVED:
@@ -309,6 +318,84 @@ static libinput_drv_instance* libinput_drv_instance_new()
 static void libinput_drv_instance_destroy(libinput_drv_instance* instance)
 {
 	free(instance);
+}
+
+static void libinput_drv_handle_keyboard_input(libinput_drv_instance* instance, struct libinput_event* event, lv_indev_data_t * data)
+{
+	struct libinput_event_keyboard* keyboard_event = libinput_event_get_keyboard_event(event);
+	instance->key = libinput_event_keyboard_get_key(keyboard_event);
+	instance->state = libinput_event_keyboard_get_key_state(keyboard_event) == LIBINPUT_KEY_STATE_PRESSED;
+
+	// Update the state for the key
+	data->state = instance->state;
+
+	// BUT, we need to map to an *actual* key.
+	// Either some internal LVGL key binding
+	// OR, using xkbcommon for mapping scancodes to text input.
+	switch(instance->key) {
+		case KEY_BACKSPACE:
+			data->key = LV_KEY_BACKSPACE;
+			break;
+		case KEY_ENTER:
+			data->key = LV_KEY_ENTER;
+			break;
+		case KEY_TAB:
+			data->key = LV_KEY_NEXT;
+			break;
+
+		case KEY_DELETE:
+			data->key = LV_KEY_DEL;
+			break;
+
+		case KEY_HOME:
+			data->key = LV_KEY_HOME;
+			break;
+		case KEY_END:
+			data->key = LV_KEY_END;
+			break;
+
+		case KEY_RIGHT:
+			data->key = LV_KEY_RIGHT;
+			break;
+		case KEY_LEFT:
+			data->key = LV_KEY_LEFT;
+			break;
+		case KEY_UP:
+			data->key = LV_KEY_UP;
+			break;
+		case KEY_DOWN:
+			data->key = LV_KEY_DOWN;
+			break;
+
+		// Used for navigating on tablets/phones without involving the display.
+		case KEY_VOLUMEUP:
+			data->key = LV_KEY_PREV;
+			break;
+		case KEY_VOLUMEDOWN:
+			data->key = LV_KEY_NEXT;
+			break;
+		case KEY_POWER:
+			data->key = LV_KEY_ENTER;
+			break;
+
+		default:
+			// Here we handle converting to a useful value
+			// TODO: handle using xkbcommon
+			data->key = instance->key;
+			}
+			break;
+	}
+#ifdef DRV_DEBUG
+	printf(
+		"[indev/libinput]: lvgl input data (keyboard): state = %4d; key = %3d; // %s\n",
+		data->state,
+		data->key,
+		libinput_device_get_name(instance->libinput_device)
+	);
+#endif
+
+	// Don't forget to cleanup!
+	libinput_event_destroy(event);
 }
 
 #endif
