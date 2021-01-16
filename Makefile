@@ -67,11 +67,12 @@ CFLAGS += $(shell $(PKG_CONFIG) --cflags sdl2)
 LDFLAGS += $(shell $(PKG_CONFIG) --libs sdl2)
 REQUIRES += sdl2
 else
-CFLAGS += $(shell $(PKG_CONFIG) --cflags libevdev)
-LDFLAGS += $(shell $(PKG_CONFIG) --libs libevdev)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags libinput)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs libinput)
+REQUIRES += libinput
+
 LDFLAGS += -lpthread
 LDFLAGS += -lxkbcommon
-REQUIRES += libevdev
 endif
 
 # External components
