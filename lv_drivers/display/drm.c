@@ -525,8 +525,9 @@ err:
 	return -1;
 }
 
-static int drm_setup(unsigned int fourcc, lv_disp_drv_t* drv)
+static int drm_setup(lv_disp_drv_t* drv)
 {
+	unsigned int fourcc = 0;
 	int ret;
 
 	drm_dev.fd = drm_open(DRM_CARD);
@@ -545,7 +546,21 @@ static int drm_setup(unsigned int fourcc, lv_disp_drv_t* drv)
 		goto err;
 	}
 
+#if LV_COLOR_DEPTH == 32
+	// ARGB888 and XRGB888 are compatible for our use case.
+	fourcc = DRM_FORMAT_ARGB8888;
 	ret = find_plane(fourcc, &drm_dev.plane_id, drm_dev.crtc_id, drm_dev.crtc_idx);
+	if (ret) {
+		fourcc = DRM_FORMAT_XRGB8888;
+		ret = find_plane(fourcc, &drm_dev.plane_id, drm_dev.crtc_id, drm_dev.crtc_idx);
+	}
+#elif LV_COLOR_DEPTH == 16
+	fourcc = DRM_FORMAT_RGB565;
+	ret = find_plane(fourcc, &drm_dev.plane_id, drm_dev.crtc_id, drm_dev.crtc_idx);
+#else
+#error LV_COLOR_DEPTH not supported
+#endif
+
 	if (ret) {
 		err("Cannot find plane");
 		goto err;
@@ -757,14 +772,6 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 	lv_disp_flush_ready(disp_drv);
 }
 
-#if LV_COLOR_DEPTH == 32
-#define DRM_FOURCC DRM_FORMAT_ARGB8888
-#elif LV_COLOR_DEPTH == 16
-#define DRM_FOURCC DRM_FORMAT_RGB565
-#else
-#error LV_COLOR_DEPTH not supported
-#endif
-
 void drm_get_sizes(lv_coord_t *width, lv_coord_t *height, uint32_t *dpi)
 {
 	if (width)
@@ -782,7 +789,7 @@ void drm_init(lv_disp_drv_t* drv)
 	int ret;
 	info("Starting DRM subsystem...");
 
-	ret = drm_setup(DRM_FOURCC, drv);
+	ret = drm_setup(drv);
 	if (ret) {
 		close(drm_dev.fd);
 		drm_dev.fd = -1;
