@@ -17,7 +17,7 @@
 #define USE_EVDEV 0
 #define USE_LIBINPUT 0
 #else
-#define USE_FBDEV 1
+#define USE_DRM 1
 #define USE_EVDEV 0
 #define USE_LIBINPUT 1
 #endif
