@@ -13,7 +13,6 @@
 #include <linux/input.h>
 
 #define DRV_DEBUG
-#define TIMEOUT_DONT_BLOCK 0
 
 /*********************
  *      DEFINES
@@ -139,6 +138,8 @@ libinput_drv_instance* libinput_init_drv(char* dev_name)
 	instance->fds[0].events = POLLIN;
 	instance->fds[0].revents = 0;
 
+	fcntl(instance->fds[0].fd, F_SETFL, O_ASYNC | O_NONBLOCK);
+
 #ifdef DRV_DEBUG
 	printf("[indev/libinput]: done with '%s'...\n", dev_name);
 #endif
@@ -165,15 +166,6 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 	bool changed = false;
 
 	libinput_drv_instance* instance = drv->user_data;
-
-	switch (poll(instance->fds, 1, TIMEOUT_DONT_BLOCK)) {
-		case -1:
-			perror(NULL);
-		case 0:
-			goto report_driver_state;
-		default:
-			break;
-	}
 
 	libinput_dispatch(instance->libinput_context);
 	// (maybe) empty the event queue
@@ -257,8 +249,6 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 		}
 		libinput_event_destroy(event);
 	}
-
-report_driver_state:
 
 	if (changed) {
 		data->state = instance->state;
