@@ -296,7 +296,7 @@ static int find_plane(unsigned int fourcc, uint32_t *plane_id, uint32_t crtc_id,
 		return -1;
 	}
 
-	dbg("drm: found planes %u", planes->count_planes);
+	dbg("found planes %u", planes->count_planes);
 
 	for (i = 0; i < planes->count_planes; ++i) {
 		plane = drmModeGetPlane(drm_dev.fd, planes->planes[i]);
@@ -311,6 +311,7 @@ static int find_plane(unsigned int fourcc, uint32_t *plane_id, uint32_t crtc_id,
 		}
 
 		for (j = 0; j < plane->count_formats; ++j) {
+			dbg("plane info: plane->formats[j](0x%x) == format(0x%x);", plane->formats[j], format);
 			if (plane->formats[j] == format)
 				break;
 		}
@@ -367,13 +368,13 @@ static int drm_find_connector(void)
 #endif
 
 		if (conn->connection == DRM_MODE_CONNECTED) {
-			dbg("drm: connector %d: connected", conn->connector_id);
+			dbg("connector %d: connected", conn->connector_id);
 		} else if (conn->connection == DRM_MODE_DISCONNECTED) {
-			dbg("drm: connector %d: disconnected", conn->connector_id);
+			dbg("connector %d: disconnected", conn->connector_id);
 		} else if (conn->connection == DRM_MODE_UNKNOWNCONNECTION) {
-			dbg("drm: connector %d: unknownconnection", conn->connector_id);
+			dbg("connector %d: unknownconnection", conn->connector_id);
 		} else {
-			dbg("drm: connector %d: unknown", conn->connector_id);
+			dbg("connector %d: unknown", conn->connector_id);
 		}
 
 		if (conn->connection == DRM_MODE_CONNECTED && conn->count_modes > 0)
@@ -623,7 +624,7 @@ static int drm_allocate_dumb(struct drm_buffer *buf)
 	buf->pitch = creq.pitch;
 	dbg("pitch %d", buf->pitch);
 	buf->size = creq.size;
-	dbg("size %d", buf->size);
+	dbg("size %ld", buf->size);
 
 	/* prepare buffer for memory mapping */
 	memset(&mreq, 0, sizeof(mreq));
@@ -712,7 +713,7 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 	lv_coord_t h = (area->y2 - area->y1 + 1);
 	int i, y;
 
-	dbg("x %d:%d y %d:%d w %d h %d", area->x1, area->x2, area->y1, area->y2, w, h);
+	dbg("drm_flush() x %d:%d y %d:%d w %d h %d", area->x1, area->x2, area->y1, area->y2, w, h);
 
 	/* Partial update */
 	if ((w != drm_dev.width || h != drm_dev.height) && drm_dev.cur_bufs[0])
