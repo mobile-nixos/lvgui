@@ -261,8 +261,6 @@ static int drm_dmabuf_set_plane(struct drm_buffer *buf)
 		drm_add_crtc_property("ACTIVE", 1);
 
 		flags |= DRM_MODE_ATOMIC_ALLOW_MODESET;
-
-		first = 0;
 	}
 
 	drm_add_plane_property("FB_ID", buf->fb_handle);
@@ -277,10 +275,16 @@ static int drm_dmabuf_set_plane(struct drm_buffer *buf)
 	drm_add_plane_property("CRTC_H", drm_dev.height);
 
 	ret = drmModeAtomicCommit(drm_dev.fd, drm_dev.req, flags, NULL);
+
 	if (ret) {
 		err("drmModeAtomicCommit failed: %s", strerror(errno));
 		drmModeAtomicFree(drm_dev.req);
 		return ret;
+	}
+
+	// We *successfully* made our first atomic commit.
+	if (first) {
+		first = 0;
 	}
 
 	return 0;
