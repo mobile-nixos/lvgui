@@ -7,7 +7,7 @@
  *      INCLUDES
  *********************/
 #include "fbdev.h"
-#if USE_FBDEV || USE_BSD_FBDEV
+#if USE_FBDEV || USE_BSD_FBDEV || USE_DRM
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -58,6 +58,8 @@ struct bsd_fb_fix_info{
  *  STATIC PROTOTYPES
  **********************/
 
+static void fbdev_set_resolution(lv_disp_drv_t* disp_drv);
+
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -80,7 +82,7 @@ static int fbfd = 0;
  *   GLOBAL FUNCTIONS
  **********************/
 
-void fbdev_init(void)
+void fbdev_init(lv_disp_drv_t* disp_drv)
 {
     // Open the file for reading and writing
     fbfd = open(FBDEV_PATH, O_RDWR);
@@ -143,6 +145,7 @@ void fbdev_init(void)
 
     printf("The framebuffer device was mapped to memory successfully.\n");
 
+    fbdev_set_resolution(disp_drv);
 }
 
 void fbdev_exit(void)
@@ -236,7 +239,11 @@ void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color
     lv_disp_flush_ready(drv);
 }
 
-void fbdev_set_resolution(lv_disp_drv_t* disp_drv)
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
+
+static void fbdev_set_resolution(lv_disp_drv_t* disp_drv)
 {
     // Open the file for reading and writing
     fbfd = open(FBDEV_PATH, O_RDWR);
@@ -256,9 +263,5 @@ void fbdev_set_resolution(lv_disp_drv_t* disp_drv)
 
     close(fbfd);
 }
-
-/**********************
- *   STATIC FUNCTIONS
- **********************/
 
 #endif

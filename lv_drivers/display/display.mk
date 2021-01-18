@@ -1,3 +1,4 @@
+CSRCS += drm.c
 CSRCS += fbdev.c
 CSRCS += monitor.c
 

@@ -17,7 +17,7 @@
 #define USE_EVDEV 0
 #define USE_LIBINPUT 0
 #else
-#define USE_FBDEV 1
+#define USE_DRM 1
 #define USE_EVDEV 0
 #define USE_LIBINPUT 1
 #endif
@@ -201,12 +201,24 @@ extern int monitor_height;
 #  define USE_FBDEV           0
 #endif
 
-#if USE_FBDEV
+#if USE_FBDEV || USE_DRM
 #  define FBDEV_PATH          "/dev/fb0"
 #endif
 
 #ifndef USE_BSD_FBDEV
 #	define USE_BSD_FBDEV 0
+#endif
+
+/*-----------------------------------------
+ *  DRM/KMS device (/dev/dri/cardX)
+ *-----------------------------------------*/
+#ifndef USE_DRM
+#	define USE_DRM           0
+#endif
+
+#if USE_DRM
+#	define DRM_CARD          "/dev/dri/card0"
+#	define DRM_CONNECTOR_ID  -1	/* -1 for the first connected one */
 #endif
 
 /*********************

@@ -1,10 +1,10 @@
 /**
- * @file fbdev.h
+ * @file drm.h
  *
  */
 
-#ifndef FBDEV_H
-#define FBDEV_H
+#ifndef DRM_H
+#define DRM_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
 #endif
 #endif
 
-#if USE_FBDEV || USE_BSD_FBDEV || USE_DRM
+#if USE_DRM
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
 #include "lvgl.h"
@@ -40,18 +40,18 @@ extern "C" {
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-void fbdev_init(lv_disp_drv_t* disp_drv);
-void fbdev_exit(void);
-void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_p);
+void drm_init(lv_disp_drv_t* drv);
+void drm_exit(void);
+void drm_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_p);
 
 /**********************
  *      MACROS
  **********************/
 
-#endif  /*USE_FBDEV*/
+#endif  /*USE_DRM*/
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /*FBDEV_H*/
+#endif /*DRM_H*/

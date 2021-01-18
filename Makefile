@@ -71,6 +71,9 @@ CFLAGS += $(shell $(PKG_CONFIG) --cflags libinput)
 LDFLAGS += $(shell $(PKG_CONFIG) --libs libinput)
 REQUIRES += libinput
 
+CFLAGS += $(shell $(PKG_CONFIG) --cflags libdrm)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs libdrm)
+
 LDFLAGS += -lpthread
 LDFLAGS += -lxkbcommon
 endif
