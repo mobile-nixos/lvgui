@@ -11,7 +11,6 @@ LV_IMG_DECLARE(lvgui_touch);
 
 mn_hal_default_font_t mn_hal_default_font;
 int mn_hal_default_dpi;
-lv_disp_drv_t disp_drv;
 static lv_obj_t * lvgui_cursor_obj;
 static lv_obj_t * lvgui_touch_obj;
 static lv_group_t * lvgui_focus_group;

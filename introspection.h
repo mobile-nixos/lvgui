@@ -9,5 +9,6 @@
 bool lv_introspection_is_simulator(void);
 bool lv_introspection_is_debug(void);
 bool lv_introspection_use_assert_style(void);
+const char * lv_introspection_display_driver(void);
 
 #endif
