@@ -164,8 +164,9 @@ handle_errno_error:
 	err("modeset failed with error %d: %m\n", errno);
 
 err:
-	close(modeset_list->fd);
-	modeset_list->fd = -1;
+	if (modeset_list) {
+		drm_exit();
+	}
 
 	err("(falling back to fbdev...)");
 	fbdev_init(drv);
