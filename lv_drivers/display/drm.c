@@ -23,23 +23,15 @@
 #include "drm.h"
 #if USE_DRM
 
-#include <unistd.h>
-#include <pthread.h>
-#include <time.h>
-#include <sys/time.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
 #include <sys/mman.h>
-#include <inttypes.h>
+#include <unistd.h>
 
 #include <xf86drm.h>
 #include <xf86drmMode.h>
-#include <drm_fourcc.h>
 
 #include "lv_drivers/display/fbdev.h"
 
