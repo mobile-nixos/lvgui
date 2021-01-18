@@ -276,6 +276,7 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 			case LIBINPUT_EVENT_TABLET_TOOL_BUTTON:
 			case LIBINPUT_EVENT_TABLET_TOOL_PROXIMITY:
 			case LIBINPUT_EVENT_TABLET_TOOL_TIP:
+			case LIBINPUT_EVENT_TOUCH_FRAME:
 				// no-op
 				break;
 
@@ -286,7 +287,6 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 				break;
 
 			case LIBINPUT_EVENT_TOUCH_CANCEL:
-			case LIBINPUT_EVENT_TOUCH_FRAME:
 			default:
 				// DO NOT mask this with DRV_DEBUG
 				// We want to be verbose on *unhandled* events.
