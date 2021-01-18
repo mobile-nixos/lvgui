@@ -35,8 +35,6 @@
 
 #include "lv_drivers/display/fbdev.h"
 
-#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
-
 // #define DRV_DEBUG
 
 #define err(msg, ...)   fprintf(stderr, "[display/drm_drv]: error: " msg "\n", ##__VA_ARGS__);
@@ -54,7 +52,6 @@ static int modeset_create_fb(int fd, struct modeset_dev *dev);
 static int modeset_setup_dev(int fd, drmModeRes *res, drmModeConnector *conn, struct modeset_dev *dev);
 static int modeset_open(int *out, const char *node);
 static int modeset_prepare(int fd);
-static void modeset_draw(void);
 
 static void dbg_fill_buffer(struct modeset_dev *iter, uint8_t r, uint8_t g, uint8_t b);
 
@@ -78,6 +75,10 @@ struct modeset_dev {
 };
 
 static struct modeset_dev *modeset_list = NULL;
+
+/****************************************
+ *        PUBLIC IMPLEMENTATION         *
+ ***************************************/
 
 void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
