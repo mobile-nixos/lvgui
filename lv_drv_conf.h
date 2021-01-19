@@ -10,16 +10,24 @@
 #if 1 /*Set it to "1" to enable the content*/
 
 #if LVGL_ENV_SIMULATOR
+
 #define USE_MONITOR 1
 #define USE_MOUSE 1
 // #define USE_MOUSEWHEEL 1
 #define USE_KEYBOARD 1
+
+#define USE_DRM 0
+#define USE_FBDEV 0
 #define USE_EVDEV 0
 #define USE_LIBINPUT 0
+
 #else
+
 #define USE_DRM 1
+#define USE_FBDEV 0
 #define USE_EVDEV 0
 #define USE_LIBINPUT 1
+
 #endif
 
 #ifndef LV_DRV_CONF_H
