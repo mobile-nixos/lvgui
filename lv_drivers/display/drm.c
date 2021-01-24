@@ -82,6 +82,7 @@ static struct modeset_dev *modeset_list = NULL;
 
 void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
+	int ret;
 	// Pick the first device
 	struct modeset_dev* dev = modeset_list;
 
@@ -115,6 +116,15 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 			(uint8_t *)color_p + (w * (LV_COLOR_SIZE/8) * y),
 			w * (LV_COLOR_SIZE/8)
 		);
+	}
+
+	// This normally is used with double-buffering, where we would flip to
+	// another buffer, rather than presenting the same buffer.
+	// Though, this does allow rendering to work on some devices (e.g. SDM845).
+	ret = drmModeSetCrtc(dev->fd, dev->crtc, dev->fb, 0, 0,
+			&dev->conn, 1, &dev->mode);
+	if (ret) {
+		err("cannot flip CRTC for connector %u (%d): %m", dev->conn, errno);
 	}
 
 	lv_disp_flush_ready(disp_drv);
@@ -228,6 +238,7 @@ static int modeset_prepare(int fd)
 	}
 
 	/* iterate all connectors */
+	// Keeps only the first found and working device.
 	for (i = 0; i < res->count_connectors; ++i) {
 		/* get information for each connector */
 		conn = drmModeGetConnector(fd, res->connectors[i]);
@@ -258,6 +269,9 @@ static int modeset_prepare(int fd)
 		drmModeFreeConnector(conn);
 		dev->next = modeset_list;
 		modeset_list = dev;
+
+		// Only work off the first found connector
+		break;
 	}
 
 	/* free resources again */
