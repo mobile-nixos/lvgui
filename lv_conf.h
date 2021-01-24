@@ -22,8 +22,8 @@
 // Define maximum sizes this code will support.
 // This is not the actual size of the display.
 // This directly impacts the memory usage.
-#define LV_HOR_RES_MAX          (1080)
-#define LV_VER_RES_MAX          (2340)
+#define LV_HOR_RES_MAX          (1440)
+#define LV_VER_RES_MAX          (2560)
 
 /* Color depth:
  * - 1:  1 byte per pixel
