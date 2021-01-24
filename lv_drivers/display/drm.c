@@ -228,6 +228,7 @@ static int modeset_prepare(int fd)
 	}
 
 	/* iterate all connectors */
+	// Keeps only the first found and working device.
 	for (i = 0; i < res->count_connectors; ++i) {
 		/* get information for each connector */
 		conn = drmModeGetConnector(fd, res->connectors[i]);
@@ -258,6 +259,9 @@ static int modeset_prepare(int fd)
 		drmModeFreeConnector(conn);
 		dev->next = modeset_list;
 		modeset_list = dev;
+
+		// Only work off the first found connector
+		break;
 	}
 
 	/* free resources again */
