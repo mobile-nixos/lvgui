@@ -47,7 +47,11 @@ void hal_setup_display(void);
 #	include "lv_drivers/indev/keyboard.h"
 #endif
 
-#define DISP_BUF_SIZE (80*LV_HOR_RES_MAX)
+// irb(main):005:0> (1440 * 2560 * 4)/1024/1024
+//            width * height * bytes MB
+// => 14
+// We can spare 14MiB, it makes the DRM driver behave on SDM845.
+#define DISP_BUF_SIZE (LV_VER_RES_MAX*LV_HOR_RES_MAX)
 
 // WARNING: This is not proper DPI.
 // This is the bizarro concept of DPI for lvgl, which is more
