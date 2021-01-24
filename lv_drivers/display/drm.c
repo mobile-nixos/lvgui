@@ -46,27 +46,34 @@
 #define dbg(msg, ...) {}
 #endif
 
+struct modeset_buf;
 struct modeset_dev;
 static int modeset_find_crtc(int fd, drmModeRes *res, drmModeConnector *conn, struct modeset_dev *dev);
-static int modeset_create_fb(int fd, struct modeset_dev *dev);
+static int modeset_create_fb(int fd, struct modeset_buf *buf);
+static void modeset_destroy_fb(int fd, struct modeset_buf *buf);
 static int modeset_setup_dev(int fd, drmModeRes *res, drmModeConnector *conn, struct modeset_dev *dev);
 static int modeset_open(int *out, const char *node);
 static int modeset_prepare(int fd);
 
-static void dbg_fill_buffer(struct modeset_dev *iter, uint8_t r, uint8_t g, uint8_t b);
+static void dbg_fill_buffer(struct modeset_buf *buf, uint8_t r, uint8_t g, uint8_t b);
 
-struct modeset_dev {
-	struct modeset_dev *next;
-
+struct modeset_buf {
 	uint32_t width;
 	uint32_t height;
 	uint32_t stride;
 	uint32_t size;
 	uint32_t handle;
 	uint8_t *map;
+	uint32_t fb;
+};
+
+struct modeset_dev {
+	struct modeset_dev *next;
+
+	unsigned int front_buf;
+	struct modeset_buf bufs[2];
 
 	drmModeModeInfo mode;
-	uint32_t fb;
 	uint32_t conn;
 	uint32_t crtc;
 	drmModeCrtc *saved_crtc;
@@ -85,6 +92,8 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 	int ret;
 	// Pick the first device
 	struct modeset_dev* dev = modeset_list;
+	struct modeset_buf* front_buf;
+	struct modeset_buf* back_buf;
 
 	if (modeset_list->fd < 0) {
 		err("drm_flush called when DRM device is not initialized properly.");
@@ -92,27 +101,32 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 		return;
 	}
 
+	// We may need to copy from it into back_buf...
+	front_buf = &dev->bufs[dev->front_buf];
+
+	// The back buffer is the *other* buffer than front_buf
+	back_buf = &dev->bufs[dev->front_buf ^ 1];
+
 	lv_coord_t w = (area->x2 - area->x1 + 1);
 	lv_coord_t h = (area->y2 - area->y1 + 1);
 	int i, y;
 
 	dbg("drm_flush() x %d:%d y %d:%d w %d h %d", area->x1, area->x2, area->y1, area->y2, w, h);
 
-	// TODO: for a partial update, copy current framebuffer into back buffer before doing the partial update.
 	// Partial update, so we need to update the back buffer with the front buffer content first.
-	// if ((w != modeset_list->width || h != modeset_list->height) && modeset_list->cur_bufs[1])
-	// 	memcpy(dev->map, modeset_list->cur_bufs[1]->map, dev->size);
-	(int) h; // temporary until ^ is added back...
+	if ((w != back_buf->width || h != back_buf->height) && back_buf) {
+		memcpy(back_buf->map, front_buf->map, back_buf->size);
+	}
 
 	// Just in case, this is most likely a BUG in this driver.
-	if (area->y2 > modeset_list->height) {
+	if (area->y2 > back_buf->height) {
 		err("drm_flush() too large to fit in buffer!!!! [BUG!!]");
 		return;
 	}
 
 	for (y = 0, i = area->y1 ; i <= area->y2 ; ++i, ++y) {
 		memcpy(
-			(uint8_t *)dev->map + (area->x1 * (LV_COLOR_SIZE/8)) + (dev->stride * i),
+			(uint8_t *)back_buf->map + (area->x1 * (LV_COLOR_SIZE/8)) + (back_buf->stride * i),
 			(uint8_t *)color_p + (w * (LV_COLOR_SIZE/8) * y),
 			w * (LV_COLOR_SIZE/8)
 		);
@@ -121,11 +135,13 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 	// This normally is used with double-buffering, where we would flip to
 	// another buffer, rather than presenting the same buffer.
 	// Though, this does allow rendering to work on some devices (e.g. SDM845).
-	ret = drmModeSetCrtc(dev->fd, dev->crtc, dev->fb, 0, 0,
+	ret = drmModeSetCrtc(dev->fd, dev->crtc, back_buf->fb, 0, 0,
 			&dev->conn, 1, &dev->mode);
 	if (ret) {
 		err("cannot flip CRTC for connector %u (%d): %m", dev->conn, errno);
 	}
+
+	dev->front_buf ^= 1;
 
 	lv_disp_flush_ready(disp_drv);
 }
@@ -136,6 +152,7 @@ void drm_init(lv_disp_drv_t* drv)
 	int ret = 0;
 	const char *card = DRM_CARD;
 	struct modeset_dev *dev;
+	struct modeset_buf *buf;
 
 	info("Starting DRM subsystem... (%s)", card);
 
@@ -152,7 +169,8 @@ void drm_init(lv_disp_drv_t* drv)
 	//for (dev = modeset_list; dev; dev = dev->next) {
 	dev = modeset_list;
 	dev->saved_crtc = drmModeGetCrtc(fd, dev->crtc);
-	ret = drmModeSetCrtc(fd, dev->crtc, dev->fb, 0, 0,
+	buf = &dev->bufs[dev->front_buf];
+	ret = drmModeSetCrtc(fd, dev->crtc, buf->fb, 0, 0,
 			&dev->conn, 1, &dev->mode);
 	if (ret) {
 		err("cannot set CRTC for connector %u (%d): %m", dev->conn, errno);
@@ -161,11 +179,11 @@ void drm_init(lv_disp_drv_t* drv)
 	//}
 
 #ifdef DRV_DEBUG
-	dbg_fill_buffer(dev, 0x00, 0xFF, 0x00);
+	dbg_fill_buffer(&dev->bufs[0], 0x00, 0xFF, 0x00);
 #endif
 
-	drv->hor_res = modeset_list->width;
-	drv->ver_res = modeset_list->height;
+	drv->hor_res = modeset_list->bufs[0].width;
+	drv->ver_res = modeset_list->bufs[0].height;
 
 	goto ok;
 	goto err;
@@ -296,11 +314,14 @@ static int modeset_setup_dev(int fd, drmModeRes *res, drmModeConnector *conn,
 		return -EFAULT;
 	}
 
-	/* copy the mode information into our device structure */
+	/* copy the mode information into our device structure and into both
+	 * buffers */
 	memcpy(&dev->mode, &conn->modes[0], sizeof(dev->mode));
-	dev->width = conn->modes[0].hdisplay;
-	dev->height = conn->modes[0].vdisplay;
-	info("mode for connector %u is %ux%u", conn->connector_id, dev->width, dev->height);
+	dev->bufs[0].width = conn->modes[0].hdisplay;
+	dev->bufs[0].height = conn->modes[0].vdisplay;
+	dev->bufs[1].width = conn->modes[0].hdisplay;
+	dev->bufs[1].height = conn->modes[0].vdisplay;
+	info("mode for connector %u is %ux%u", conn->connector_id, dev->bufs[0].width, dev->bufs[0].height);
 
 	/* find a crtc for this connector */
 	ret = modeset_find_crtc(fd, res, conn, dev);
@@ -309,11 +330,14 @@ static int modeset_setup_dev(int fd, drmModeRes *res, drmModeConnector *conn,
 		return ret;
 	}
 
-	/* create a framebuffer for this CRTC */
-	ret = modeset_create_fb(fd, dev);
-	if (ret) {
-		err("cannot create framebuffer for connector %u", conn->connector_id);
-		return ret;
+	/* create framebuffers for this CRTC */
+	for (int i = 0; i < 2; i++) {
+		ret = modeset_create_fb(fd, &dev->bufs[i]);
+		if (ret) {
+			err("cannot create framebuffer for connector %u", conn->connector_id);
+			modeset_destroy_fb(fd, &dev->bufs[i]);
+			return ret;
+		}
 	}
 
 	return 0;
@@ -394,7 +418,7 @@ static int modeset_find_crtc(int fd, drmModeRes *res, drmModeConnector *conn,
 	return -ENOENT;
 }
 
-static int modeset_create_fb(int fd, struct modeset_dev *dev)
+static int modeset_create_fb(int fd, struct modeset_buf *buf)
 {
 	struct drm_mode_create_dumb creq;
 	struct drm_mode_destroy_dumb dreq;
@@ -403,21 +427,21 @@ static int modeset_create_fb(int fd, struct modeset_dev *dev)
 
 	/* create dumb buffer */
 	memset(&creq, 0, sizeof(creq));
-	creq.width = dev->width;
-	creq.height = dev->height;
+	creq.width = buf->width;
+	creq.height = buf->height;
 	creq.bpp = 32;
 	ret = drmIoctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
 	if (ret < 0) {
 		err("cannot create dumb buffer (%d): %m", errno);
 		return -errno;
 	}
-	dev->stride = creq.pitch;
-	dev->size = creq.size;
-	dev->handle = creq.handle;
+	buf->stride = creq.pitch;
+	buf->size = creq.size;
+	buf->handle = creq.handle;
 
 	/* create framebuffer object for the dumb-buffer */
-	ret = drmModeAddFB(fd, dev->width, dev->height, 24, 32, dev->stride,
-			   dev->handle, &dev->fb);
+	ret = drmModeAddFB(fd, buf->width, buf->height, 24, 32, buf->stride,
+			   buf->handle, &buf->fb);
 	if (ret) {
 		err("cannot create framebuffer (%d): %m", errno);
 		ret = -errno;
@@ -426,7 +450,7 @@ static int modeset_create_fb(int fd, struct modeset_dev *dev)
 
 	/* prepare buffer for memory mapping */
 	memset(&mreq, 0, sizeof(mreq));
-	mreq.handle = dev->handle;
+	mreq.handle = buf->handle;
 	ret = drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
 	if (ret) {
 		err("cannot map dumb buffer (%d): %m", errno);
@@ -435,40 +459,63 @@ static int modeset_create_fb(int fd, struct modeset_dev *dev)
 	}
 
 	/* perform actual memory mapping */
-	dev->map = mmap(0, dev->size, PROT_READ | PROT_WRITE, MAP_SHARED,
+	buf->map = mmap(0, buf->size, PROT_READ | PROT_WRITE, MAP_SHARED,
 		        fd, mreq.offset);
-	if (dev->map == MAP_FAILED) {
+	if (buf->map == MAP_FAILED) {
 		err("cannot mmap dumb buffer (%d): %m", errno);
 		ret = -errno;
 		goto err_fb;
 	}
 
 	/* clear the framebuffer to 0 */
-	memset(dev->map, 0, dev->size);
+	memset(buf->map, 0, buf->size);
 
 	return 0;
 
 err_fb:
-	drmModeRmFB(fd, dev->fb);
+	drmModeRmFB(fd, buf->fb);
 err_destroy:
 	memset(&dreq, 0, sizeof(dreq));
-	dreq.handle = dev->handle;
+	dreq.handle = buf->handle;
 	drmIoctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
 	return ret;
 }
 
+/*
+ * modeset_destroy_fb() is a new function. It does exactly the reverse of
+ * modeset_create_fb() and destroys a single framebuffer. The modeset.c example
+ * used to do this directly in modeset_cleanup().
+ * We simply unmap the buffer, remove the drm-FB and destroy the memory buffer.
+ */
+
+static void modeset_destroy_fb(int fd, struct modeset_buf *buf)
+{
+	struct drm_mode_destroy_dumb dreq;
+
+	/* unmap buffer */
+	munmap(buf->map, buf->size);
+
+	/* delete framebuffer */
+	drmModeRmFB(fd, buf->fb);
+
+	/* delete dumb buffer */
+	memset(&dreq, 0, sizeof(dreq));
+	dreq.handle = buf->handle;
+	drmIoctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
+}
+
 // }}}
 
-static void dbg_fill_buffer(struct modeset_dev *dev, uint8_t r, uint8_t g, uint8_t b)
+static void dbg_fill_buffer(struct modeset_buf *buf, uint8_t r, uint8_t g, uint8_t b)
 {
 	int j, k;
 	int off;
 
 	dbg("Filling framebuffer...");
-	for (j = 0; j < dev->height; ++j) {
-		for (k = 0; k < dev->width; ++k) {
-			off = dev->stride * j + k * 4;
-			*(uint32_t*)&dev->map[off] = (r << 16) | (g << 8) | b;
+	for (j = 0; j < buf->height; ++j) {
+		for (k = 0; k < buf->width; ++k) {
+			off = buf->stride * j + k * 4;
+			*(uint32_t*)&buf->map[off] = (r << 16) | (g << 8) | b;
 		}
 	}
 }
