@@ -207,13 +207,6 @@ void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color
 
 static void fbdev_set_resolution(lv_disp_drv_t* disp_drv)
 {
-    // Open the file for reading and writing
-    fbfd = open(FBDEV_PATH, O_RDWR);
-    if(fbfd == -1) {
-        perror("Error: cannot open framebuffer device");
-        return;
-    }
-
     // Get variable screen information
     if(ioctl(fbfd, FBIOGET_VSCREENINFO, &vinfo) == -1) {
         perror("Error reading variable information");
@@ -222,8 +215,6 @@ static void fbdev_set_resolution(lv_disp_drv_t* disp_drv)
 
 	disp_drv->hor_res = vinfo.xres;
 	disp_drv->ver_res = vinfo.yres;
-
-    close(fbfd);
 }
 
 #endif
