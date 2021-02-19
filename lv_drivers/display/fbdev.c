@@ -7,7 +7,7 @@
  *      INCLUDES
  *********************/
 #include "fbdev.h"
-#if USE_FBDEV || USE_BSD_FBDEV || USE_DRM
+#if USE_FBDEV || USE_DRM
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -17,14 +17,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
-#if USE_BSD_FBDEV
-#include <sys/fcntl.h>
-#include <sys/time.h>
-#include <sys/consio.h>
-#include <sys/fbio.h>
-#else  /* USE_BSD_FBDEV */
 #include <linux/fb.h>
-#endif /* USE_BSD_FBDEV */
 
 /*********************
  *      DEFINES
@@ -63,13 +56,8 @@ static void fbdev_set_resolution(lv_disp_drv_t* disp_drv);
 /**********************
  *  STATIC VARIABLES
  **********************/
-#if USE_BSD_FBDEV
-static struct bsd_fb_var_info vinfo;
-static struct bsd_fb_fix_info finfo;
-#else
 static struct fb_var_screeninfo vinfo;
 static struct fb_fix_screeninfo finfo;
-#endif /* USE_BSD_FBDEV */
 static char *fbp = 0;
 static long int screensize = 0;
 static int fbfd = 0;
@@ -92,31 +80,6 @@ void fbdev_init(lv_disp_drv_t* disp_drv)
     }
     printf("The framebuffer device was opened successfully.\n");
 
-#if USE_BSD_FBDEV
-    struct fbtype fb;
-    unsigned line_length;
-
-    //Get fb type
-    if (ioctl(fbfd, FBIOGTYPE, &fb) != 0) {
-        perror("ioctl(FBIOGTYPE)");
-        return;
-    }
-
-    //Get screen width
-    if (ioctl(fbfd, FBIO_GETLINEWIDTH, &line_length) != 0) {
-        perror("ioctl(FBIO_GETLINEWIDTH)");
-        return;
-    }
-
-    vinfo.xres = (unsigned) fb.fb_width;
-    vinfo.yres = (unsigned) fb.fb_height;
-    vinfo.bits_per_pixel = fb.fb_depth + 8;
-    vinfo.xoffset = 0;
-    vinfo.yoffset = 0;
-    finfo.line_length = line_length;
-    finfo.smem_len = finfo.line_length * vinfo.yres;
-#else /* USE_BSD_FBDEV */
-
     // Get fixed screen information
     if(ioctl(fbfd, FBIOGET_FSCREENINFO, &finfo) == -1) {
         perror("Error reading fixed information");
@@ -128,7 +91,6 @@ void fbdev_init(lv_disp_drv_t* disp_drv)
         perror("Error reading variable information");
         return;
     }
-#endif /* USE_BSD_FBDEV */
 
     printf("%dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
 
