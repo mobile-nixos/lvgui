@@ -9,6 +9,7 @@
 #include "fbdev.h"
 #if USE_FBDEV || USE_DRM
 
+#include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stddef.h>
@@ -24,6 +25,17 @@
  *********************/
 #ifndef FBDEV_PATH
 #define FBDEV_PATH  "/dev/fb0"
+#endif
+
+// #define DRV_DEBUG
+
+#define err(msg, ...)   fprintf(stderr, "[display/fbdev]: error: " msg "\n", ##__VA_ARGS__);
+#define print(msg, ...)	fprintf(stdout, "[display/fbdev]: " msg, ##__VA_ARGS__);
+#define info(msg, ...)    print(msg "\n", ##__VA_ARGS__)
+#ifdef DRV_DEBUG
+#define dbg(msg, ...)     print("(debug) " msg "\n", ##__VA_ARGS__)
+#else
+#define dbg(msg, ...) {}
 #endif
 
 /**********************
@@ -78,7 +90,7 @@ void fbdev_init(lv_disp_drv_t* disp_drv)
         perror("Error: cannot open framebuffer device");
         return;
     }
-    printf("The framebuffer device was opened successfully.\n");
+    print("The framebuffer device was opened successfully.\n");
 
     // Get fixed screen information
     if(ioctl(fbfd, FBIOGET_FSCREENINFO, &finfo) == -1) {
@@ -92,7 +104,7 @@ void fbdev_init(lv_disp_drv_t* disp_drv)
         return;
     }
 
-    printf("%dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
+    print("%dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
 
     // Figure out the size of the screen in bytes
     screensize =  finfo.smem_len; //finfo.line_length * vinfo.yres;    
@@ -105,9 +117,20 @@ void fbdev_init(lv_disp_drv_t* disp_drv)
     }
     memset(fbp, 0, screensize);
 
-    printf("The framebuffer device was mapped to memory successfully.\n");
+    print("The framebuffer device was mapped to memory successfully.\n");
 
     fbdev_set_resolution(disp_drv);
+
+    dbg(
+        "%dx%d, %dbpp,xres_virtual=%d,yres_virtual=%dvinfo.xoffset=%d,vinfo.yoffset=%d\n"
+        , vinfo.xres
+        , vinfo.yres
+        , vinfo.bits_per_pixel
+        , vinfo.xres_virtual
+        , vinfo.yres_virtual
+        , vinfo.xoffset
+        , vinfo.yoffset
+    );
 }
 
 void fbdev_exit(void)
@@ -132,14 +155,19 @@ void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color
         return;
     }
 
+    lv_coord_t w = (area->x2 - area->x1 + 1);
+#ifdef DRV_DEBUG
+    lv_coord_t h = (area->y2 - area->y1 + 1);
+#endif
+
+    dbg("fbdev_flush() x %d:%d y %d:%d w %d h %d", area->x1, area->x2, area->y1, area->y2, w, h);
+
     /*Truncate the area to the screen*/
     int32_t act_x1 = area->x1 < 0 ? 0 : area->x1;
     int32_t act_y1 = area->y1 < 0 ? 0 : area->y1;
     int32_t act_x2 = area->x2 > (int32_t)vinfo.xres - 1 ? (int32_t)vinfo.xres - 1 : area->x2;
     int32_t act_y2 = area->y2 > (int32_t)vinfo.yres - 1 ? (int32_t)vinfo.yres - 1 : area->y2;
 
-
-    lv_coord_t w = (act_x2 - act_x1 + 1);
     long int location = 0;
     long int byte_location = 0;
     unsigned char bit_location = 0;
@@ -213,8 +241,8 @@ static void fbdev_set_resolution(lv_disp_drv_t* disp_drv)
         return;
     }
 
-	disp_drv->hor_res = vinfo.xres;
-	disp_drv->ver_res = vinfo.yres;
+    disp_drv->hor_res = vinfo.xres;
+    disp_drv->ver_res = vinfo.yres;
 }
 
 #endif
