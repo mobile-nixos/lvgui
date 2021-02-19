@@ -223,8 +223,9 @@ void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color
         /*Not supported bit per pixel*/
     }
 
-    //May be some direct update command is required
-    //ret = ioctl(state->fd, FBIO_UPDATE, (unsigned long)((uintptr_t)rect));
+    // "pan" the framebuffer, some gpu drivers only update when told to this way.
+    // Don't check for errors, it's not important here.
+    ioctl(fbfd, FBIOPAN_DISPLAY, &vinfo);
 
     lv_disp_flush_ready(drv);
 }
