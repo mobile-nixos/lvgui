@@ -213,10 +213,6 @@ extern int monitor_height;
 #  define FBDEV_PATH          "/dev/fb0"
 #endif
 
-#ifndef USE_BSD_FBDEV
-#	define USE_BSD_FBDEV 0
-#endif
-
 /*-----------------------------------------
  *  DRM/KMS device (/dev/dri/cardX)
  *-----------------------------------------*/

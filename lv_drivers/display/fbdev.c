@@ -7,8 +7,9 @@
  *      INCLUDES
  *********************/
 #include "fbdev.h"
-#if USE_FBDEV || USE_BSD_FBDEV || USE_DRM
+#if USE_FBDEV || USE_DRM
 
+#include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stddef.h>
@@ -17,20 +18,24 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
-#if USE_BSD_FBDEV
-#include <sys/fcntl.h>
-#include <sys/time.h>
-#include <sys/consio.h>
-#include <sys/fbio.h>
-#else  /* USE_BSD_FBDEV */
 #include <linux/fb.h>
-#endif /* USE_BSD_FBDEV */
 
 /*********************
  *      DEFINES
  *********************/
 #ifndef FBDEV_PATH
 #define FBDEV_PATH  "/dev/fb0"
+#endif
+
+// #define DRV_DEBUG
+
+#define err(msg, ...)   fprintf(stderr, "[display/fbdev]: error: " msg "\n", ##__VA_ARGS__);
+#define print(msg, ...)	fprintf(stdout, "[display/fbdev]: " msg, ##__VA_ARGS__);
+#define info(msg, ...)    print(msg "\n", ##__VA_ARGS__)
+#ifdef DRV_DEBUG
+#define dbg(msg, ...)     print("(debug) " msg "\n", ##__VA_ARGS__)
+#else
+#define dbg(msg, ...) {}
 #endif
 
 /**********************
@@ -63,13 +68,8 @@ static void fbdev_set_resolution(lv_disp_drv_t* disp_drv);
 /**********************
  *  STATIC VARIABLES
  **********************/
-#if USE_BSD_FBDEV
-static struct bsd_fb_var_info vinfo;
-static struct bsd_fb_fix_info finfo;
-#else
 static struct fb_var_screeninfo vinfo;
 static struct fb_fix_screeninfo finfo;
-#endif /* USE_BSD_FBDEV */
 static char *fbp = 0;
 static long int screensize = 0;
 static int fbfd = 0;
@@ -90,32 +90,7 @@ void fbdev_init(lv_disp_drv_t* disp_drv)
         perror("Error: cannot open framebuffer device");
         return;
     }
-    printf("The framebuffer device was opened successfully.\n");
-
-#if USE_BSD_FBDEV
-    struct fbtype fb;
-    unsigned line_length;
-
-    //Get fb type
-    if (ioctl(fbfd, FBIOGTYPE, &fb) != 0) {
-        perror("ioctl(FBIOGTYPE)");
-        return;
-    }
-
-    //Get screen width
-    if (ioctl(fbfd, FBIO_GETLINEWIDTH, &line_length) != 0) {
-        perror("ioctl(FBIO_GETLINEWIDTH)");
-        return;
-    }
-
-    vinfo.xres = (unsigned) fb.fb_width;
-    vinfo.yres = (unsigned) fb.fb_height;
-    vinfo.bits_per_pixel = fb.fb_depth + 8;
-    vinfo.xoffset = 0;
-    vinfo.yoffset = 0;
-    finfo.line_length = line_length;
-    finfo.smem_len = finfo.line_length * vinfo.yres;
-#else /* USE_BSD_FBDEV */
+    print("The framebuffer device was opened successfully.\n");
 
     // Get fixed screen information
     if(ioctl(fbfd, FBIOGET_FSCREENINFO, &finfo) == -1) {
@@ -128,9 +103,8 @@ void fbdev_init(lv_disp_drv_t* disp_drv)
         perror("Error reading variable information");
         return;
     }
-#endif /* USE_BSD_FBDEV */
 
-    printf("%dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
+    print("%dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
 
     // Figure out the size of the screen in bytes
     screensize =  finfo.smem_len; //finfo.line_length * vinfo.yres;    
@@ -143,9 +117,20 @@ void fbdev_init(lv_disp_drv_t* disp_drv)
     }
     memset(fbp, 0, screensize);
 
-    printf("The framebuffer device was mapped to memory successfully.\n");
+    print("The framebuffer device was mapped to memory successfully.\n");
 
     fbdev_set_resolution(disp_drv);
+
+    dbg(
+        "%dx%d, %dbpp,xres_virtual=%d,yres_virtual=%dvinfo.xoffset=%d,vinfo.yoffset=%d\n"
+        , vinfo.xres
+        , vinfo.yres
+        , vinfo.bits_per_pixel
+        , vinfo.xres_virtual
+        , vinfo.yres_virtual
+        , vinfo.xoffset
+        , vinfo.yoffset
+    );
 }
 
 void fbdev_exit(void)
@@ -170,14 +155,19 @@ void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color
         return;
     }
 
+    lv_coord_t w = (area->x2 - area->x1 + 1);
+#ifdef DRV_DEBUG
+    lv_coord_t h = (area->y2 - area->y1 + 1);
+#endif
+
+    dbg("fbdev_flush() x %d:%d y %d:%d w %d h %d", area->x1, area->x2, area->y1, area->y2, w, h);
+
     /*Truncate the area to the screen*/
     int32_t act_x1 = area->x1 < 0 ? 0 : area->x1;
     int32_t act_y1 = area->y1 < 0 ? 0 : area->y1;
     int32_t act_x2 = area->x2 > (int32_t)vinfo.xres - 1 ? (int32_t)vinfo.xres - 1 : area->x2;
     int32_t act_y2 = area->y2 > (int32_t)vinfo.yres - 1 ? (int32_t)vinfo.yres - 1 : area->y2;
 
-
-    lv_coord_t w = (act_x2 - act_x1 + 1);
     long int location = 0;
     long int byte_location = 0;
     unsigned char bit_location = 0;
@@ -233,8 +223,9 @@ void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color
         /*Not supported bit per pixel*/
     }
 
-    //May be some direct update command is required
-    //ret = ioctl(state->fd, FBIO_UPDATE, (unsigned long)((uintptr_t)rect));
+    // "pan" the framebuffer, some gpu drivers only update when told to this way.
+    // Don't check for errors, it's not important here.
+    ioctl(fbfd, FBIOPAN_DISPLAY, &vinfo);
 
     lv_disp_flush_ready(drv);
 }
@@ -245,23 +236,14 @@ void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color
 
 static void fbdev_set_resolution(lv_disp_drv_t* disp_drv)
 {
-    // Open the file for reading and writing
-    fbfd = open(FBDEV_PATH, O_RDWR);
-    if(fbfd == -1) {
-        perror("Error: cannot open framebuffer device");
-        return;
-    }
-
     // Get variable screen information
     if(ioctl(fbfd, FBIOGET_VSCREENINFO, &vinfo) == -1) {
         perror("Error reading variable information");
         return;
     }
 
-	disp_drv->hor_res = vinfo.xres;
-	disp_drv->ver_res = vinfo.yres;
-
-    close(fbfd);
+    disp_drv->hor_res = vinfo.xres;
+    disp_drv->ver_res = vinfo.yres;
 }
 
 #endif
