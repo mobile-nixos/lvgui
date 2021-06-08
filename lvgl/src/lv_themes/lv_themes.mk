@@ -7,6 +7,7 @@ CSRCS += lv_theme_zen.c
 CSRCS += lv_theme_material.c
 CSRCS += lv_theme_nemo.c
 CSRCS += lv_theme_mono.c
+CSRCS += lv_theme_nixos.c
 
 DEPPATH += --dep-path $(LVGL_DIR)/lvgl/src/lv_themes
 VPATH += :$(LVGL_DIR)/lvgl/src/lv_themes
