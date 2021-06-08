@@ -289,6 +289,7 @@ typedef void * lv_indev_drv_user_data_t;            /*Type of user data in the i
 #define LV_USE_THEME_MATERIAL   0   /*Flat theme with bold colors and light shadows*/
 #define LV_USE_THEME_ZEN        0   /*Peaceful, mainly light theme */
 #define LV_USE_THEME_NEMO       0   /*Water-like theme based on the movie "Finding Nemo"*/
+#define LV_USE_THEME_NIXOS      1   /* Specific theme for Mobile NixOS */
 
 /*==================
  *    FONT USAGE
