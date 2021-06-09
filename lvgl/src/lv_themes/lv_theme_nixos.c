@@ -307,16 +307,19 @@ static void sw_init(void)
     sw_indic.body.radius = LV_RADIUS_CIRCLE;
 
     lv_style_copy(&sw_knob_on, theme.style.slider.knob);
-    sw_knob_on.body.shadow.width = 3;
+    sw_knob_on.body.border.width    = PIXEL_SCALE(2);
+    sw_knob_on.body.shadow.width = PIXEL_SCALE(3);
     sw_knob_on.body.shadow.type  = LV_SHADOW_BOTTOM;
     sw_knob_on.body.shadow.color = DEF_SHADOW_COLOR;
+    sw_knob_on.body.main_color   = COLOR_BLUE_LIGHT;
+    sw_knob_on.body.grad_color   = sw_knob_on.body.main_color;
+    sw_knob_on.body.border.color = COLOR_BLUE_DARK;
+    sw_knob_on.body.border.opa   = LV_OPA_COVER;
 
     lv_style_copy(&sw_knob_off, &sw_knob_on);
-    sw_knob_off.body.main_color   = COLOR_BLUE_LIGHT;
+    sw_knob_off.body.main_color   = COLOR_BLUE_DARK;
+    sw_knob_off.body.border.color = COLOR_BLUE_DARK2;
     sw_knob_off.body.grad_color   = sw_knob_off.body.main_color;
-    sw_knob_off.body.border.width = 1;
-    sw_knob_off.body.border.color = COLOR_GRAY_DARK;
-    sw_knob_off.body.border.opa   = LV_OPA_COVER;
 
     theme.style.sw.bg       = &sw_bg;
     theme.style.sw.indic    = &sw_indic;
