@@ -5,6 +5,7 @@
 #include "lv_drv_conf.h"
 
 #include "hal.h"
+#include "scale.h"
 
 LV_IMG_DECLARE(lvgui_cursor);
 LV_IMG_DECLARE(lvgui_touch);
