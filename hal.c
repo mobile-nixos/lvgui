@@ -14,6 +14,8 @@ static lv_obj_t * lvgui_cursor_obj;
 static lv_obj_t * lvgui_touch_obj;
 static lv_group_t * lvgui_focus_group;
 
+static char* mn_hal_asset_path = "./";
+
 void hal_preinit(void);
 void hal_set_dpi(void);
 void hal_setup_display(void);
@@ -51,6 +53,25 @@ void hal_setup_display(void);
 // => 14
 // We can spare 14MiB, it makes the DRM driver behave on SDM845.
 #define DISP_BUF_SIZE (LV_VER_RES_MAX*LV_HOR_RES_MAX)
+
+/**
+ * Provides a freshly allocated string with the complete path to a given asset.
+ *
+ * Consumer is tasked with freeing the allocated string.
+ */
+char* hal_asset_path(const char* asset_path)
+{
+	char* str = lv_mem_alloc(strlen(mn_hal_asset_path) + strlen(asset_path) + 1);
+	LV_ASSERT_MEM(str)
+
+	if (str == NULL) {
+		return NULL;
+	};
+
+	strcpy(str, mn_hal_asset_path);
+	strcat(str, asset_path);
+	return str;
+}
 
 // WARNING: This is not proper DPI.
 // This is the bizarro concept of DPI for lvgl, which is more
@@ -242,8 +263,21 @@ void hal_preinit()
 	hal_set_dpi();
 }
 
-void hal_init(void)
+/**
+ * Initializes the LVGUI "HAL"
+ * The consumer is responsible for the assets path!!
+ */
+void hal_init(const char* asset_path)
 {
+	mn_hal_asset_path = lv_mem_alloc(strlen(asset_path) + 1);
+	LV_ASSERT_MEM(mn_hal_asset_path)
+
+	if (mn_hal_asset_path == NULL) {
+		abort();
+	};
+
+	strcpy(mn_hal_asset_path, asset_path);
+
 	// Do some preliminary hardware initialization.
 	// Mostly some initialization with the display that can't be done later.
 	hal_preinit();
