@@ -6,6 +6,7 @@ lv_group_t * lvgui_get_focus_group();
 void lvgui_focus_ring_disable();
 lv_disp_drv_t disp_drv;
 int mn_hal_default_dpi;
+mn_hal_default_font_t mn_hal_default_font;
 char * hal_asset_path(const char* asset_path);
 
 #endif

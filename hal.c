@@ -3,6 +3,7 @@
 #include <sys/time.h>
 #include "lvgl/lvgl.h"
 #include "lv_drv_conf.h"
+#include "lv_lib_freetype/lv_freetype.h"
 
 #include "hal.h"
 #include "scale.h"
@@ -10,7 +11,6 @@
 LV_IMG_DECLARE(lvgui_cursor);
 LV_IMG_DECLARE(lvgui_touch);
 
-mn_hal_default_font_t mn_hal_default_font;
 static lv_obj_t * lvgui_cursor_obj;
 static lv_obj_t * lvgui_touch_obj;
 static lv_group_t * lvgui_focus_group;
@@ -82,30 +82,34 @@ char* hal_asset_path(const char* asset_path)
 // and not according to the device size.
 void hal_set_dpi()
 {
-	// HACK
+	int ret = 0;
 	// This needs to happen before lv_init.
 	// This means we need to figure out the DPI before hal_init :(
-	// Default fallback value.
-	mn_hal_default_dpi = 100;
 
 	mn_hal_default_dpi = 200*(disp_drv.hor_res)/720;
-	printf("HAL DPI: %d\n", mn_hal_default_dpi);
+
+#if LV_LOG_LEVEL <= LV_LOG_LEVEL_INFO
+	printf("[LVGUI:HAL] Computed 'DPI': %d\n", mn_hal_default_dpi);
+#endif
 
 	// Not strictly DPI, but fonts don't actually scale with DPI
 	// so we need to handle it ourselves.
 
-	// HACK
-	// This will be inherited by the default theme, via styles...
-	// This has to be not-NULL before lv_init or else the default theme will fail.
-	// It fails due to its use in `lv_core/lv_style.c`
+	// Init freetype with this many cached glyphs
+	lv_freetype_init(255);
 
-	if (mn_hal_default_dpi < 150) {
-		printf("HAL DPI: Using Roboto 22\n");
-		mn_hal_default_font = &lv_font_roboto_22;
+	// Font we're going to use
+	static lv_font_t font;
+	ret = lv_freetype_font_init(&font, hal_asset_path("fonts/Roboto-Regular.ttf"), POINTS_SCALE(24));
+	if (ret == FT_Err_Ok) {
+		mn_hal_default_font = (void *)&font;
+#if LV_LOG_LEVEL <= LV_LOG_LEVEL_INFO
+		printf("[LVGUI:HAL] Default font size: %d\n", POINTS_SCALE(24));
+#endif
 	}
 	else {
-		printf("HAL DPI: Using Roboto 28\n");
-		mn_hal_default_font = &lv_font_roboto_28;
+		LV_LOG_ERROR("Could not load font; falling back to built-in Roboto@22...");
+		mn_hal_default_font = &lv_font_roboto_22;
 	}
 }
 
