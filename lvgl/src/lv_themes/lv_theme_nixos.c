@@ -10,6 +10,7 @@
 
 #if LV_USE_THEME_NIXOS
 
+#include "../../../scale.h"
 #include <stdio.h>
 
 #if LV_COLOR_DEPTH == 1
@@ -20,10 +21,6 @@
  *      DEFINES
  *********************/
 #define DEF_RADIUS 0
-
-// Scales values to 1:1px at 720p
-// This is the scale at which the mockups were designed.
-#define PIXEL_SCALE(x) ((int)(LV_DPI * x/200))
 
 #define COL_PADDING PIXEL_SCALE(32)
 #define ROW_PADDING PIXEL_SCALE(32)
