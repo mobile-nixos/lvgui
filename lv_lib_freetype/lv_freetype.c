@@ -8,6 +8,7 @@
  *********************/
 
 #include "lv_freetype.h"
+#include "../hal.h"
 
 /*********************
  *      DEFINES
@@ -27,6 +28,10 @@
 static FT_Library library;
 
 #if USE_CACHE_MANGER
+// Fallback font
+static uint16_t fallback_last_size = 0;
+static FT_Face fallback_face;
+
 static FTC_Manager cache_manager;
 static FTC_CMapCache cmap_cache;
 /*static FTC_ImageCache image_cache;*/
@@ -40,6 +45,21 @@ static FTC_SBit sbit;
 /**********************
  *   STATIC FUNCTIONS
  **********************/
+
+static void refresh_fallback_size(uint16_t size)
+{
+    FT_Error error;
+
+	if (fallback_last_size != size) {
+		error = FT_Set_Pixel_Sizes(fallback_face, 0, size);
+		if ( error ) {
+			printf("Error in FT_Set_Char_Size for fallback font: %d\n", error);
+			return;
+		}
+
+		fallback_last_size = size;
+	}
+}
  
 static FT_Error  font_Face_Requester(FTC_FaceID  face_id,
                          FT_Library  library,
@@ -50,6 +70,7 @@ static FT_Error  font_Face_Requester(FTC_FaceID  face_id,
 
     return FT_Err_Ok;
 }
+
 static bool get_glyph_dsc_cache_cb(const lv_font_t * font, lv_font_glyph_dsc_t * dsc_out, uint32_t unicode_letter, uint32_t unicode_letter_next)
 {
     if(unicode_letter < 0x20) {
@@ -68,6 +89,19 @@ static bool get_glyph_dsc_cache_cb(const lv_font_t * font, lv_font_glyph_dsc_t *
 	lv_font_fmt_freetype_dsc_t * dsc = (lv_font_fmt_freetype_dsc_t *)(font->user_data);
     face = dsc->face;
 	FTC_ImageTypeRec desc_sbit_type;
+
+	// https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_get_char_index
+	// First check
+	if (FT_Get_Char_Index(face, unicode_letter) == 0) {
+		refresh_fallback_size(dsc->font_size);
+
+		face = fallback_face;
+
+		if (FT_Get_Char_Index(face, unicode_letter) == 0) {
+			printf("Warning: missing glyph 0x%x in main font and fallback font.\n", unicode_letter);
+			return false;
+		}
+	}
 
 	desc_sbit_type.face_id = (FTC_FaceID)face;
 	desc_sbit_type.flags = FT_LOAD_RENDER | FT_LOAD_TARGET_NORMAL;
@@ -95,6 +129,22 @@ static const uint8_t * get_glyph_bitmap_cache_cb(const lv_font_t * font, uint32_
 	return (const uint8_t *)sbit->buffer;
 }
 #else
+
+static void refresh_fallback_size(uint16_t size)
+{
+    FT_Error error;
+
+	if (fallback_last_size != size) {
+		error = FT_Set_Pixel_Sizes(fallback_face, 0, size);
+		if ( error ) {
+			printf("Error in FT_Set_Char_Size for fallback font: %d\n", error);
+			return;
+		}
+
+		fallback_last_size = size;
+	}
+}
+
 static bool get_glyph_dsc_cb(const lv_font_t * font, lv_font_glyph_dsc_t * dsc_out, uint32_t unicode_letter, uint32_t unicode_letter_next)
 {
     if(unicode_letter < 0x20) {
@@ -113,6 +163,18 @@ static bool get_glyph_dsc_cb(const lv_font_t * font, lv_font_glyph_dsc_t * dsc_o
     face = dsc->face;
 
 	FT_UInt glyph_index = FT_Get_Char_Index( face, unicode_letter );
+
+	if (glyph_index == 0) {
+		refresh_fallback_size(dsc->font_size);
+
+		face = fallback_face;
+		glyph_index = FT_Get_Char_Index( face, unicode_letter );
+
+		if (glyph_index == 0) {
+			printf("Warning: missing glyph 0x%x in main font and fallback font.\n", unicode_letter);
+			return false;
+		}
+	}
 
 	error = FT_Load_Glyph(
 			face,          /* handle to face object */
@@ -149,6 +211,20 @@ static const uint8_t * get_glyph_bitmap_cb(const lv_font_t * font, uint32_t unic
 	FT_Face face;
 	lv_font_fmt_freetype_dsc_t * dsc = (lv_font_fmt_freetype_dsc_t *)(font->user_data);
 	face = dsc->face;
+
+	FT_UInt glyph_index = FT_Get_Char_Index( face, unicode_letter );
+	if (glyph_index == 0) {
+		refresh_fallback_size(dsc->font_size);
+
+		face = fallback_face;
+		glyph_index = FT_Get_Char_Index( face, unicode_letter );
+
+		if (glyph_index == 0) {
+			printf("Warning: missing glyph 0x%x in main font and fallback font.\n", unicode_letter);
+			return false;
+		}
+	}
+
 	return (const uint8_t *)(face->glyph->bitmap.buffer);
 }
 #endif
@@ -203,6 +279,12 @@ int lv_freetype_init(uint8_t max_faces)
 		return error;
 	}
 #endif
+
+	error = FT_New_Face(library, hal_asset_path("fonts/fallback.ttf"), 0, &fallback_face);
+	if (error) {
+		printf("WARNING: Error loading fallback font in FT_New_Face: %d\n", error);
+	}
+
     return FT_Err_Ok;
 }
 
@@ -249,7 +331,6 @@ int lv_freetype_font_init(lv_font_t * font, const char * font_path, uint16_t fon
 	font->line_height = (dsc->face->size->metrics.height >> 6);
     font->base_line = -(dsc->face->size->metrics.descender >> 6);  /*Base line measured from the top of line_height*/
 	font->subpx = LV_FONT_SUBPX_NONE;
-
     
     return FT_Err_Ok;
 }
