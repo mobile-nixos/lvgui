@@ -11,6 +11,8 @@
 #if LV_USE_THEME_NIXOS
 
 #include "../../../scale.h"
+#include "../../../hal.h"
+#include "../../../lv_lib_freetype/lv_freetype.h"
 #include <stdio.h>
 
 #if LV_COLOR_DEPTH == 1
@@ -147,15 +149,25 @@ static void btn_init(void)
 {
 #if LV_USE_BTN != 0
     static lv_style_t rel, pr, tgl_rel, tgl_pr, ina;
+    static lv_font_t btn_font;
+    int ret = 0;
+
+    ret = lv_freetype_font_init(&btn_font, hal_asset_path("fonts/Overpass-Bold.ttf"), POINTS_SCALE(25));
 
     lv_style_copy(&rel, &def);
+    if (ret == FT_Err_Ok) {
+        rel.text.font = &btn_font;
+    }
+    else {
+        LV_LOG_ERROR("Could not load button font; falling back to default font...");
+    }
     rel.body.main_color     = COLOR_BLUE_LIGHT;
     rel.body.grad_color     = rel.body.main_color;
     rel.body.radius         = PIXEL_SCALE(40);
     rel.body.padding.left   = COL_PADDING;
     rel.body.padding.right  = COL_PADDING;
-    rel.body.padding.top    = ROW_PADDING;
-    rel.body.padding.bottom = ROW_PADDING;
+    rel.body.padding.top    = PIXEL_SCALE(23);
+    rel.body.padding.bottom = PIXEL_SCALE(23);
     rel.body.padding.inner  = VER_GRID;
 
     rel.body.shadow.color   = DEF_SHADOW_COLOR;
