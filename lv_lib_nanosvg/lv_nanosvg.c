@@ -100,5 +100,5 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
 static void decoder_close(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * dsc)
 {
 	(void) decoder;
-	free(dsc->img_data);
+	(void) dsc;
 }
