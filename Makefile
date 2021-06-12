@@ -91,6 +91,7 @@ endif
 
 # Additional source files
 CSRCS += ./hal.c
+CSRCS += ./url.c
 CSRCS += ./introspection.c
 CSRCS += ./artwork/lvgui_cursor.c
 CSRCS += ./artwork/lvgui_touch.c
