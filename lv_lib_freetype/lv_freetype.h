@@ -32,8 +32,6 @@ extern "C" {
 #include FT_GLYPH_H
 #include FT_CACHE_H
 
-#define USE_CACHE_MANGER	1
-
 /*********************
  *      DEFINES
  *********************/
@@ -50,7 +48,7 @@ typedef struct {
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-int lv_freetype_init(uint8_t max_faces);
+int lv_freetype_init();
 int lv_freetype_font_init(lv_font_t * font, const char * font_path, uint16_t font_size);
 
 /**********************
