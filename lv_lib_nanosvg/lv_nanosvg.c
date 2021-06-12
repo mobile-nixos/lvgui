@@ -7,23 +7,12 @@
 #define NANOSVGRAST_IMPLEMENTATION
 #include "nanosvgrast.h"
 
-// Struct used to hold data for special operation to apply on the next image load.
-typedef struct {
-	int width;
-	int height;
-} lv_nanosvg_next_data_t;
-
-static lv_nanosvg_next_data_t next_data;
-
-void lv_nanosvg_next_reset(void);
-
 static lv_res_t decoder_info(struct _lv_img_decoder * decoder, const void * src, lv_img_header_t * header);
 static lv_res_t decoder_open(lv_img_decoder_t * dec, lv_img_decoder_dsc_t * dsc);
 static void decoder_close(lv_img_decoder_t * dec, lv_img_decoder_dsc_t * dsc);
 
 void lv_nanosvg_init(void)
 {
-	lv_nanosvg_next_reset();
 	lv_img_decoder_t * dec = lv_img_decoder_create();
 	lv_img_decoder_set_info_cb(dec, decoder_info);
 	lv_img_decoder_set_open_cb(dec, decoder_open);
@@ -59,16 +48,6 @@ static lv_res_t decoder_info(struct _lv_img_decoder * decoder, const void * src,
 		width = (int)image->width;
 		height = (int)image->height;
 
-		if (next_data.width > 0 || next_data.height > 0) {
-			if (next_data.width == 0) {
-				next_data.width = width * next_data.height / height;
-			}
-			if (next_data.height == 0) {
-				next_data.height = height * next_data.width / width;
-			}
-			width = next_data.width;
-			height = next_data.height;
-		}
 
 		header->w = width;
 		header->h = height;
@@ -123,20 +102,3 @@ static void decoder_close(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * dsc
 	(void) decoder;
 	free(dsc->img_data);
 }
-
-void lv_nanosvg_next_reset()
-{
-	next_data.width = 0;
-	next_data.height = 0;
-}
-
-void lv_nanosvg_resize_next_width(int width)
-{
-	next_data.width = width;
-}
-
-void lv_nanosvg_resize_next_height(int height)
-{
-	next_data.height = height;
-}
-
