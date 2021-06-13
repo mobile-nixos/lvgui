@@ -39,7 +39,7 @@ extern "C" {
  * @param font pointer to a font (NULL to use the default)
  * @return pointer to the initialized theme
  */
-lv_theme_t * lv_theme_nixos_init(lv_font_t * font);
+lv_theme_t * lv_theme_nixos_init(lv_font_t * font, lv_font_t * button_font);
 
 /**
  * Get a pointer to the theme

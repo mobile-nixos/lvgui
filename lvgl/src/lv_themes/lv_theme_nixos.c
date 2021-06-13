@@ -77,6 +77,7 @@ static lv_style_t sb;
 /*Saved input parameters*/
 static uint16_t _hue;
 static lv_font_t * _font;
+static lv_font_t * _button_font;
 
 /**********************
  *      MACROS
@@ -149,18 +150,9 @@ static void btn_init(void)
 {
 #if LV_USE_BTN != 0
     static lv_style_t rel, pr, tgl_rel, tgl_pr, ina;
-    static lv_font_t btn_font;
-    int ret = 0;
-
-    ret = lv_freetype_font_init(&btn_font, hal_asset_path("fonts/Overpass-Bold.ttf"), POINTS_SCALE(25));
 
     lv_style_copy(&rel, &def);
-    if (ret == FT_Err_Ok) {
-        rel.text.font = &btn_font;
-    }
-    else {
-        LV_LOG_ERROR("Could not load button font; falling back to default font...");
-    }
+    rel.text.font           = _button_font;
     rel.body.main_color     = COLOR_BLUE_LIGHT;
     rel.body.grad_color     = rel.body.main_color;
     rel.body.radius         = PIXEL_SCALE(40);
@@ -770,12 +762,14 @@ static void style_mod_edit(lv_group_t * group, lv_style_t * style)
  * @param font pointer to a font (NULL to use the default)
  * @return pointer to the initialized theme
  */
-lv_theme_t * lv_theme_nixos_init(lv_font_t * font)
+lv_theme_t * lv_theme_nixos_init(lv_font_t * font, lv_font_t * button_font)
 {
     if(font == NULL) font = LV_FONT_DEFAULT;
+    if(button_font == NULL) button_font = LV_FONT_DEFAULT;
 
     _hue  = BASE_HUE; // Start at the right hue.
     _font = font;
+    _button_font = button_font;
 
     /*For backward compatibility initialize all theme elements with a default style */
     uint16_t i;
