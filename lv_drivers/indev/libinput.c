@@ -318,6 +318,7 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 			instance->root_x = lv_disp_get_hor_res(drv->disp) - 1;
 		}
 		if(data->point.y >= lv_disp_get_ver_res(drv->disp)) {
+			data->point.y = lv_disp_get_ver_res(drv->disp) - 1;
 			instance->root_y = lv_disp_get_ver_res(drv->disp) - 1;
 		}
 
