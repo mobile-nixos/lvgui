@@ -15,11 +15,30 @@
 #include <xkbcommon/xkbcommon.h>
 #include <xkbcommon/xkbcommon-compose.h>
 
-// #define DRV_DEBUG
-
 // I'd like a better source for the requirement than the *evdev* example, but eh, it _is_ needed.
 // https://github.com/xkbcommon/libxkbcommon/blob/9caa4128c2534cfbd46fc73768ef6202f813eb53/tools/interactive-evdev.c#L57
 #define EVDEV_OFFSET 8
+
+#undef LVGUI_LOG_ERROR
+#if LV_LOG_LEVEL <= LV_LOG_LEVEL_ERROR
+#define LVGUI_LOG_ERROR(s, ...) fprintf(stderr, "[ERROR] (%s): " s "\n", __func__, ##__VA_ARGS__);
+#else
+#define LVGUI_LOG_ERROR
+#endif
+
+#undef LVGUI_LOG_WARN
+#if LV_LOG_LEVEL <= LV_LOG_LEVEL_WARN
+#define LVGUI_LOG_WARN(s, ...) fprintf(stderr, "[WARN] (%s): " s "\n", __func__, ##__VA_ARGS__);
+#else
+#define LVGUI_LOG_WARN
+#endif
+
+#undef LVGUI_LOG_INFO
+#if LV_LOG_LEVEL <= LV_LOG_LEVEL_INFO
+#define LVGUI_LOG_INFO(s, ...) fprintf(stderr, "[INFO] (%s): " s "\n", __func__, ##__VA_ARGS__);
+#else
+#define LVGUI_LOG_INFO
+#endif
 
 /*********************
  *      DEFINES
@@ -111,9 +130,7 @@ bool libinput_set_file(libinput_drv_instance* instance, char* dev_name)
 
 libinput_drv_instance* libinput_init_drv(char* dev_name)
 {
-#ifdef DRV_DEBUG
-	printf("[indev/libinput]: Initializing for '%s'...\n", dev_name);
-#endif
+	LVGUI_LOG_INFO("[indev/libinput]: Initializing for '%s'...", dev_name);
 
 	// Allocate the instance in memory
 	libinput_drv_instance* instance = libinput_drv_instance_new();
@@ -138,17 +155,17 @@ libinput_drv_instance* libinput_init_drv(char* dev_name)
 		instance->lv_indev_drv_type = LV_INDEV_TYPE_POINTER;
 	}
 
-#ifdef DRV_DEBUG
-	printf("\n");
-	printf(
-		"> Device *%s* (`%s`):\n",
+#if LV_LOG_LEVEL <= LV_LOG_LEVEL_INFO
+	LVGUI_LOG_INFO("");
+	LVGUI_LOG_INFO(
+		"> Device *%s* (`%s`):",
 		libinput_device_get_name(instance->libinput_device),
 		libinput_device_get_sysname(instance->libinput_device)
 	);
-	if (instance->is_pointer)     { printf(">  - is a pointer\n"); }
-	if (instance->is_touchscreen) { printf(">  - is a touchscreen\n"); }
-	if (instance->is_keyboard)    { printf(">  - is a keyboard\n"); }
-	printf("\n");
+	if (instance->is_pointer)     { LVGUI_LOG_INFO(">  - is a pointer"); }
+	if (instance->is_touchscreen) { LVGUI_LOG_INFO(">  - is a touchscreen"); }
+	if (instance->is_keyboard)    { LVGUI_LOG_INFO(">  - is a keyboard"); }
+	LVGUI_LOG_INFO("");
 #endif
 
 	// Prepare file descriptors for polling
@@ -158,9 +175,7 @@ libinput_drv_instance* libinput_init_drv(char* dev_name)
 
 	fcntl(instance->fds[0].fd, F_SETFL, O_ASYNC | O_NONBLOCK);
 
-#ifdef DRV_DEBUG
-	printf("[indev/libinput]: done with '%s'...\n", dev_name);
-#endif
+	LVGUI_LOG_INFO("[indev/libinput]: done with '%s'...", dev_name);
 
 	// Initialize xkbcommon
 	xkbcommon_init();
@@ -218,26 +233,22 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 				instance->root_x += libinput_event_pointer_get_dx(pointer_event);
 				instance->root_y += libinput_event_pointer_get_dy(pointer_event);
 
-#ifdef DRV_DEBUG
-				printf(
-					"[indev/libinput]: Relative move: dx = %f, dy = %f, x = %f, y = %f;\n",
+				LVGUI_LOG_INFO(
+					"[indev/libinput]: Relative move: dx = %f, dy = %f, x = %f, y = %f;",
 					libinput_event_pointer_get_dx(pointer_event),
 					libinput_event_pointer_get_dy(pointer_event),
 					instance->root_x,
 					instance->root_y
 				);
-#endif
 				break;
 
 			case LIBINPUT_EVENT_POINTER_BUTTON:
 				pointer_event = libinput_event_get_pointer_event(event);
 				in_button = libinput_event_pointer_get_button(pointer_event);
-#ifdef DRV_DEBUG
-				printf(
-					"[indev/libinput]: Pointer button button = %d;\n",
+				LVGUI_LOG_INFO(
+					"[indev/libinput]: Pointer button button = %d;",
 					in_button
 				);
-#endif
 				if (in_button == BTN_LEFT) {
 					if (libinput_event_pointer_get_button_state(pointer_event) == LIBINPUT_BUTTON_STATE_PRESSED) {
 						instance->state = LV_INDEV_STATE_PR;
@@ -281,17 +292,17 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 				break;
 
 			case LIBINPUT_EVENT_NONE:
-				// DO NOT mask this with DRV_DEBUG
+				// DO NOT mask this log.
 				// It is unexpected, since we're polling
-				printf("[indev/libinput]: Unexpected LIBINPUT_EVENT_NONE.\n");
+				LVGUI_LOG_INFO("[indev/libinput]: Unexpected LIBINPUT_EVENT_NONE.");
 				break;
 
 			case LIBINPUT_EVENT_TOUCH_CANCEL:
 			default:
-				// DO NOT mask this with DRV_DEBUG
+				// DO NOT mask this log.
 				// We want to be verbose on *unhandled* events.
 				// If the event does nothing, add it to the no-op list.
-				printf("[indev/libinput]: Event type %d not handled.\n", type);
+				LVGUI_LOG_INFO("[indev/libinput]: Event type %d not handled.", type);
 				break;
 		}
 		libinput_event_destroy(event);
@@ -318,19 +329,19 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 			instance->root_x = lv_disp_get_hor_res(drv->disp) - 1;
 		}
 		if(data->point.y >= lv_disp_get_ver_res(drv->disp)) {
+			data->point.y = lv_disp_get_ver_res(drv->disp) - 1;
 			instance->root_y = lv_disp_get_ver_res(drv->disp) - 1;
 		}
 
-#ifdef DRV_DEBUG
-		printf(
-			"[indev/libinput]: lvgl input data: x = %d; y = %4d; state = %4d; key = %3d; // %s\n",
+		LVGUI_LOG_INFO(
+			"[indev/libinput]: (instance: 0x%p) lvgl input data: x = %4d; y = %4d; state = %4d; key = %3d; // %s",
+			instance,
 			data->point.x,
 			data->point.y,
 			data->state,
 			data->key,
 			libinput_device_get_name(instance->libinput_device)
 		);
-#endif
 	}
 
 	// False because there are no events to handle anymore
@@ -445,14 +456,12 @@ static void libinput_drv_handle_keyboard_input(libinput_drv_instance* instance, 
 			}
 			break;
 	}
-#ifdef DRV_DEBUG
-	printf(
-		"[indev/libinput]: lvgl input data (keyboard): state = %4d; key = %3d; // %s\n",
+	LVGUI_LOG_INFO(
+		"[indev/libinput]: lvgl input data (keyboard): state = %4d; key = %3d; // %s",
 		data->state,
 		data->key,
 		libinput_device_get_name(instance->libinput_device)
 	);
-#endif
 
 	// Don't forget to cleanup!
 	libinput_event_destroy(event);
@@ -467,7 +476,7 @@ static int xkbcommon_init() {
 	struct xkb_context *ctx;
 	ctx = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
 	if (!ctx) {
-		printf("error: Could not create xkb_context.\n");
+		LVGUI_LOG_ERROR("error: Could not create xkb_context.");
 		return 1;
 	}
 
@@ -482,13 +491,13 @@ static int xkbcommon_init() {
 	our_xkb_keymap = xkb_keymap_new_from_names(ctx, &names,
 			XKB_KEYMAP_COMPILE_NO_FLAGS);
 	if (!our_xkb_keymap) {
-		printf("error: Could not create xkb_keymap.\n");
+		LVGUI_LOG_ERROR("error: Could not create xkb_keymap.");
 		return 1;
 	}
 
 	our_xkb_state = xkb_state_new(our_xkb_keymap);
 	if (!our_xkb_state) {
-		printf("error: Could not create xkb_state\n");
+		LVGUI_LOG_ERROR("error: Could not create xkb_state");
 		return 1;
 	}
 
@@ -507,12 +516,10 @@ static int xkbcommon_init() {
 	compose_table = xkb_compose_table_new_from_locale(ctx, locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
 
 	if (!compose_table) {
-		printf("warning: Could not create xkb_compose_table.\n");
+		LVGUI_LOG_WARN("warning: Could not create xkb_compose_table.");
 	}
 	else {
-#ifdef DRV_DEBUG
-		printf("Configured locale and xkb_compose_table\n");
-#endif
+		LVGUI_LOG_INFO("Configured locale and xkb_compose_table");
 
 		our_xkb_compose_state = xkb_compose_state_new(compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
 	}
@@ -547,9 +554,7 @@ static int handle_xkbcommon_input(int keycode, int direction, char *key_characte
 	// Get keysym name
 	xkb_keysym_get_name(keysym, keysym_name, sizeof(keysym_name));
 
-#ifdef DRV_DEBUG
-	printf("[indev/libinput]: key code 0x%02x direction %1d; %s\n", keycode, direction, keysym_name);
-#endif
+	LVGUI_LOG_INFO("[indev/libinput]: key code 0x%02x direction %1d; %s", keycode, direction, keysym_name);
 
 	// Maybe override keysym and current character string from compose
 	if (direction == XKB_KEY_UP) {
@@ -568,9 +573,9 @@ static int handle_xkbcommon_input(int keycode, int direction, char *key_characte
 		// Get keysym name
 		xkb_keysym_get_name(keysym, keysym_name, sizeof(keysym_name));
 
-#ifdef DRV_DEBUG
+#if LV_LOG_LEVEL <= LV_LOG_LEVEL_INFO
 		if (strcmp(key_character, "")) {
-			printf("[indev/libinput]: Char entered: [%s] key name: '%s'; ret = %d\n", key_character, keysym_name, ret);
+			LVGUI_LOG_INFO("[indev/libinput]: Char entered: [%s] key name: '%s'; ret = %d", key_character, keysym_name, ret);
 		}
 #endif
 	}
