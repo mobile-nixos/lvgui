@@ -394,6 +394,9 @@
 #ifndef LV_USE_THEME_NEMO
 #define LV_USE_THEME_NEMO       0   /*Water-like theme based on the movie "Finding Nemo"*/
 #endif
+#ifndef LV_USE_THEME_NIXOS
+#define LV_USE_THEME_NIXOS      0
+#endif
 
 /*==================
  *    FONT USAGE

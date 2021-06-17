@@ -72,7 +72,7 @@ typedef int16_t lv_coord_t;
  * The graphical objects and other related data are stored here. */
 
 /* 1: use custom malloc/free, 0: use the built-in `lv_mem_alloc` and `lv_mem_free` */
-#define LV_MEM_CUSTOM      0
+#define LV_MEM_CUSTOM      1
 #if LV_MEM_CUSTOM == 0
 /* Size of the memory used by `lv_mem_alloc` in bytes (>= 2kB)*/
 #  define LV_MEM_SIZE    (128U * 1024U)
@@ -172,7 +172,7 @@ typedef void * lv_fs_drv_user_data_t;
  * With complex image decoders (e.g. PNG or JPG) caching can save the continuous open/decode of images.
  * However the opened images might consume additional RAM.
  * LV_IMG_CACHE_DEF_SIZE must be >= 1 */
-#define LV_IMG_CACHE_DEF_SIZE       1
+#define LV_IMG_CACHE_DEF_SIZE       8
 
 /*Declare the type of the user data of image decoder (can be e.g. `void *`, `int`, `struct`)*/
 typedef void * lv_img_decoder_user_data_t;
@@ -289,6 +289,7 @@ typedef void * lv_indev_drv_user_data_t;            /*Type of user data in the i
 #define LV_USE_THEME_MATERIAL   0   /*Flat theme with bold colors and light shadows*/
 #define LV_USE_THEME_ZEN        0   /*Peaceful, mainly light theme */
 #define LV_USE_THEME_NEMO       0   /*Water-like theme based on the movie "Finding Nemo"*/
+#define LV_USE_THEME_NIXOS      1   /* Specific theme for Mobile NixOS */
 
 /*==================
  *    FONT USAGE
@@ -364,7 +365,7 @@ typedef void * lv_font_user_data_t;
 
 /* If a word is at least this long, will break wherever "prettiest"
  * To disable, set to a value <= 0 */
-#define LV_TXT_LINE_BREAK_LONG_LEN          12
+#define LV_TXT_LINE_BREAK_LONG_LEN          24
 
 /* Minimum number of characters in a long word to put on a line before a break.
  * Depends on LV_TXT_LINE_BREAK_LONG_LEN. */
@@ -499,7 +500,7 @@ typedef void * lv_obj_user_data_t;
 #endif
 
 /*LED (dependencies: -)*/
-#define LV_USE_LED      1
+#define LV_USE_LED      0
 
 /*Line (dependencies: -*/
 #define LV_USE_LINE     1

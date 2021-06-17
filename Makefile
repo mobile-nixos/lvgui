@@ -94,6 +94,7 @@ LIBRARY = liblvgui.so
 endif
 
 # Additional source files
+CSRCS += ./font.c
 CSRCS += ./hal.c
 CSRCS += ./url.c
 CSRCS += ./introspection.c
