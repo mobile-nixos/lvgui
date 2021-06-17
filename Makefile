@@ -78,10 +78,14 @@ LDFLAGS += -lpthread
 LDFLAGS += -lxkbcommon
 endif
 
+CFLAGS += $(shell $(PKG_CONFIG) --cflags freetype2)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs freetype2)
+
 # External components
 include $(LVGL_DIR)/lvgl/lvgl.mk
 include $(LVGL_DIR)/lv_drivers/lv_drivers.mk
 include $(LVGL_DIR)/lv_lib_nanosvg/lv_lib_nanosvg.mk
+include $(LVGL_DIR)/lv_lib_freetype/lv_lib_freetype.mk
 
 ifeq ($(STATIC), true)
 LIBRARY = liblvgui.a
