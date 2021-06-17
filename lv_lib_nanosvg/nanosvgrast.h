@@ -49,12 +49,12 @@ typedef struct NSVGrasterizer NSVGrasterizer;
 // Allocated rasterizer context.
 NSVGrasterizer* nsvgCreateRasterizer(void);
 
-// Rasterizes SVG image, returns RGBA image (non-premultiplied alpha)
+// Rasterizes SVG image, returns BGRA image (non-premultiplied alpha)
 //   r - pointer to rasterizer context
 //   image - pointer to image to rasterize
 //   tx,ty - image offset (applied after scaling)
 //   scale - image scale
-//   dst - pointer to destination image data, 4 bytes per pixel (RGBA)
+//   dst - pointer to destination image data, 4 bytes per pixel (BGRA)
 //   w - width of the image to render
 //   h - height of the image to render
 //   stride - number of bytes per scaleline in the destination buffer
@@ -954,9 +954,9 @@ static void nsvg__fillActiveEdges(unsigned char* scanline, int len, NSVGactiveEd
 
 static float nsvg__clampf(float a, float mn, float mx) { return a < mn ? mn : (a > mx ? mx : a); }
 
-static unsigned int nsvg__RGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+static unsigned int nsvg__BGRA(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-	return (r) | (g << 8) | (b << 16) | (a << 24);
+	return (b) | (g << 8) | (r << 16) | (a << 24);
 }
 
 static unsigned int nsvg__lerpRGBA(unsigned int c0, unsigned int c1, float u)
@@ -966,7 +966,7 @@ static unsigned int nsvg__lerpRGBA(unsigned int c0, unsigned int c1, float u)
 	int g = (((c0>>8) & 0xff)*(256-iu) + (((c1>>8) & 0xff)*iu)) >> 8;
 	int b = (((c0>>16) & 0xff)*(256-iu) + (((c1>>16) & 0xff)*iu)) >> 8;
 	int a = (((c0>>24) & 0xff)*(256-iu) + (((c1>>24) & 0xff)*iu)) >> 8;
-	return nsvg__RGBA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
+	return nsvg__BGRA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 }
 
 static unsigned int nsvg__applyOpacity(unsigned int c, float u)
@@ -976,7 +976,7 @@ static unsigned int nsvg__applyOpacity(unsigned int c, float u)
 	int g = (c>>8) & 0xff;
 	int b = (c>>16) & 0xff;
 	int a = (((c>>24) & 0xff)*iu) >> 8;
-	return nsvg__RGBA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
+	return nsvg__BGRA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 }
 
 static inline int nsvg__div255(int x)

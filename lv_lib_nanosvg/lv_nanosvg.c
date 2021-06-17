@@ -1,21 +1,12 @@
 #include <stdio.h>
 #include "lvgl/lvgl.h"
 #include "lv_nanosvg.h"
+#include "url.h"
 
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg.h"
 #define NANOSVGRAST_IMPLEMENTATION
 #include "nanosvgrast.h"
-
-// Struct used to hold data for special operation to apply on the next image load.
-typedef struct {
-	int width;
-	int height;
-} lv_nanosvg_next_data_t;
-
-static lv_nanosvg_next_data_t next_data;
-
-void lv_nanosvg_next_reset(void);
 
 static lv_res_t decoder_info(struct _lv_img_decoder * decoder, const void * src, lv_img_header_t * header);
 static lv_res_t decoder_open(lv_img_decoder_t * dec, lv_img_decoder_dsc_t * dsc);
@@ -23,7 +14,6 @@ static void decoder_close(lv_img_decoder_t * dec, lv_img_decoder_dsc_t * dsc);
 
 void lv_nanosvg_init(void)
 {
-	lv_nanosvg_next_reset();
 	lv_img_decoder_t * dec = lv_img_decoder_create();
 	lv_img_decoder_set_info_cb(dec, decoder_info);
 	lv_img_decoder_set_open_cb(dec, decoder_open);
@@ -39,42 +29,46 @@ static lv_res_t decoder_info(struct _lv_img_decoder * decoder, const void * src,
 
 	(void) height;
 	(void) width;
-	(void) src_type;
 
 	if (src_type == LV_IMG_SRC_FILE) {
-		const char * filename = src;
+		const char * path = url_get_path(src);
 		NSVGimage *image = NULL;
 
-		image = nsvgParseFromFile(filename, "px", 96.0f);
+		image = nsvgParseFromFile(path, "px", 96.0f);
 		if (image == NULL) {
-			fprintf(stderr, "Could not open SVG image '%s' for information.\n", filename);
+			fprintf(stderr, "Could not open SVG image '%s' for information.\n", path);
 			nsvgDelete(image);
 
+			free(path);
 			return LV_RES_INV;
 		}
 
 		header->always_zero = 0;
 		header->cf = LV_IMG_CF_RAW_ALPHA;
 
+		// The internal width/height of the SVG
 		width = (int)image->width;
 		height = (int)image->height;
 
-		if (next_data.width > 0 || next_data.height > 0) {
-			if (next_data.width == 0) {
-				next_data.width = width * next_data.height / height;
+		// The user might have requested specific dimensions via URL params
+		bool gave_width = url_get_int_param((char*)src, "width", &width);
+		bool gave_height = url_get_int_param((char*)src, "height", &height);
+
+		// User gave only one part of the component; scale accordingly
+		if ((gave_width || gave_height) && !(gave_width && gave_height)) {
+			if (gave_height) {
+				width = width * height / (int)image->height;
 			}
-			if (next_data.height == 0) {
-				next_data.height = height * next_data.width / width;
+			if (gave_width) {
+				height = height * width / (int)image->width;
 			}
-			width = next_data.width;
-			height = next_data.height;
 		}
 
 		header->w = width;
 		header->h = height;
 
 		nsvgDelete(image);
-
+		free(path);
 		return LV_RES_OK;
 	}
 
@@ -89,7 +83,7 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
 
 	(void) decoder;
 
-	const char * filename = dsc->src;
+	const char * filename = url_get_path(dsc->src);
 	NSVGimage *image = NULL;
 	NSVGrasterizer *rast = NULL;
 
@@ -98,6 +92,7 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
 		fprintf(stderr, "Could not open SVG image '%s' for rasterizing.\n", filename);
 		nsvgDelete(image);
 
+		free(filename);
 		return LV_RES_INV;
 	}
 
@@ -107,36 +102,27 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
 		nsvgDeleteRasterizer(rast);
 		nsvgDelete(image);
 
+		free(filename);
 		return LV_RES_INV;
 	}
 
-	dsc->img_data = malloc(dsc->header.w * dsc->header.h * 4);
+	dsc->img_data = lv_mem_alloc(dsc->header.w * dsc->header.h * 4);
+	LV_ASSERT_MEM(dsc->img_data);
+	if (dsc->img_data == NULL) {
+		free(filename);
+		return LV_RES_INV;
+	}
 	nsvgRasterize(rast, image, 0,0, ((float)dsc->header.w/(float)image->width), dsc->img_data, dsc->header.w, dsc->header.h, dsc->header.w*4);
 
+	nsvgDeleteRasterizer(rast);
 	nsvgDelete(image);
 
+	free(filename);
 	return LV_RES_OK;
 }
 
 static void decoder_close(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * dsc)
 {
 	(void) decoder;
-	free(dsc->img_data);
+	(void) dsc;
 }
-
-void lv_nanosvg_next_reset()
-{
-	next_data.width = 0;
-	next_data.height = 0;
-}
-
-void lv_nanosvg_resize_next_width(int width)
-{
-	next_data.width = width;
-}
-
-void lv_nanosvg_resize_next_height(int height)
-{
-	next_data.height = height;
-}
-
