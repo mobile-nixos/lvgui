@@ -86,7 +86,14 @@ void hal_set_dpi()
 	// This needs to happen before lv_init.
 	// This means we need to figure out the DPI before hal_init :(
 
-	mn_hal_default_dpi = 200*(disp_drv.hor_res)/720;
+	// Portrait mode
+	if (disp_drv.hor_res < disp_drv.ver_res) {
+		mn_hal_default_dpi = 200*(disp_drv.hor_res)/720;
+	}
+	// Landscape mode
+	else {
+		mn_hal_default_dpi = 200*(disp_drv.ver_res)/720;
+	}
 
 #if LV_LOG_LEVEL <= LV_LOG_LEVEL_INFO
 	printf("[LVGUI:HAL] Computed 'DPI': %d\n", mn_hal_default_dpi);
