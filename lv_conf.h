@@ -22,8 +22,11 @@
 // Define maximum sizes this code will support.
 // This is not the actual size of the display.
 // This directly impacts the memory usage.
-#define LV_HOR_RES_MAX          (1440)
-#define LV_VER_RES_MAX          (2560)
+// Currently set to 5K resolution...
+// Though this does not define a minimum ram use.
+// (Except for the SDL monitor used in the simulator)
+#define LV_HOR_RES_MAX          (2880)
+#define LV_VER_RES_MAX          (5120)
 
 /* Color depth:
  * - 1:  1 byte per pixel
