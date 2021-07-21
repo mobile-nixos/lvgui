@@ -64,9 +64,10 @@ typedef struct
                                  non-printable character*/
 
     uint32_t reserved : 2; /*Reserved to be used later*/
+    uint32_t _unused : 22; /*rest of alignment in the initial 32 bits*/
 
-    uint32_t w : 11; /*Width of the image map*/
-    uint32_t h : 11; /*Height of the image map*/
+    uint32_t w; /*Width of the image map*/
+    uint32_t h; /*Height of the image map*/
 } lv_img_header_t;
 
 /*Image color format*/
