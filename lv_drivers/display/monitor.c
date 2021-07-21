@@ -372,6 +372,16 @@ static void monitor_sdl_refr_core(void)
 
 static void window_create(monitor_t * m)
 {
+	if (MONITOR_HOR_RES * MONITOR_VER_RES > LV_HOR_RES_MAX * LV_VER_RES_MAX) {
+		fprintf(
+			stderr,
+			"Error: total pixel size (%d) bigger than allowed (%d).\nPlease reduce the simulator resolution.\n",
+			MONITOR_HOR_RES * MONITOR_VER_RES,
+			LV_HOR_RES_MAX * LV_VER_RES_MAX
+		);
+		exit(1);
+	};
+
     m->window = SDL_CreateWindow("TFT Simulator",
                               SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                               MONITOR_HOR_RES * MONITOR_ZOOM, MONITOR_VER_RES * MONITOR_ZOOM, 0);       /*last param. SDL_WINDOW_BORDERLESS to hide borders*/
