@@ -170,6 +170,12 @@ void lv_debug_log_error(const char * msg, uint64_t value)
     }
 }
 
+// This attribute makes this function overridable by calling code.
+void __attribute__ ((weak)) lv_debug_app_assert_handler(void)
+{
+	LV_LOG_WARN("ASSERT triggered, but lv_debug_app_assert_handler() not overriden...");
+}
+
 /**********************
  *   STATIC FUNCTIONS
  **********************/
