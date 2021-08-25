@@ -40,6 +40,8 @@ bool lv_debug_check_str(const void * str);
 
 void lv_debug_log_error(const char * msg, uint64_t value);
 
+void lv_debug_app_assert_handler(void);
+
 /**********************
  *      MACROS
  **********************/
@@ -50,6 +52,7 @@ void lv_debug_log_error(const char * msg, uint64_t value);
     if(!(expr)) {                               \
         LV_LOG_ERROR(__func__);                 \
         lv_debug_log_error(msg, (uint64_t)((uintptr_t)value));         \
+        lv_debug_app_assert_handler();          \
         while(1);                               \
     }                                           \
 }
