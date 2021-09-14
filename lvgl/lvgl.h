@@ -52,7 +52,6 @@ extern "C" {
 #include "src/lv_objx/lv_cpicker.h"
 #include "src/lv_objx/lv_bar.h"
 #include "src/lv_objx/lv_slider.h"
-#include "src/lv_objx/lv_led.h"
 #include "src/lv_objx/lv_btnm.h"
 #include "src/lv_objx/lv_kb.h"
 #include "src/lv_objx/lv_ddlist.h"

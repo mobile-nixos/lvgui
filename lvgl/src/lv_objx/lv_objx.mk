@@ -23,7 +23,6 @@ CSRCS += lv_btnm.c
 CSRCS += lv_cont.c
 CSRCS += lv_img.c
 CSRCS += lv_imgbtn.c
-CSRCS += lv_led.c
 CSRCS += lv_lmeter.c
 CSRCS += lv_page.c
 CSRCS += lv_sw.c

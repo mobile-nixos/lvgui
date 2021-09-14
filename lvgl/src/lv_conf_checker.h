@@ -694,11 +694,6 @@
 #endif
 #endif
 
-/*LED (dependencies: -)*/
-#ifndef LV_USE_LED
-#define LV_USE_LED      1
-#endif
-
 /*Line (dependencies: -*/
 #ifndef LV_USE_LINE
 #define LV_USE_LINE     1

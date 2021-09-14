@@ -502,9 +502,6 @@ typedef void * lv_obj_user_data_t;
 #  define LV_LABEL_LONG_TXT_HINT          0
 #endif
 
-/*LED (dependencies: -)*/
-#define LV_USE_LED      0
-
 /*Line (dependencies: -*/
 #define LV_USE_LINE     1
 
