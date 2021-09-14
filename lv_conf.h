@@ -451,12 +451,6 @@ typedef void * lv_obj_user_data_t;
 /*Check box (dependencies: lv_btn, lv_label)*/
 #define LV_USE_CB       1
 
-/*Chart (dependencies: -)*/
-#define LV_USE_CHART    1
-#if LV_USE_CHART
-#  define LV_CHART_AXIS_TICK_LABEL_MAX_LEN    20
-#endif
-
 /*Container (dependencies: -*/
 #define LV_USE_CONT     1
 

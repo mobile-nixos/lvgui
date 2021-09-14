@@ -611,16 +611,6 @@
 #define LV_USE_CB       1
 #endif
 
-/*Chart (dependencies: -)*/
-#ifndef LV_USE_CHART
-#define LV_USE_CHART    1
-#endif
-#if LV_USE_CHART
-#ifndef LV_CHART_AXIS_TICK_LABEL_MAX_LEN
-#  define LV_CHART_AXIS_TICK_LABEL_MAX_LEN    256
-#endif
-#endif
-
 /*Container (dependencies: -*/
 #ifndef LV_USE_CONT
 #define LV_USE_CONT     1
