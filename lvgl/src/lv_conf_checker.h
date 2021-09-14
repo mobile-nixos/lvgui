@@ -699,17 +699,6 @@
 #define LV_USE_LINE     1
 #endif
 
-/*List (dependencies: lv_page, lv_btn, lv_label, (lv_img optionally for icons ))*/
-#ifndef LV_USE_LIST
-#define LV_USE_LIST     1
-#endif
-#if LV_USE_LIST != 0
-/*Default animation time of focusing to a list element [ms] (0: no animation)  */
-#ifndef LV_LIST_DEF_ANIM_TIME
-#  define LV_LIST_DEF_ANIM_TIME  100
-#endif
-#endif
-
 /*Line meter (dependencies: *;)*/
 #ifndef LV_USE_LMETER
 #define LV_USE_LMETER   1

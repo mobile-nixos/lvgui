@@ -15,7 +15,6 @@ CSRCS += lv_chart.c
 CSRCS += lv_canvas.c
 CSRCS += lv_gauge.c
 CSRCS += lv_label.c
-CSRCS += lv_list.c
 CSRCS += lv_slider.c
 CSRCS += lv_ta.c
 CSRCS += lv_spinbox.c
