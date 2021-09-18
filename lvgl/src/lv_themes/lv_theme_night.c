@@ -181,24 +181,6 @@ static void line_init(void)
 #endif
 }
 
-static void led_init(void)
-{
-#if LV_USE_LED != 0
-    static lv_style_t led;
-    lv_style_copy(&led, &def);
-    led.body.shadow.width = LV_DPI / 10;
-    led.body.radius       = LV_RADIUS_CIRCLE;
-    led.body.border.width = LV_DPI / 30;
-    led.body.border.opa   = LV_OPA_30;
-    led.body.main_color   = lv_color_hsv_to_rgb(_hue, 100, 100);
-    led.body.grad_color   = lv_color_hsv_to_rgb(_hue, 100, 40);
-    led.body.border.color = lv_color_hsv_to_rgb(_hue, 60, 60);
-    led.body.shadow.color = lv_color_hsv_to_rgb(_hue, 100, 100);
-
-    theme.style.led = &led;
-#endif
-}
-
 static void img_init(void)
 {
 #if LV_USE_IMG != 0
@@ -320,13 +302,6 @@ static void preload_init(void)
 #if LV_USE_PRELOAD != 0
 
     theme.style.preload = theme.style.arc;
-#endif
-}
-
-static void chart_init(void)
-{
-#if LV_USE_CHART
-    theme.style.chart = &panel;
 #endif
 }
 
@@ -539,65 +514,6 @@ static void spinbox_init(void)
 #endif
 }
 
-static void list_init(void)
-{
-#if LV_USE_LIST != 0
-    static lv_style_t list_bg, list_btn_rel, list_btn_pr, list_btn_tgl_rel, list_btn_tgl_pr;
-
-    lv_style_copy(&list_bg, &panel);
-    list_bg.body.padding.top    = 0;
-    list_bg.body.padding.bottom = 0;
-    list_bg.body.padding.left   = 0;
-    list_bg.body.padding.right  = 0;
-    list_bg.body.padding.inner  = 0;
-
-    lv_style_copy(&list_btn_rel, &bg);
-    list_btn_rel.body.opa            = LV_OPA_TRANSP;
-    list_btn_rel.body.border.part    = LV_BORDER_BOTTOM;
-    list_btn_rel.body.border.color   = lv_color_hsv_to_rgb(_hue, 10, 5);
-    list_btn_rel.body.border.width   = 1;
-    list_btn_rel.body.radius         = LV_DPI / 10;
-    list_btn_rel.text.color          = lv_color_hsv_to_rgb(_hue, 5, 80);
-    list_btn_rel.image.color         = lv_color_hsv_to_rgb(_hue, 5, 80);
-    list_btn_rel.body.padding.top    = LV_DPI / 6;
-    list_btn_rel.body.padding.bottom = LV_DPI / 6;
-    list_btn_rel.body.padding.left   = LV_DPI / 8;
-    list_btn_rel.body.padding.right  = LV_DPI / 8;
-
-    lv_style_copy(&list_btn_pr, theme.style.btn.pr);
-    list_btn_pr.body.main_color     = lv_color_hsv_to_rgb(_hue, 10, 5);
-    list_btn_pr.body.grad_color     = lv_color_hsv_to_rgb(_hue, 10, 5);
-    list_btn_pr.body.border.color   = lv_color_hsv_to_rgb(_hue, 10, 5);
-    list_btn_pr.body.border.width   = 0;
-    list_btn_pr.body.padding.top    = LV_DPI / 6;
-    list_btn_pr.body.padding.bottom = LV_DPI / 6;
-    list_btn_pr.body.padding.left   = LV_DPI / 8;
-    list_btn_pr.body.padding.right  = LV_DPI / 8;
-    list_btn_pr.text.color          = lv_color_hsv_to_rgb(_hue, 5, 80);
-    list_btn_pr.image.color         = lv_color_hsv_to_rgb(_hue, 5, 80);
-
-    lv_style_copy(&list_btn_tgl_rel, &list_btn_rel);
-    list_btn_tgl_rel.body.opa        = LV_OPA_COVER;
-    list_btn_tgl_rel.body.main_color = lv_color_hsv_to_rgb(_hue, 80, 70);
-    list_btn_tgl_rel.body.grad_color = lv_color_hsv_to_rgb(_hue, 80, 70);
-    list_btn_tgl_rel.body.border.color   = lv_color_hsv_to_rgb(_hue, 60, 40);
-    list_btn_tgl_rel.body.radius         = list_bg.body.radius;
-
-    lv_style_copy(&list_btn_tgl_pr, &list_btn_tgl_rel);
-    list_btn_tgl_pr.body.main_color = lv_color_hsv_to_rgb(_hue, 80, 60);
-    list_btn_tgl_pr.body.grad_color = lv_color_hsv_to_rgb(_hue, 80, 60);
-
-    theme.style.list.sb          = &sb;
-    theme.style.list.bg          = &list_bg;
-    theme.style.list.scrl        = &lv_style_transp_tight;
-    theme.style.list.btn.rel     = &list_btn_rel;
-    theme.style.list.btn.pr      = &list_btn_pr;
-    theme.style.list.btn.tgl_rel = &list_btn_tgl_rel;
-    theme.style.list.btn.tgl_pr  = &list_btn_tgl_pr;
-    theme.style.list.btn.ina     = &def;
-#endif
-}
-
 static void ddlist_init(void)
 {
 #if LV_USE_DDLIST != 0
@@ -728,7 +644,6 @@ lv_theme_t * lv_theme_night_init(uint16_t hue, lv_font_t * font)
     label_init();
     img_init();
     line_init();
-    led_init();
     bar_init();
     slider_init();
     sw_init();
@@ -736,7 +651,6 @@ lv_theme_t * lv_theme_night_init(uint16_t hue, lv_font_t * font)
     gauge_init();
     arc_init();
     preload_init();
-    chart_init();
     calendar_init();
     cb_init();
     btnm_init();
@@ -744,7 +658,6 @@ lv_theme_t * lv_theme_night_init(uint16_t hue, lv_font_t * font)
     page_init();
     ta_init();
     spinbox_init();
-    list_init();
     ddlist_init();
     roller_init();
     tileview_init();
