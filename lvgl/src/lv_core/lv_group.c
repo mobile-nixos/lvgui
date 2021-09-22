@@ -434,13 +434,23 @@ lv_obj_t * lv_group_get_focused(const lv_group_t * group)
 
 #if LV_USE_USER_DATA
 /**
- * Get a pointer to the group's user data
- * @param group pointer to an group
- * @return pointer to the user data
+ * Get the group's user data
+ * @param group pointer to the group
+ * @return user data
  */
 lv_group_user_data_t * lv_group_get_user_data(lv_group_t * group)
 {
-    return &group->user_data;
+    return group->user_data;
+}
+
+/**
+ * Get a pointer to the group's user data
+ * @param group pointer to the group
+ * @return pointer to the user data
+ */
+lv_group_user_data_t * lv_group_get_user_data_ptr(const lv_group_t * group)
+{
+    return (lv_group_user_data_t *)&group->user_data;
 }
 
 /**

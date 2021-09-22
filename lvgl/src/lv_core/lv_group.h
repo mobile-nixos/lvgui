@@ -230,10 +230,17 @@ lv_obj_t * lv_group_get_focused(const lv_group_t * group);
 #if LV_USE_USER_DATA
 /**
  * Get a pointer to the group's user data
- * @param group pointer to an group
+ * @param group pointer to the group
  * @return pointer to the user data
  */
 lv_group_user_data_t * lv_group_get_user_data(lv_group_t * group);
+
+/**
+ * Get a pointer to the group's user data
+ * @param group pointer to the group
+ * @return pointer to the user data
+ */
+lv_group_user_data_t * lv_group_get_user_data_ptr(const lv_group_t * group);
 
 /**
  * Set the group's user data. The data will be copied.
