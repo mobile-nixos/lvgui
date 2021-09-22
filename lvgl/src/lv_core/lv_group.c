@@ -458,7 +458,7 @@ lv_group_user_data_t * lv_group_get_user_data_ptr(const lv_group_t * group)
  * @param group pointer to a group
  * @param data user data
  */
-void lv_group_set_user_data(lv_obj_t * group, lv_group_user_data_t data)
+void lv_group_set_user_data(lv_group_t * group, lv_group_user_data_t data)
 {
     memcpy(&group->user_data, &data, sizeof(lv_group_user_data_t));
 }
