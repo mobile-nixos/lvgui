@@ -14,6 +14,9 @@
  *      DEFINES
  *********************/
 
+#define UNICODE_REPLACEMENT      0XFFFD
+#define UNICODE_QUESTION_MARK    0x3F
+
 /**********************
  *      TYPEDEFS
  **********************/
@@ -72,8 +75,21 @@ static bool get_glyph_dsc_cb(const lv_font_t * font, lv_font_glyph_dsc_t * dsc_o
 		glyph_index = FT_Get_Char_Index( face, unicode_letter );
 
 		if (glyph_index == 0) {
-			printf("Warning: missing glyph 0x%x in main font and fallback font.\n", unicode_letter);
-			return false;
+			// First try UNICODE_REPLACEMENT, then try UNICODE_QUESTION_MARK (logic is written backwards)
+			if (unicode_letter == UNICODE_QUESTION_MARK) {
+				return false;
+			}
+			else if (unicode_letter == UNICODE_REPLACEMENT) {
+				return get_glyph_dsc_cb(font, dsc_out, UNICODE_QUESTION_MARK, unicode_letter_next);
+			}
+			else {
+				// Only warn for the actual glyph missing...
+				// If '�' is missing, ¯\_(ツ)_/¯
+				// If '?' is missing... I don't want to think about it...
+				printf("Warning: missing glyph 0x%x in main font and fallback font.\n", unicode_letter);
+
+				return get_glyph_dsc_cb(font, dsc_out, UNICODE_REPLACEMENT, unicode_letter_next);
+			}
 		}
 	}
 
@@ -121,8 +137,16 @@ static const uint8_t * get_glyph_bitmap_cb(const lv_font_t * font, uint32_t unic
 		glyph_index = FT_Get_Char_Index( face, unicode_letter );
 
 		if (glyph_index == 0) {
-			printf("Warning: missing glyph 0x%x in main font and fallback font.\n", unicode_letter);
-			return false;
+			// First try UNICODE_REPLACEMENT, then try UNICODE_QUESTION_MARK (logic is written backwards)
+			if (unicode_letter == UNICODE_QUESTION_MARK) {
+				return false;
+			}
+			else if (unicode_letter == UNICODE_REPLACEMENT) {
+				return get_glyph_bitmap_cb(font, UNICODE_QUESTION_MARK);
+			}
+			else {
+				return get_glyph_bitmap_cb(font, UNICODE_REPLACEMENT);
+			}
 		}
 	}
 
