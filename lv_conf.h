@@ -451,12 +451,6 @@ typedef void * lv_obj_user_data_t;
 /*Check box (dependencies: lv_btn, lv_label)*/
 #define LV_USE_CB       1
 
-/*Chart (dependencies: -)*/
-#define LV_USE_CHART    1
-#if LV_USE_CHART
-#  define LV_CHART_AXIS_TICK_LABEL_MAX_LEN    20
-#endif
-
 /*Container (dependencies: -*/
 #define LV_USE_CONT     1
 
@@ -502,18 +496,8 @@ typedef void * lv_obj_user_data_t;
 #  define LV_LABEL_LONG_TXT_HINT          0
 #endif
 
-/*LED (dependencies: -)*/
-#define LV_USE_LED      0
-
 /*Line (dependencies: -*/
 #define LV_USE_LINE     1
-
-/*List (dependencies: lv_page, lv_btn, lv_label, (lv_img optionally for icons ))*/
-#define LV_USE_LIST     1
-#if LV_USE_LIST != 0
-/*Default animation time of focusing to a list element [ms] (0: no animation)  */
-#  define LV_LIST_DEF_ANIM_TIME  100
-#endif
 
 /*Line meter (dependencies: *;)*/
 #define LV_USE_LMETER   1

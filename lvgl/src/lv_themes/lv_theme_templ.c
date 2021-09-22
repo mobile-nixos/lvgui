@@ -109,14 +109,6 @@ static void line_init(void)
 #endif
 }
 
-static void led_init(void)
-{
-#if LV_USE_LED != 0
-
-    theme.style.led = &def;
-#endif
-}
-
 static void bar_init(void)
 {
 #if LV_USE_BAR
@@ -176,14 +168,6 @@ static void preload_init(void)
 #if LV_USE_PRELOAD != 0
 
     theme.style.preload = &def;
-#endif
-}
-
-static void chart_init(void)
-{
-#if LV_USE_CHART
-
-    theme.style.chart = &def;
 #endif
 }
 
@@ -259,21 +243,6 @@ static void ta_init(void)
     theme.style.ta.oneline = &def;
     theme.style.ta.cursor  = NULL; /*Let library to calculate the cursor's style*/
     theme.style.ta.sb      = &def;
-#endif
-}
-
-static void list_init(void)
-{
-#if LV_USE_LIST != 0
-
-    theme.style.list.sb          = &def;
-    theme.style.list.bg          = &def;
-    theme.style.list.scrl        = &def;
-    theme.style.list.btn.rel     = &def;
-    theme.style.list.btn.pr      = &def;
-    theme.style.list.btn.tgl_rel = &def;
-    theme.style.list.btn.tgl_pr  = &def;
-    theme.style.list.btn.ina     = &def;
 #endif
 }
 
@@ -384,7 +353,6 @@ lv_theme_t * lv_theme_templ_init(uint16_t hue, lv_font_t * font)
     label_init();
     img_init();
     line_init();
-    led_init();
     bar_init();
     slider_init();
     sw_init();
@@ -392,14 +360,12 @@ lv_theme_t * lv_theme_templ_init(uint16_t hue, lv_font_t * font)
     gauge_init();
     arc_init();
     preload_init();
-    chart_init();
     calendar_init();
     cb_init();
     btnm_init();
     kb_init();
     page_init();
     ta_init();
-    list_init();
     ddlist_init();
     roller_init();
     table_init();

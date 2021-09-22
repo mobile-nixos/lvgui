@@ -245,13 +245,6 @@ static void line_init(void)
 #endif
 }
 
-static void led_init(void)
-{
-#if LV_USE_LED != 0
-#error NixOS theme does not support `led`
-#endif
-}
-
 static void bar_init(void)
 {
 #if LV_USE_BAR
@@ -389,13 +382,6 @@ static void preload_init(void)
 #if LV_USE_PRELOAD != 0
 
     theme.style.preload = theme.style.arc;
-#endif
-}
-
-static void chart_init(void)
-{
-#if LV_USE_CHART
-    theme.style.chart = theme.style.panel;
 #endif
 }
 
@@ -582,63 +568,6 @@ static void spinbox_init(void)
 #endif
 }
 
-static void list_init(void)
-{
-#if LV_USE_LIST != 0
-
-    static lv_style_t list_bg, rel, pr, tgl_rel, tgl_pr, ina;
-
-    lv_style_copy(&list_bg, theme.style.panel);
-    list_bg.body.padding.left   = 0;
-    list_bg.body.padding.right  = 0;
-    list_bg.body.padding.top    = 0;
-    list_bg.body.padding.bottom = 0;
-    list_bg.body.padding.inner  = 0;
-
-    lv_style_copy(&rel, &lv_style_transp);
-    rel.body.padding.left   = LV_DPI / 8;
-    rel.body.padding.right  = LV_DPI / 8;
-    rel.body.padding.top    = LV_DPI / 6;
-    rel.body.padding.bottom = LV_DPI / 6;
-    rel.body.radius         = 10;
-    rel.body.border.color   = lv_color_hex3(0xbbb);
-    rel.body.border.width   = 1;
-    rel.body.border.part    = LV_BORDER_BOTTOM;
-
-    lv_style_copy(&pr, &rel);
-    pr.glass             = 0;
-    pr.body.main_color   = lv_color_hex3(0xddd);
-    pr.body.grad_color   = pr.body.main_color;
-    pr.body.border.width = 0;
-    pr.body.opa          = LV_OPA_COVER;
-    pr.body.radius       = DEF_RADIUS;
-    pr.text.font         = _font;
-
-    lv_style_copy(&tgl_rel, &pr);
-    tgl_rel.body.main_color = lv_color_hsv_to_rgb(_hue, 90, 70);
-    tgl_rel.body.grad_color = tgl_rel.body.main_color;
-    tgl_rel.text.color      = lv_color_hsv_to_rgb(_hue, 5, 95);
-
-    lv_style_copy(&tgl_pr, &tgl_rel);
-    tgl_pr.body.main_color   = lv_color_hsv_to_rgb(_hue, 90, 60);
-    tgl_pr.body.grad_color   = tgl_pr.body.main_color;
-    tgl_pr.body.border.width = 0;
-
-    lv_style_copy(&ina, &pr);
-    ina.body.main_color = lv_color_hex3(0xccc);
-    ina.body.grad_color = ina.body.main_color;
-
-    theme.style.list.sb          = &sb;
-    theme.style.list.bg          = &list_bg;
-    theme.style.list.scrl        = &lv_style_transp_tight;
-    theme.style.list.btn.rel     = &rel;
-    theme.style.list.btn.pr      = &pr;
-    theme.style.list.btn.tgl_rel = &tgl_rel;
-    theme.style.list.btn.tgl_pr  = &tgl_pr;
-    theme.style.list.btn.ina     = &ina;
-#endif
-}
-
 static void ddlist_init(void)
 {
 #if LV_USE_DDLIST != 0
@@ -785,13 +714,11 @@ lv_theme_t * lv_theme_nixos_init(lv_font_t * font, lv_font_t * button_font)
     label_init();
     img_init();
     line_init();
-    led_init();
     bar_init();
     slider_init();
     sw_init();
     lmeter_init();
     gauge_init();
-    chart_init();
     arc_init();
     preload_init();
     calendar_init();
@@ -801,7 +728,6 @@ lv_theme_t * lv_theme_nixos_init(lv_font_t * font, lv_font_t * button_font)
     page_init();
     ta_init();
     spinbox_init();
-    list_init();
     ddlist_init();
     roller_init();
     tileview_init();

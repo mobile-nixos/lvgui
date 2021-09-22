@@ -149,20 +149,6 @@ static void line_init(void)
 #endif
 }
 
-static void led_init(void)
-{
-#if LV_USE_LED != 0
-    static lv_style_t led;
-    lv_style_copy(&led, &light_frame);
-    led.body.radius       = LV_RADIUS_CIRCLE;
-    led.body.shadow.width = LV_DPI / 8;
-    led.body.shadow.color = LV_COLOR_BLACK;
-    led.body.shadow.type  = LV_SHADOW_FULL;
-
-    theme.style.led = &led;
-#endif
-}
-
 static void bar_init(void)
 {
 #if LV_USE_BAR
@@ -245,13 +231,6 @@ static void gauge_init(void)
 #endif
 }
 
-static void chart_init(void)
-{
-#if LV_USE_CHART
-    theme.style.chart = &light_frame;
-#endif
-}
-
 static void calendar_init(void)
 {
 #if LV_USE_CALENDAR
@@ -331,21 +310,6 @@ static void spinbox_init(void)
 
     theme.style.spinbox.bg    = &light_frame;
     theme.style.spinbox.cursor  = NULL; /*Let library to calculate the cursor's style*/
-#endif
-}
-
-static void list_init(void)
-{
-#if LV_USE_LIST != 0
-
-    theme.style.list.sb          = &dark_frame;
-    theme.style.list.bg          = &light_frame;
-    theme.style.list.scrl        = &lv_style_transp_fit;
-    theme.style.list.btn.rel     = &light_plain;
-    theme.style.list.btn.pr      = &dark_plain;
-    theme.style.list.btn.tgl_rel = &dark_plain;
-    theme.style.list.btn.tgl_pr  = &light_plain;
-    theme.style.list.btn.ina     = &light_plain;
 #endif
 }
 
@@ -442,13 +406,11 @@ lv_theme_t * lv_theme_mono_init(uint16_t hue, lv_font_t * font)
     label_init();
     img_init();
     line_init();
-    led_init();
     bar_init();
     slider_init();
     sw_init();
     lmeter_init();
     gauge_init();
-    chart_init();
     calendar_init();
     cb_init();
     btnm_init();
@@ -456,7 +418,6 @@ lv_theme_t * lv_theme_mono_init(uint16_t hue, lv_font_t * font)
     page_init();
     ta_init();
     spinbox_init();
-    list_init();
     ddlist_init();
     roller_init();
 

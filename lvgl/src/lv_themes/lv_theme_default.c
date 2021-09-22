@@ -118,22 +118,6 @@ static void line_init(void)
 #endif
 }
 
-static void led_init(void)
-{
-#if LV_USE_LED != 0
-    static lv_style_t led;
-
-    lv_style_copy(&led, &lv_style_pretty_color);
-    led.body.shadow.width = LV_DPI / 10;
-    led.body.radius       = LV_RADIUS_CIRCLE;
-    led.body.border.width = LV_DPI / 30;
-    led.body.border.opa   = LV_OPA_30;
-    led.body.shadow.color = led.body.main_color;
-
-    theme.style.led = &led;
-#endif
-}
-
 static void bar_init(void)
 {
 #if LV_USE_BAR
@@ -205,14 +189,6 @@ static void gauge_init(void)
 #endif
 }
 
-static void chart_init(void)
-{
-#if LV_USE_CHART
-
-    theme.style.chart = &lv_style_pretty;
-#endif
-}
-
 static void cb_init(void)
 {
 #if LV_USE_CB != 0
@@ -270,21 +246,6 @@ static void ta_init(void)
     theme.style.ta.oneline = &lv_style_pretty;
     theme.style.ta.cursor  = NULL;
     theme.style.ta.sb      = &sb;
-#endif
-}
-
-static void list_init(void)
-{
-#if LV_USE_LIST != 0
-
-    theme.style.list.bg          = &lv_style_pretty;
-    theme.style.list.scrl        = &lv_style_transp_fit;
-    theme.style.list.sb          = &sb;
-    theme.style.list.btn.rel     = &lv_style_btn_rel;
-    theme.style.list.btn.pr      = &lv_style_btn_pr;
-    theme.style.list.btn.tgl_rel = &lv_style_btn_tgl_rel;
-    theme.style.list.btn.tgl_pr  = &lv_style_btn_tgl_pr;
-    theme.style.list.btn.ina     = &lv_style_btn_ina;
 #endif
 }
 
@@ -391,19 +352,16 @@ lv_theme_t * lv_theme_default_init(uint16_t hue, lv_font_t * font)
     label_init();
     img_init();
     line_init();
-    led_init();
     bar_init();
     slider_init();
     sw_init();
     lmeter_init();
     gauge_init();
-    chart_init();
     cb_init();
     btnm_init();
     kb_init();
     page_init();
     ta_init();
-    list_init();
     ddlist_init();
     roller_init();
     table_init();

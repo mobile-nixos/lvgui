@@ -289,24 +289,6 @@ static void line_init(void)
 #endif
 }
 
-static void led_init(void)
-{
-#if LV_USE_LED != 0
-    static lv_style_t led;
-    lv_style_copy(&led, &lv_style_pretty_color);
-    led.body.shadow.width = LV_DPI / 10;
-    led.body.radius       = LV_RADIUS_CIRCLE;
-    led.body.border.width = LV_DPI / 30;
-    led.body.border.opa   = LV_OPA_30;
-    led.body.main_color   = lv_color_hsv_to_rgb(_hue, 100, 100);
-    led.body.grad_color   = lv_color_hsv_to_rgb(_hue, 100, 40);
-    led.body.border.color = lv_color_hsv_to_rgb(_hue, 60, 60);
-    led.body.shadow.color = lv_color_hsv_to_rgb(_hue, 100, 100);
-
-    theme.style.led = &led;
-#endif
-}
-
 static void slider_init(void)
 {
 #if LV_USE_SLIDER != 0
@@ -416,13 +398,6 @@ static void preload_init(void)
 #if LV_USE_PRELOAD != 0
 
     theme.style.preload = theme.style.arc;
-#endif
-}
-
-static void chart_init(void)
-{
-#if LV_USE_CHART
-    theme.style.chart = &panel;
 #endif
 }
 
@@ -593,45 +568,6 @@ static void spinbox_init(void)
 #endif
 }
 
-static void list_init(void)
-{
-#if LV_USE_LIST != 0
-    static lv_style_t list_bg, list_rel, list_pr, list_trel, list_tpr, list_ina;
-    lv_style_copy(&list_rel, &def);
-    list_rel.body.opa          = LV_OPA_TRANSP;
-    list_rel.body.border.width = 1;
-    list_rel.body.border.color = lv_color_hsv_to_rgb(_hue, 50, 85);
-    list_rel.body.border.opa   = LV_OPA_COVER;
-    list_rel.text.color        = lv_color_hsv_to_rgb(_hue, 10, 94);
-    list_rel.text.font         = _font;
-
-    lv_style_copy(&list_pr, &list_rel);
-    list_pr.body.opa        = LV_OPA_COVER;
-    list_pr.body.main_color = lv_color_hsv_to_rgb(_hue, 34, 41);
-    list_pr.body.grad_color = lv_color_hsv_to_rgb(_hue, 34, 41);
-    list_pr.text.color      = lv_color_hsv_to_rgb(_hue, 7, 96);
-
-    lv_style_copy(&list_trel, &list_rel);
-    lv_style_copy(&list_tpr, &list_pr);
-    lv_style_copy(&list_ina, &def);
-
-    lv_style_copy(&list_bg, &list_rel);
-    list_bg.body.padding.left   = 0;
-    list_bg.body.padding.right  = 0;
-    list_bg.body.padding.top    = 0;
-    list_bg.body.padding.bottom = 0;
-
-    theme.style.list.sb          = &sb;
-    theme.style.list.bg          = &list_bg;
-    theme.style.list.scrl        = &lv_style_transp_tight;
-    theme.style.list.btn.rel     = &list_rel;
-    theme.style.list.btn.pr      = &list_pr;
-    theme.style.list.btn.tgl_rel = &list_trel;
-    theme.style.list.btn.tgl_pr  = &list_tpr;
-    theme.style.list.btn.ina     = &list_ina;
-#endif
-}
-
 static void ddlist_init(void)
 {
 #if LV_USE_DDLIST != 0
@@ -773,14 +709,12 @@ lv_theme_t * lv_theme_nemo_init(uint16_t hue, lv_font_t * font)
     bar_init();
     img_init();
     line_init();
-    led_init();
     slider_init();
     sw_init();
     lmeter_init();
     gauge_init();
     arc_init();
     preload_init();
-    chart_init();
     calendar_init();
     cb_init();
     btnm_init();
@@ -788,7 +722,6 @@ lv_theme_t * lv_theme_nemo_init(uint16_t hue, lv_font_t * font)
     page_init();
     ta_init();
     spinbox_init();
-    list_init();
     ddlist_init();
     roller_init();
     tileview_init();

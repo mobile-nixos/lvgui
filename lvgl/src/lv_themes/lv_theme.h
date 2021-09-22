@@ -94,10 +94,6 @@ typedef struct
         } line;
 #endif
 
-#if LV_USE_LED != 0
-        lv_style_t * led;
-#endif
-
 #if LV_USE_BAR != 0
         struct
         {
@@ -139,10 +135,6 @@ typedef struct
             lv_style_t * knob_off;
             lv_style_t * knob_on;
         } sw;
-#endif
-
-#if LV_USE_CHART != 0
-        lv_style_t * chart;
 #endif
 
 #if LV_USE_CALENDAR != 0
@@ -230,23 +222,6 @@ typedef struct
             lv_style_t * cursor;
             lv_style_t * sb;
         } spinbox;
-#endif
-
-#if LV_USE_LIST
-        struct
-        {
-            lv_style_t * bg;
-            lv_style_t * scrl;
-            lv_style_t * sb;
-            struct
-            {
-                lv_style_t * rel;
-                lv_style_t * pr;
-                lv_style_t * tgl_rel;
-                lv_style_t * tgl_pr;
-                lv_style_t * ina;
-            } btn;
-        } list;
 #endif
 
 #if LV_USE_DDLIST != 0

@@ -186,25 +186,6 @@ static void line_init(void)
 #endif
 }
 
-static void led_init(void)
-{
-#if LV_USE_LED != 0
-
-    static lv_style_t led;
-    lv_style_copy(&led, &lv_style_pretty_color);
-    led.body.shadow.width = LV_DPI / 10;
-    led.body.radius       = LV_RADIUS_CIRCLE;
-    led.body.border.width = LV_DPI / 30;
-    led.body.border.opa   = LV_OPA_30;
-    led.body.main_color   = lv_color_hsv_to_rgb(_hue, 60, 100);
-    led.body.grad_color   = lv_color_hsv_to_rgb(_hue, 60, 40);
-    led.body.border.color = lv_color_hsv_to_rgb(_hue, 60, 60);
-    led.body.shadow.color = lv_color_hsv_to_rgb(_hue, 80, 100);
-
-    theme.style.led = &led;
-#endif
-}
-
 static void bar_init(void)
 {
 #if LV_USE_BAR
@@ -330,13 +311,6 @@ static void preload_init(void)
 #if LV_USE_PRELOAD != 0
 
     theme.style.preload = theme.style.arc;
-#endif
-}
-
-static void chart_init(void)
-{
-#if LV_USE_CHART
-    theme.style.chart = theme.style.panel;
 #endif
 }
 
@@ -550,53 +524,6 @@ static void spinbox_init(void)
 #endif
 }
 
-static void list_init(void)
-{
-#if LV_USE_LIST != 0
-    static lv_style_t bg, rel, pr, tgl_rel, tgl_pr, ina;
-
-    lv_style_copy(&bg, theme.style.panel);
-    bg.body.padding.left   = 0;
-    bg.body.padding.right  = 0;
-    bg.body.padding.top    = 0;
-    bg.body.padding.bottom = 0;
-
-    lv_style_copy(&rel, &def);
-    rel.body.opa            = LV_OPA_TRANSP;
-    rel.body.border.width   = 0;
-    rel.body.padding.left   = LV_DPI / 8;
-    rel.body.padding.right  = LV_DPI / 8;
-    rel.body.padding.top    = LV_DPI / 8;
-    rel.body.padding.bottom = LV_DPI / 8;
-    rel.text.color          = lv_color_hex3(0x666);
-    rel.image.color         = lv_color_hex3(0x666);
-
-    lv_style_copy(&pr, &rel);
-    pr.text.color  = theme.style.btn.pr->text.color;
-    pr.image.color = theme.style.btn.pr->image.color;
-
-    lv_style_copy(&tgl_rel, &rel);
-    tgl_rel.text.color = lv_color_hsv_to_rgb(_hue, 50, 90);
-
-    lv_style_copy(&tgl_pr, &rel);
-    tgl_pr.text.color  = theme.style.btn.tgl_pr->text.color;
-    tgl_pr.image.color = theme.style.btn.tgl_pr->image.color;
-
-    lv_style_copy(&ina, &rel);
-    ina.text.color  = theme.style.btn.ina->text.color;
-    ina.image.color = theme.style.btn.ina->image.color;
-
-    theme.style.list.sb          = &sb;
-    theme.style.list.bg          = &bg;
-    theme.style.list.scrl        = &lv_style_transp_tight;
-    theme.style.list.btn.rel     = &rel;
-    theme.style.list.btn.pr      = &pr;
-    theme.style.list.btn.tgl_rel = &tgl_rel;
-    theme.style.list.btn.tgl_pr  = &tgl_pr;
-    theme.style.list.btn.ina     = &ina;
-#endif
-}
-
 static void ddlist_init(void)
 {
 #if LV_USE_DDLIST != 0
@@ -738,7 +665,6 @@ lv_theme_t * lv_theme_zen_init(uint16_t hue, lv_font_t * font)
     label_init();
     img_init();
     line_init();
-    led_init();
     bar_init();
     slider_init();
     sw_init();
@@ -746,7 +672,6 @@ lv_theme_t * lv_theme_zen_init(uint16_t hue, lv_font_t * font)
     gauge_init();
     arc_init();
     preload_init();
-    chart_init();
     calendar_init();
     cb_init();
     btnm_init();
@@ -754,7 +679,6 @@ lv_theme_t * lv_theme_zen_init(uint16_t hue, lv_font_t * font)
     page_init();
     ta_init();
     spinbox_init();
-    list_init();
     ddlist_init();
     roller_init();
     tileview_init();

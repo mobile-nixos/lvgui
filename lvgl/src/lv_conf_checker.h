@@ -611,16 +611,6 @@
 #define LV_USE_CB       1
 #endif
 
-/*Chart (dependencies: -)*/
-#ifndef LV_USE_CHART
-#define LV_USE_CHART    1
-#endif
-#if LV_USE_CHART
-#ifndef LV_CHART_AXIS_TICK_LABEL_MAX_LEN
-#  define LV_CHART_AXIS_TICK_LABEL_MAX_LEN    256
-#endif
-#endif
-
 /*Container (dependencies: -*/
 #ifndef LV_USE_CONT
 #define LV_USE_CONT     1
@@ -694,25 +684,9 @@
 #endif
 #endif
 
-/*LED (dependencies: -)*/
-#ifndef LV_USE_LED
-#define LV_USE_LED      1
-#endif
-
 /*Line (dependencies: -*/
 #ifndef LV_USE_LINE
 #define LV_USE_LINE     1
-#endif
-
-/*List (dependencies: lv_page, lv_btn, lv_label, (lv_img optionally for icons ))*/
-#ifndef LV_USE_LIST
-#define LV_USE_LIST     1
-#endif
-#if LV_USE_LIST != 0
-/*Default animation time of focusing to a list element [ms] (0: no animation)  */
-#ifndef LV_LIST_DEF_ANIM_TIME
-#  define LV_LIST_DEF_ANIM_TIME  100
-#endif
 #endif
 
 /*Line meter (dependencies: *;)*/
