@@ -438,7 +438,7 @@ lv_obj_t * lv_group_get_focused(const lv_group_t * group)
  * @param group pointer to the group
  * @return user data
  */
-lv_group_user_data_t * lv_group_get_user_data(lv_group_t * group)
+lv_group_user_data_t lv_group_get_user_data(lv_group_t * group)
 {
     return group->user_data;
 }
