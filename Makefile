@@ -34,7 +34,6 @@ WARNING_FLAGS ?= \
 	-Wno-missing-field-initializers \
 	-Wno-sign-compare \
 	-Wno-switch-default \
-	-Wno-switch-enum \
 	-Wno-unused-function \
 	-Wno-unused-parameter \
 	-Wno-unused-value \
