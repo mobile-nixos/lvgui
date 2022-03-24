@@ -76,6 +76,8 @@ struct modeset_dev {
 
 static struct modeset_dev *modeset_list = NULL;
 
+drm_orientation_t drm_display_orientation;
+
 /****************************************
  *        PUBLIC IMPLEMENTATION         *
  ***************************************/
@@ -94,7 +96,7 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 
 	lv_coord_t w = (area->x2 - area->x1 + 1);
 	lv_coord_t h = (area->y2 - area->y1 + 1);
-	int i, y;
+	int i, y, x = 0;
 
 	dbg("drm_flush() x %d:%d y %d:%d w %d h %d", area->x1, area->x2, area->y1, area->y2, w, h);
 
@@ -105,17 +107,65 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 	(int) h; // temporary until ^ is added back...
 
 	// Just in case, this is most likely a BUG in this driver.
-	if (area->y2 > modeset_list->height) {
-		err("drm_flush() too large to fit in buffer!!!! [BUG!!]");
-		return;
+	if (drm_display_orientation == DRM_ORIENTATION_NORMAL || drm_display_orientation == DRM_ORIENTATION_UPSIDE_DOWN) {
+		if (area->y2 > modeset_list->height) {
+			err("drm_flush() too large to fit in buffer!!!! [BUG!!]");
+			return;
+		}
+	}
+	else {
+		if (area->y2 > modeset_list->width) {
+			err("drm_flush() too large to fit in buffer!!!! [BUG!!]");
+			return;
+		}
 	}
 
-	for (y = 0, i = area->y1 ; i <= area->y2 ; ++i, ++y) {
-		memcpy(
-			(uint8_t *)dev->map + (area->x1 * (LV_COLOR_SIZE/8)) + (dev->stride * i),
-			(uint8_t *)color_p + (w * (LV_COLOR_SIZE/8) * y),
-			w * (LV_COLOR_SIZE/8)
-		);
+	switch (drm_display_orientation) {
+		case DRM_ORIENTATION_NORMAL:
+			for (y = 0, i = area->y1 ; i <= area->y2 ; ++i, ++y) {
+				memcpy(
+					(uint8_t *)dev->map + (area->x1 * (LV_COLOR_SIZE/8)) + (dev->stride * i),
+					(uint8_t *)color_p + (w * (LV_COLOR_SIZE/8) * y),
+					w * (LV_COLOR_SIZE/8)
+				);
+			}
+			break;
+		case DRM_ORIENTATION_UPSIDE_DOWN:
+			{
+				int off = 0;
+				for (y = area->y1; y <= area->y2 && y < disp_drv->ver_res; y++) {
+					for (x = area->x1; x <= area->x2 && x < disp_drv->hor_res; x++) {
+						off = dev->stride * (disp_drv->ver_res - y - 1) + (disp_drv->hor_res - x) * 4;
+						*(uint32_t*)&dev->map[off] = lv_color_to32(*color_p);
+						color_p++;
+					}
+				}
+			}
+			break;
+		case DRM_ORIENTATION_CLOCKWISE:
+			{
+				int off = 0;
+				for (y = area->y1; y <= area->y2 && y < disp_drv->hor_res; y++) {
+					for (x = area->x1; x <= area->x2 && x < disp_drv->ver_res; x++) {
+						off = dev->stride * x + (disp_drv->hor_res - y) * 4;
+						*(uint32_t*)&dev->map[off] = lv_color_to32(*color_p);
+						color_p++;
+					}
+				}
+			}
+			break;
+		case DRM_ORIENTATION_COUNTER_CLOCKWISE:
+			{
+				int off = 0;
+				for (y = area->y1; y <= area->y2 && y < disp_drv->hor_res; y++) {
+					for (x = area->x1; x <= area->x2 && x < disp_drv->ver_res; x++) {
+						off = dev->stride * (disp_drv->ver_res - x - 1) + y * 4;
+						*(uint32_t*)&dev->map[off] = lv_color_to32(*color_p);
+						color_p++;
+					}
+				}
+			}
+			break;
 	}
 
 	// This normally is used with double-buffering, where we would flip to
@@ -136,6 +186,9 @@ void drm_init(lv_disp_drv_t* drv)
 	int ret = 0;
 	const char *card = DRM_CARD;
 	struct modeset_dev *dev;
+
+	// Ensure drivers peeking at DRM orientation gets something sensible
+	drm_display_orientation = DRM_ORIENTATION_NORMAL;
 
 	info("Starting DRM subsystem... (%s)", card);
 
@@ -164,8 +217,60 @@ void drm_init(lv_disp_drv_t* drv)
 	dbg_fill_buffer(dev, 0x00, 0xFF, 0x00);
 #endif
 
+	{
+		int i;
+		char * name = 0;
+		uint64_t value;
+		drmModeObjectProperties *props;
+		drmModePropertyRes *prop;
+
+		props = drmModeObjectGetProperties(fd, dev->conn, DRM_MODE_OBJECT_CONNECTOR);
+		if (props) {
+			for (i = 0; i < props->count_props; i++) {
+				prop = drmModeGetProperty(fd, props->props[i]);
+				value = props->prop_values[i];
+				dbg("prop->name = %s; (value = %lu) (count_enums = %d) (count_values = %d)", prop->name, value, prop->count_enums, prop->count_values);
+				if (!strcmp(prop->name, "panel orientation")) {
+					for (i = 0; i < prop->count_enums; i++) {
+						name = prop->enums[i].name;
+						dbg("name = %s", name)
+						dbg("value = %llu", prop->enums[i].value)
+						if (value == prop->enums[i].value) {
+							if (!strcmp(name, "Normal")) {
+								drm_display_orientation = DRM_ORIENTATION_NORMAL;
+							}
+							else if (!strcmp(name, "Upside Down")) {
+								drm_display_orientation = DRM_ORIENTATION_UPSIDE_DOWN;
+							}
+							else if (!strcmp(name, "Left Side Up")) {
+								drm_display_orientation = DRM_ORIENTATION_COUNTER_CLOCKWISE;
+							}
+							else if (!strcmp(name, "Right Side Up")) {
+								drm_display_orientation = DRM_ORIENTATION_CLOCKWISE;
+							}
+							break;
+						}
+					}
+
+					// We only care about panel orientation
+					info("DRM panel orientation from property: %s (%d)", name, drm_display_orientation);
+					break;
+				}
+				drmModeFreeProperty(prop);
+			}
+			drmModeFreeObjectProperties(props);
+		}
+	}
+
 	drv->hor_res = modeset_list->width;
 	drv->ver_res = modeset_list->height;
+
+	if (drm_display_orientation == DRM_ORIENTATION_NORMAL || drm_display_orientation == DRM_ORIENTATION_UPSIDE_DOWN) {
+		drv->rotated = 0;
+	}
+	else {
+		drv->rotated = 1;
+	}
 
 	goto ok;
 	goto err;
