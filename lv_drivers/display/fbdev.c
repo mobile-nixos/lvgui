@@ -192,6 +192,25 @@ void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color
     }
     /*16 bit per pixel*/
     else if(vinfo.bits_per_pixel == 16) {
+#if LV_COLOR_DEPTH == 32
+        uint16_t * fbp16 = (uint16_t *)fbp;
+        int32_t y;
+        int32_t x;
+		for(y = act_y1; y <= act_y2; y++) {
+			for(x = act_x1; x <= act_x2; x++) {
+                location = (x + vinfo.xoffset) + (y + vinfo.yoffset) * finfo.line_length / 2;
+				fbp16[location] = (uint16_t)(
+					// R, and 3 bits from G
+					((color_p->ch.red   & 0xf8)       | (color_p->ch.green >> 5)) << 8
+					// 3 bits from G, and B
+					| ((color_p->ch.green & 0x1c) << 3) | (color_p->ch.blue  >> 3)
+				);
+				color_p++;
+			}
+
+			color_p += area->x2 - act_x2;
+		}
+#else
         uint16_t * fbp16 = (uint16_t *)fbp;
         int32_t y;
         for(y = act_y1; y <= act_y2; y++) {
@@ -199,6 +218,7 @@ void fbdev_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color
             memcpy(&fbp16[location], (uint32_t *)color_p, (act_x2 - act_x1 + 1) * 2);
             color_p += w;
         }
+#endif
     }
     /*8 bit per pixel*/
     else if(vinfo.bits_per_pixel == 8) {
