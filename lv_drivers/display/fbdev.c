@@ -122,7 +122,15 @@ void fbdev_init(lv_disp_drv_t* disp_drv)
     fbdev_set_resolution(disp_drv);
 
     dbg(
-        "%dx%d, %dbpp,xres_virtual=%d,yres_virtual=%dvinfo.xoffset=%d,vinfo.yoffset=%d\n"
+		"finfo: smem_len=%d, xpanstep=%d, ypanstep=%d, ywrapstep=%d, line_length=%d"
+        , finfo.smem_len
+        , finfo.xpanstep
+        , finfo.ypanstep
+        , finfo.ywrapstep
+        , finfo.line_length
+    );
+    dbg(
+        "vinfo: %dx%d, %dbpp, xres_virtual=%d, yres_virtual=%d, xoffset=%d, yoffset=%d\n"
         , vinfo.xres
         , vinfo.yres
         , vinfo.bits_per_pixel
