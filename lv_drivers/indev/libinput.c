@@ -422,11 +422,15 @@ static void libinput_drv_handle_keyboard_input(libinput_drv_instance* instance, 
 		case KEY_LEFT:
 			data->key = LV_KEY_LEFT;
 			break;
+
 		case KEY_UP:
 			data->key = LV_KEY_PREV;
 			break;
 		case KEY_DOWN:
 			data->key = LV_KEY_NEXT;
+			break;
+		case KEY_OK:
+			data->key = LV_KEY_ENTER;
 			break;
 
 		// Used for navigating on tablets/phones without involving the display.
