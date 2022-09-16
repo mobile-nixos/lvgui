@@ -515,11 +515,26 @@ static void kb_init(void)
 {
 #if LV_USE_KB
 
+    static lv_style_t bg;
+    lv_style_copy(&bg, theme.style.panel);
+
+    bg.body.main_color = COLOR_BLUE_DARK2;
+    bg.body.grad_color = bg.body.main_color;
+    bg.body.border.width = 0;
+
     static lv_style_t rel;
     lv_style_copy(&rel, &lv_style_transp);
-    rel.text.font = _font;
+    rel.body.radius     = PIXEL_SCALE(2);
+    rel.body.opa        = LV_OPA_COVER;
+    rel.body.main_color = COLOR_BLUE_DARK;
+    rel.body.border.width   = PIXEL_SCALE(0);
+    rel.body.border.color   = COLOR_BLUE_DARKER;
+    rel.body.border.opa     = LV_OPA_COVER;
+    rel.body.grad_color = rel.body.main_color;
+    rel.text.color  = COLOR_ORANGE;
+    // rel.text.font = _font;
 
-    theme.style.kb.bg          = theme.style.btnm.bg;
+    theme.style.kb.bg          = &bg;
     theme.style.kb.btn.rel     = &rel;
     theme.style.kb.btn.pr      = theme.style.btnm.btn.pr;
     theme.style.kb.btn.tgl_rel = theme.style.btnm.btn.tgl_rel;
