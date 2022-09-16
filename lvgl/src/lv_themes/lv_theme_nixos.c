@@ -557,17 +557,25 @@ static void ta_init(void)
 {
 #if LV_USE_TA
     static lv_style_t oneline;
+    static lv_style_t bg;
+    lv_style_copy(&bg, theme.style.panel);
+
+    bg.body.opa        = LV_OPA_COVER;
+    bg.body.main_color = lv_color_mix(COLOR_BLUE, COLOR_BLACK, LV_OPA_80);
+    bg.body.grad_color = bg.body.main_color;
+    bg.body.border.width   = PIXEL_SCALE(2);
+    bg.body.border.color   = COLOR_BLUE_LIGHT;
+    bg.body.border.opa     = LV_OPA_COVER;
+    bg.body.radius   = PIXEL_SCALE(5);
 
     lv_style_copy(&oneline, &def);
     oneline.body.opa          = LV_OPA_TRANSP;
-    oneline.body.radius       = 0;
-    oneline.body.border.part  = LV_BORDER_BOTTOM;
-    oneline.body.border.width = 3;
-    oneline.body.border.color = lv_color_hex3(0x333);
+    oneline.body.radius       = PIXEL_SCALE(2);
+    oneline.body.border.width = 0;
     oneline.body.border.opa   = LV_OPA_COVER;
     oneline.text.color        = DEF_COLOR_TEXT;
 
-    theme.style.ta.area    = theme.style.panel;
+    theme.style.ta.area    = &bg;
     theme.style.ta.oneline = &oneline;
     theme.style.ta.cursor  = NULL; /*Let library to calculate the cursor's style*/
     theme.style.ta.sb      = &sb;
