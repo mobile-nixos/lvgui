@@ -111,8 +111,8 @@ static void basic_init(void)
     panel.body.radius         = DEF_RADIUS;
     panel.body.main_color     = COLOR_BLUE_DARK;
     panel.body.grad_color     = COLOR_BLUE_DARK;
-    panel.body.border.width   = PIXEL_SCALE(1);
-    panel.body.border.color   = lv_color_hex3(0xf00);
+    panel.body.border.width   = PIXEL_SCALE(2);
+    panel.body.border.color   = COLOR_BLUE_LIGHT;
     panel.body.border.opa     = LV_OPA_COVER;
     panel.body.shadow.color   = DEF_SHADOW_COLOR;
     panel.body.shadow.type    = LV_SHADOW_BOTTOM;
