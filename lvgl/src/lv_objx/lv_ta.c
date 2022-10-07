@@ -1833,6 +1833,10 @@ static void refr_cursor_area(lv_obj_t * ta)
 
     /*Draw he cursor according to the type*/
     lv_area_t cur_area;
+    cur_area.x1 = 0;
+    cur_area.y1 = 0;
+    cur_area.x2 = 0;
+    cur_area.y2 = 0;
 
     if(ext->cursor.type == LV_CURSOR_LINE) {
         cur_area.x1 =
