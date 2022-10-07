@@ -797,17 +797,19 @@ static void lv_btn_ink_effect_anim_ready(lv_anim_t * a)
     if((state == LV_BTN_STATE_REL || state == LV_BTN_STATE_TGL_REL) && ext->toggle == 0 && ink_playback == false) {
         lv_anim_t new_a;
         new_a.var            = ink_obj;
-        new_a.start          = LV_BTN_INK_VALUE_MAX;
-        new_a.end            = 0;
         new_a.exec_cb        = (lv_anim_exec_xcb_t)lv_btn_ink_effect_anim;
         new_a.path_cb        = lv_anim_path_linear;
         new_a.ready_cb       = lv_btn_ink_effect_anim_ready;
-        new_a.act_time       = -ext->ink_wait_time;
+        new_a.start          = LV_BTN_INK_VALUE_MAX;
+        new_a.end            = 0;
         new_a.time           = ext->ink_out_time;
-        new_a.playback       = 0;
+        new_a.act_time       = -ext->ink_wait_time;
         new_a.playback_pause = 0;
-        new_a.repeat         = 0;
         new_a.repeat_pause   = 0;
+        new_a.playback       = 0;
+        new_a.repeat         = 0;
+        new_a.playback_now   = 0;
+        new_a.has_run        = 0;
         lv_anim_create(&new_a);
 
         ink_playback = true;
