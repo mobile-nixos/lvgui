@@ -74,9 +74,11 @@ extern "C" {
 #define LV_SYMBOL_USB             "\xef\x8a\x87" /*62087, 0xF287*/
 #define LV_SYMBOL_BLUETOOTH       "\xef\x8a\x93" /*62099, 0xF293*/
 #define LV_SYMBOL_TRASH           "\xef\x8B\xAD" /*62189, 0xF2ED*/
-#define LV_SYMBOL_BACKSPACE       "\xef\x95\x9A" /*62810, 0xF55A*/
+#define LV_SYMBOL_BACKSPACE       "\xef\x86\x91" /* \uf191 */ // 
 #define LV_SYMBOL_SD_CARD         "\xef\x9F\x82" /*63426, 0xF7C2*/
-#define LV_SYMBOL_NEW_LINE        "\xef\xA2\xA2" /*63650, 0xF8A2*/
+#define LV_SYMBOL_NEW_LINE        "\xef\x85\xB8" /* \uf178 */ //
+
+
 
 /** Invalid symbol at (U+F8FF). If written before a string then `lv_img` will show it as a label*/
 #define LV_SYMBOL_DUMMY           "\xEF\xA3\xBF"
