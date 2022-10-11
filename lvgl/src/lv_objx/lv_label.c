@@ -190,12 +190,14 @@ void lv_label_set_text(lv_obj_t * label, const char * text)
 
     if(ext->text == text && ext->static_txt == 0) {
         /*If set its own text then reallocate it (maybe its size changed)*/
-        ext->text = lv_mem_realloc(ext->text, strlen(ext->text) + 1);
+        // + 4 to prevent bogus UTF-8 decoding issues in lv_txt_utf8_next
+        ext->text = lv_mem_realloc(ext->text, strlen(ext->text) + 1 + 4);
         LV_ASSERT_MEM(ext->text);
         if(ext->text == NULL) return;
     } else {
         /*Allocate space for the new text*/
-        size_t len = strlen(text) + 1;
+        // + 4 to prevent bogus UTF-8 decoding issues in lv_txt_utf8_next
+        size_t len = strlen(text) + 1 + 4;
         if(ext->text != NULL && ext->static_txt == 0) {
             lv_mem_free(ext->text);
             ext->text = NULL;
