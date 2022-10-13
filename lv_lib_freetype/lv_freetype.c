@@ -51,7 +51,7 @@ static void refresh_fallback_size(uint16_t size)
 
 static bool get_glyph_dsc_cb(const lv_font_t * font, lv_font_glyph_dsc_t * dsc_out, uint32_t unicode_letter, uint32_t unicode_letter_next)
 {
-    if(unicode_letter < 0x20) {
+    if (unicode_letter < 0x20 || unicode_letter == 0x7f) {
         dsc_out->adv_w = 0;
         dsc_out->box_h = 0;
         dsc_out->box_w = 0;

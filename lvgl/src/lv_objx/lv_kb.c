@@ -45,7 +45,7 @@ static bool lv_kb_capslock = false;
 static const char * kb_map_lc[] = {
 	"`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", LV_SYMBOL_BACKSPACE, "\n",
 	"TAB", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\", "\n",
-	"CAPS", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", LV_SYMBOL_NEW_LINE, "\n",
+	"CAPS", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "Enter", "\n",
 	"SHIFT", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "SHIFT", "\n",
 	LOWER_ROW_KEYS
 };
@@ -61,7 +61,7 @@ static const lv_btnm_ctrl_t kb_ctrl_lc_map[] = {
 static const char * kb_map_uc[] = {
 	"~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+", LV_SYMBOL_BACKSPACE, "\n",
 	"TAB", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "{", "}", "|", "\n",
-	"caps", "A", "S", "D", "F", "G", "H", "J", "K", "L", ":", "\"", LV_SYMBOL_NEW_LINE, "\n",
+	"caps", "A", "S", "D", "F", "G", "H", "J", "K", "L", ":", "\"", "Enter", "\n",
 	"shift", "Z", "X", "C", "V", "B", "N", "M", "<", ">", "?", "shift", "\n",
 	LOWER_ROW_KEYS
 };
