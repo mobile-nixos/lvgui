@@ -99,17 +99,20 @@ void lv_indev_read_task(lv_task_t * task)
         /*Save the last activity time*/
         if(indev_act->proc.state == LV_INDEV_STATE_PR) {
             indev_act->driver.disp->last_activity_time = lv_tick_get();
-        } else if(indev_act->driver.type == LV_INDEV_TYPE_ENCODER && data.enc_diff) {
+        } else if(indev_act->driver.type & LV_INDEV_TYPE_ENCODER && data.enc_diff) {
             indev_act->driver.disp->last_activity_time = lv_tick_get();
         }
 
-        if(indev_act->driver.type == LV_INDEV_TYPE_POINTER) {
+        if(indev_act->driver.type & LV_INDEV_TYPE_POINTER) {
             indev_pointer_proc(indev_act, &data);
-        } else if(indev_act->driver.type == LV_INDEV_TYPE_KEYBOARD) {
+        }
+		if(indev_act->driver.type & LV_INDEV_TYPE_KEYBOARD) {
             indev_keyboard_proc(indev_act, &data);
-        } else if(indev_act->driver.type == LV_INDEV_TYPE_ENCODER) {
+        }
+		if(indev_act->driver.type & LV_INDEV_TYPE_ENCODER) {
             indev_encoder_proc(indev_act, &data);
-        } else if(indev_act->driver.type == LV_INDEV_TYPE_BUTTON) {
+        }
+		if(indev_act->driver.type & LV_INDEV_TYPE_BUTTON) {
             indev_button_proc(indev_act, &data);
         }
         /*Handle reset query if it happened in during processing*/
@@ -192,7 +195,7 @@ void lv_indev_enable(lv_indev_t * indev, bool en)
  */
 void lv_indev_set_cursor(lv_indev_t * indev, lv_obj_t * cur_obj)
 {
-    if(indev->driver.type != LV_INDEV_TYPE_POINTER) return;
+    if(!(indev->driver.type & LV_INDEV_TYPE_POINTER)) return;
 
     indev->cursor = cur_obj;
     lv_obj_set_parent(indev->cursor, lv_disp_get_layer_sys(indev->driver.disp));
@@ -210,7 +213,7 @@ void lv_indev_set_cursor(lv_indev_t * indev, lv_obj_t * cur_obj)
  */
 void lv_indev_set_group(lv_indev_t * indev, lv_group_t * group)
 {
-    if(indev->driver.type == LV_INDEV_TYPE_KEYBOARD || indev->driver.type == LV_INDEV_TYPE_ENCODER) {
+    if(indev->driver.type & LV_INDEV_TYPE_KEYBOARD || indev->driver.type & LV_INDEV_TYPE_ENCODER) {
         indev->group = group;
     }
 }
@@ -223,7 +226,7 @@ void lv_indev_set_group(lv_indev_t * indev, lv_group_t * group)
  */
 void lv_indev_set_button_points(lv_indev_t * indev, const lv_point_t points[])
 {
-    if(indev->driver.type == LV_INDEV_TYPE_BUTTON) {
+    if(indev->driver.type & LV_INDEV_TYPE_BUTTON) {
         indev->btn_points = points;
     }
 }
@@ -235,7 +238,7 @@ void lv_indev_set_button_points(lv_indev_t * indev, const lv_point_t points[])
  */
 void lv_indev_get_point(const lv_indev_t * indev, lv_point_t * point)
 {
-    if(indev->driver.type != LV_INDEV_TYPE_POINTER && indev->driver.type != LV_INDEV_TYPE_BUTTON) {
+    if(!(indev->driver.type & LV_INDEV_TYPE_POINTER || indev->driver.type & LV_INDEV_TYPE_BUTTON)) {
         point->x = -1;
         point->y = -1;
     } else {
@@ -251,10 +254,11 @@ void lv_indev_get_point(const lv_indev_t * indev, lv_point_t * point)
  */
 uint32_t lv_indev_get_key(const lv_indev_t * indev)
 {
-    if(indev->driver.type != LV_INDEV_TYPE_KEYBOARD)
+    if (!(indev->driver.type & LV_INDEV_TYPE_KEYBOARD)) {
         return 0;
-    else
-        return indev->proc.types.keyboard.last_key;
+	}
+
+	return indev->proc.types.keyboard.last_key;
 }
 
 /**
@@ -266,7 +270,7 @@ uint32_t lv_indev_get_key(const lv_indev_t * indev)
 bool lv_indev_is_dragging(const lv_indev_t * indev)
 {
     if(indev == NULL) return false;
-    if(indev->driver.type != LV_INDEV_TYPE_POINTER && indev->driver.type != LV_INDEV_TYPE_BUTTON) return false;
+    if(!(indev->driver.type & LV_INDEV_TYPE_POINTER || indev->driver.type & LV_INDEV_TYPE_BUTTON)) return false;
     return indev->proc.types.pointer.drag_in_prog == 0 ? false : true;
 }
 
@@ -284,7 +288,7 @@ void lv_indev_get_vect(const lv_indev_t * indev, lv_point_t * point)
         return;
     }
 
-    if(indev->driver.type != LV_INDEV_TYPE_POINTER && indev->driver.type != LV_INDEV_TYPE_BUTTON) {
+    if(!(indev->driver.type & LV_INDEV_TYPE_POINTER || indev->driver.type & LV_INDEV_TYPE_BUTTON)) {
         point->x = 0;
         point->y = 0;
     } else {
