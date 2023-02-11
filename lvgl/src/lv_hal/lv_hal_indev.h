@@ -42,12 +42,11 @@ struct _lv_indev_drv_t;
 
 /** Possible input device types*/
 enum {
-    LV_INDEV_TYPE_NONE,    /**< Uninitialized state*/
-    LV_INDEV_TYPE_POINTER, /**< Touch pad, mouse, external button*/
-    LV_INDEV_TYPE_KEYBOARD,/**< Keyboard */
-    LV_INDEV_TYPE_BUTTON,  /**< External (hardware button) which is assigned to a specific point of the
-                              screen*/
-    LV_INDEV_TYPE_ENCODER, /**< Encoder with only Left, Right turn and a Button*/
+    LV_INDEV_TYPE_NONE     = 0,       /**< Uninitialized state*/
+    LV_INDEV_TYPE_POINTER  = 2 << 0,  /**< Touch pad, mouse, external button*/
+    LV_INDEV_TYPE_KEYBOARD = 2 << 1,  /**< Keyboard */
+    LV_INDEV_TYPE_BUTTON   = 2 << 2,  /**< External (hardware button) which is assigned to a specific point of the screen*/
+    LV_INDEV_TYPE_ENCODER  = 2 << 3,  /**< Encoder with only Left, Right turn and a Button*/
 };
 typedef uint8_t lv_indev_type_t;
 
@@ -113,30 +112,29 @@ typedef struct _lv_indev_drv_t
 typedef struct _lv_indev_proc_t
 {
     lv_indev_state_t state; /**< Current state of the input device. */
-    union
-    {
-        struct
-        { /*Pointer and button data*/
-            lv_point_t act_point; /**< Current point of input device. */
-            lv_point_t last_point; /**< Last point of input device. */
-            lv_point_t vect; /**< Difference between `act_point` and `last_point`. */
-            lv_point_t drag_sum; /*Count the dragged pixels to check LV_INDEV_DEF_DRAG_LIMIT*/
-            lv_point_t drag_throw_vect;
-            struct _lv_obj_t * act_obj;      /*The object being pressed*/
-            struct _lv_obj_t * last_obj;     /*The last obejct which was pressed (used by dragthrow and
-                                                other post-release event)*/
-            struct _lv_obj_t * last_pressed; /*The lastly pressed object*/
 
-            /*Flags*/
-            uint8_t drag_limit_out : 1;
-            uint8_t drag_in_prog : 1;
-        } pointer;
-        struct
-        { /*Keyboard data*/
-            lv_indev_state_t last_state;
-            uint32_t last_key;
-        } keyboard;
-    } types;
+    struct
+    { /*Pointer and button data*/
+        lv_point_t act_point; /**< Current point of input device. */
+        lv_point_t last_point; /**< Last point of input device. */
+        lv_point_t vect; /**< Difference between `act_point` and `last_point`. */
+        lv_point_t drag_sum; /*Count the dragged pixels to check LV_INDEV_DEF_DRAG_LIMIT*/
+        lv_point_t drag_throw_vect;
+        struct _lv_obj_t * act_obj;      /*The object being pressed*/
+        struct _lv_obj_t * last_obj;     /*The last obejct which was pressed (used by dragthrow and
+                                            other post-release event)*/
+        struct _lv_obj_t * last_pressed; /*The lastly pressed object*/
+
+        /*Flags*/
+        uint8_t drag_limit_out : 1;
+        uint8_t drag_in_prog : 1;
+    } pointer;
+
+    struct
+    { /*Keyboard data*/
+        lv_indev_state_t last_state;
+        uint32_t last_key;
+    } keyboard;
 
     uint32_t pr_timestamp;         /**< Pressed time stamp*/
     uint32_t longpr_rep_timestamp; /**< Long press repeat time stamp*/

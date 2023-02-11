@@ -99,17 +99,20 @@ void lv_indev_read_task(lv_task_t * task)
         /*Save the last activity time*/
         if(indev_act->proc.state == LV_INDEV_STATE_PR) {
             indev_act->driver.disp->last_activity_time = lv_tick_get();
-        } else if(indev_act->driver.type == LV_INDEV_TYPE_ENCODER && data.enc_diff) {
+        } else if(indev_act->driver.type & LV_INDEV_TYPE_ENCODER && data.enc_diff) {
             indev_act->driver.disp->last_activity_time = lv_tick_get();
         }
 
-        if(indev_act->driver.type == LV_INDEV_TYPE_POINTER) {
+        if(indev_act->driver.type & LV_INDEV_TYPE_POINTER) {
             indev_pointer_proc(indev_act, &data);
-        } else if(indev_act->driver.type == LV_INDEV_TYPE_KEYBOARD) {
+        }
+		if(indev_act->driver.type & LV_INDEV_TYPE_KEYBOARD) {
             indev_keyboard_proc(indev_act, &data);
-        } else if(indev_act->driver.type == LV_INDEV_TYPE_ENCODER) {
+        }
+		if(indev_act->driver.type & LV_INDEV_TYPE_ENCODER) {
             indev_encoder_proc(indev_act, &data);
-        } else if(indev_act->driver.type == LV_INDEV_TYPE_BUTTON) {
+        }
+		if(indev_act->driver.type & LV_INDEV_TYPE_BUTTON) {
             indev_button_proc(indev_act, &data);
         }
         /*Handle reset query if it happened in during processing*/
@@ -192,14 +195,14 @@ void lv_indev_enable(lv_indev_t * indev, bool en)
  */
 void lv_indev_set_cursor(lv_indev_t * indev, lv_obj_t * cur_obj)
 {
-    if(indev->driver.type != LV_INDEV_TYPE_POINTER) return;
+    if(!(indev->driver.type & LV_INDEV_TYPE_POINTER)) return;
 
     indev->cursor = cur_obj;
     lv_obj_set_parent(indev->cursor, lv_disp_get_layer_sys(indev->driver.disp));
     lv_obj_set_pos(
         indev->cursor,
-        indev->proc.types.pointer.act_point.x + indev->cursor_offset.x,
-        indev->proc.types.pointer.act_point.y + indev->cursor_offset.y
+        indev->proc.pointer.act_point.x + indev->cursor_offset.x,
+        indev->proc.pointer.act_point.y + indev->cursor_offset.y
     );
 }
 
@@ -210,7 +213,7 @@ void lv_indev_set_cursor(lv_indev_t * indev, lv_obj_t * cur_obj)
  */
 void lv_indev_set_group(lv_indev_t * indev, lv_group_t * group)
 {
-    if(indev->driver.type == LV_INDEV_TYPE_KEYBOARD || indev->driver.type == LV_INDEV_TYPE_ENCODER) {
+    if(indev->driver.type & LV_INDEV_TYPE_KEYBOARD || indev->driver.type & LV_INDEV_TYPE_ENCODER) {
         indev->group = group;
     }
 }
@@ -223,7 +226,7 @@ void lv_indev_set_group(lv_indev_t * indev, lv_group_t * group)
  */
 void lv_indev_set_button_points(lv_indev_t * indev, const lv_point_t points[])
 {
-    if(indev->driver.type == LV_INDEV_TYPE_BUTTON) {
+    if(indev->driver.type & LV_INDEV_TYPE_BUTTON) {
         indev->btn_points = points;
     }
 }
@@ -235,12 +238,12 @@ void lv_indev_set_button_points(lv_indev_t * indev, const lv_point_t points[])
  */
 void lv_indev_get_point(const lv_indev_t * indev, lv_point_t * point)
 {
-    if(indev->driver.type != LV_INDEV_TYPE_POINTER && indev->driver.type != LV_INDEV_TYPE_BUTTON) {
+    if(!(indev->driver.type & LV_INDEV_TYPE_POINTER || indev->driver.type & LV_INDEV_TYPE_BUTTON)) {
         point->x = -1;
         point->y = -1;
     } else {
-        point->x = indev->proc.types.pointer.act_point.x;
-        point->y = indev->proc.types.pointer.act_point.y;
+        point->x = indev->proc.pointer.act_point.x;
+        point->y = indev->proc.pointer.act_point.y;
     }
 }
 
@@ -251,10 +254,11 @@ void lv_indev_get_point(const lv_indev_t * indev, lv_point_t * point)
  */
 uint32_t lv_indev_get_key(const lv_indev_t * indev)
 {
-    if(indev->driver.type != LV_INDEV_TYPE_KEYBOARD)
+    if (!(indev->driver.type & LV_INDEV_TYPE_KEYBOARD)) {
         return 0;
-    else
-        return indev->proc.types.keyboard.last_key;
+	}
+
+	return indev->proc.keyboard.last_key;
 }
 
 /**
@@ -266,8 +270,8 @@ uint32_t lv_indev_get_key(const lv_indev_t * indev)
 bool lv_indev_is_dragging(const lv_indev_t * indev)
 {
     if(indev == NULL) return false;
-    if(indev->driver.type != LV_INDEV_TYPE_POINTER && indev->driver.type != LV_INDEV_TYPE_BUTTON) return false;
-    return indev->proc.types.pointer.drag_in_prog == 0 ? false : true;
+    if(!(indev->driver.type & LV_INDEV_TYPE_POINTER || indev->driver.type & LV_INDEV_TYPE_BUTTON)) return false;
+    return indev->proc.pointer.drag_in_prog == 0 ? false : true;
 }
 
 /**
@@ -284,12 +288,12 @@ void lv_indev_get_vect(const lv_indev_t * indev, lv_point_t * point)
         return;
     }
 
-    if(indev->driver.type != LV_INDEV_TYPE_POINTER && indev->driver.type != LV_INDEV_TYPE_BUTTON) {
+    if(!(indev->driver.type & LV_INDEV_TYPE_POINTER || indev->driver.type & LV_INDEV_TYPE_BUTTON)) {
         point->x = 0;
         point->y = 0;
     } else {
-        point->x = indev->proc.types.pointer.vect.x;
-        point->y = indev->proc.types.pointer.vect.y;
+        point->x = indev->proc.pointer.vect.x;
+        point->y = indev->proc.pointer.vect.y;
     }
 }
 
@@ -341,7 +345,7 @@ static void indev_pointer_proc(lv_indev_t * i, lv_indev_data_t * data)
 {
     /*Move the cursor if set and moved*/
     if(i->cursor != NULL &&
-       (i->proc.types.pointer.last_point.x != data->point.x || i->proc.types.pointer.last_point.y != data->point.y)) {
+       (i->proc.pointer.last_point.x != data->point.x || i->proc.pointer.last_point.y != data->point.y)) {
         lv_obj_set_pos(
             i->cursor,
             data->point.x + i->cursor_offset.x,
@@ -355,8 +359,8 @@ static void indev_pointer_proc(lv_indev_t * i, lv_indev_data_t * data)
         }
     }
 
-    i->proc.types.pointer.act_point.x = data->point.x;
-    i->proc.types.pointer.act_point.y = data->point.y;
+    i->proc.pointer.act_point.x = data->point.x;
+    i->proc.pointer.act_point.y = data->point.y;
 
     if(i->proc.state == LV_INDEV_STATE_PR) {
         indev_proc_press(&i->proc);
@@ -364,8 +368,8 @@ static void indev_pointer_proc(lv_indev_t * i, lv_indev_data_t * data)
         indev_proc_release(&i->proc);
     }
 
-    i->proc.types.pointer.last_point.x = i->proc.types.pointer.act_point.x;
-    i->proc.types.pointer.last_point.y = i->proc.types.pointer.act_point.y;
+    i->proc.pointer.last_point.x = i->proc.pointer.act_point.x;
+    i->proc.pointer.last_point.y = i->proc.pointer.act_point.y;
 }
 
 /**
@@ -381,7 +385,7 @@ static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
         i->proc.wait_until_release      = 0;
         i->proc.pr_timestamp            = 0;
         i->proc.long_pr_sent            = 0;
-        i->proc.types.keyboard.last_state = LV_INDEV_STATE_REL; /*To skip the processing of release*/
+        i->proc.keyboard.last_state = LV_INDEV_STATE_REL; /*To skip the processing of release*/
     }
 
     lv_group_t * g = i->group;
@@ -391,17 +395,17 @@ static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
     if(indev_obj_act == NULL) return;
 
     /*Save the last key to compare it with the current latter on RELEASE*/
-    uint32_t prev_key = i->proc.types.keyboard.last_key;
+    uint32_t prev_key = i->proc.keyboard.last_key;
 
     /* Save the last key.
      * It must be done here else `lv_indev_get_key` will return the last key in events and signals*/
-    i->proc.types.keyboard.last_key = data->key;
+    i->proc.keyboard.last_key = data->key;
 
     /* Save the previous state so we can detect state changes below and also set the last state now
      * so if any signal/event handler on the way returns `LV_RES_INV` the last state is remembered
      * for the next time*/
-    uint32_t prev_state             = i->proc.types.keyboard.last_state;
-    i->proc.types.keyboard.last_state = data->state;
+    uint32_t prev_state             = i->proc.keyboard.last_state;
+    i->proc.keyboard.last_state = data->state;
 
     /*Key press happened*/
     if(data->state == LV_INDEV_STATE_PR && prev_state == LV_INDEV_STATE_REL) {
@@ -524,14 +528,14 @@ static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
         i->proc.wait_until_release      = 0;
         i->proc.pr_timestamp            = 0;
         i->proc.long_pr_sent            = 0;
-        i->proc.types.keyboard.last_state = LV_INDEV_STATE_REL; /*To skip the processing of release*/
+        i->proc.keyboard.last_state = LV_INDEV_STATE_REL; /*To skip the processing of release*/
     }
 
     /* Save the last keys before anything else.
      * They need to be already saved if the the function returns for any reason*/
-    lv_indev_state_t last_state     = i->proc.types.keyboard.last_state;
-    i->proc.types.keyboard.last_state = data->state;
-    i->proc.types.keyboard.last_key   = data->key;
+    lv_indev_state_t last_state     = i->proc.keyboard.last_state;
+    i->proc.keyboard.last_state = data->state;
+    i->proc.keyboard.last_key   = data->key;
 
     lv_group_t * g = i->group;
     if(g == NULL) return;
@@ -667,20 +671,20 @@ static void indev_button_proc(lv_indev_t * i, lv_indev_data_t * data)
         return;
     }
 	
-    i->proc.types.pointer.act_point.x = i->btn_points[data->btn_id].x;
-    i->proc.types.pointer.act_point.y = i->btn_points[data->btn_id].y;
+    i->proc.pointer.act_point.x = i->btn_points[data->btn_id].x;
+    i->proc.pointer.act_point.y = i->btn_points[data->btn_id].y;
 
     /*Still the same point is pressed*/
-    if(i->proc.types.pointer.last_point.x == i->proc.types.pointer.act_point.x &&
-       i->proc.types.pointer.last_point.y == i->proc.types.pointer.act_point.y && data->state == LV_INDEV_STATE_PR) {
+    if(i->proc.pointer.last_point.x == i->proc.pointer.act_point.x &&
+       i->proc.pointer.last_point.y == i->proc.pointer.act_point.y && data->state == LV_INDEV_STATE_PR) {
         indev_proc_press(&i->proc);
     } else {
         /*If a new point comes always make a release*/
         indev_proc_release(&i->proc);
     }
 
-    i->proc.types.pointer.last_point.x = i->proc.types.pointer.act_point.x;
-    i->proc.types.pointer.last_point.y = i->proc.types.pointer.act_point.y;
+    i->proc.pointer.last_point.x = i->proc.pointer.act_point.x;
+    i->proc.pointer.last_point.y = i->proc.pointer.act_point.y;
 }
 
 /**
@@ -690,7 +694,7 @@ static void indev_button_proc(lv_indev_t * i, lv_indev_data_t * data)
  */
 static void indev_proc_press(lv_indev_proc_t * proc)
 {
-    indev_obj_act = proc->types.pointer.act_obj;
+    indev_obj_act = proc->pointer.act_obj;
 
     if(proc->wait_until_release != 0) return;
 
@@ -705,7 +709,7 @@ static void indev_proc_press(lv_indev_proc_t * proc)
         new_obj_searched = true;
     }
     /*If there is last object but it is not dragged and not protected also search*/
-    else if(proc->types.pointer.drag_in_prog == 0 &&
+    else if(proc->pointer.drag_in_prog == 0 &&
             lv_obj_is_protected(indev_obj_act, LV_PROTECT_PRESS_LOST) == false) {
         indev_obj_act = indev_search_obj(proc, lv_disp_get_layer_sys(disp));
         if(indev_obj_act == NULL) indev_obj_act = indev_search_obj(proc, lv_disp_get_layer_top(disp));
@@ -717,21 +721,21 @@ static void indev_proc_press(lv_indev_proc_t * proc)
     }
 
     /*The last object might have drag throw. Stop it manually*/
-    if(new_obj_searched && proc->types.pointer.last_obj) {
-        proc->types.pointer.drag_throw_vect.x = 0;
-        proc->types.pointer.drag_throw_vect.y = 0;
+    if(new_obj_searched && proc->pointer.last_obj) {
+        proc->pointer.drag_throw_vect.x = 0;
+        proc->pointer.drag_throw_vect.y = 0;
         indev_drag_throw(proc);
     }
 
     /*If a new object was found reset some variables and send a pressed signal*/
-    if(indev_obj_act != proc->types.pointer.act_obj) {
-        proc->types.pointer.last_point.x = proc->types.pointer.act_point.x;
-        proc->types.pointer.last_point.y = proc->types.pointer.act_point.y;
+    if(indev_obj_act != proc->pointer.act_obj) {
+        proc->pointer.last_point.x = proc->pointer.act_point.x;
+        proc->pointer.last_point.y = proc->pointer.act_point.y;
 
         /*If a new object found the previous was lost, so send a signal*/
-        if(proc->types.pointer.act_obj != NULL) {
+        if(proc->pointer.act_obj != NULL) {
             /*Save the obj because in special cases `act_obj` can change in the signal function*/
-            lv_obj_t * last_obj = proc->types.pointer.act_obj;
+            lv_obj_t * last_obj = proc->pointer.act_obj;
 
             last_obj->signal_cb(last_obj, LV_SIGNAL_PRESS_LOST, indev_act);
             if(indev_reset_check(proc)) return;
@@ -740,20 +744,20 @@ static void indev_proc_press(lv_indev_proc_t * proc)
 
         }
 
-        proc->types.pointer.act_obj  = indev_obj_act; /*Save the pressed object*/
-        proc->types.pointer.last_obj = indev_obj_act;
+        proc->pointer.act_obj  = indev_obj_act; /*Save the pressed object*/
+        proc->pointer.last_obj = indev_obj_act;
 
         if(indev_obj_act != NULL) {
             /* Save the time when the obj pressed.
              * It is necessary to count the long press time.*/
             proc->pr_timestamp                 = lv_tick_get();
             proc->long_pr_sent                 = 0;
-            proc->types.pointer.drag_limit_out = 0;
-            proc->types.pointer.drag_in_prog   = 0;
-            proc->types.pointer.drag_sum.x     = 0;
-            proc->types.pointer.drag_sum.y     = 0;
-            proc->types.pointer.vect.x         = 0;
-            proc->types.pointer.vect.y         = 0;
+            proc->pointer.drag_limit_out = 0;
+            proc->pointer.drag_in_prog   = 0;
+            proc->pointer.drag_sum.x     = 0;
+            proc->pointer.drag_sum.y     = 0;
+            proc->pointer.vect.x         = 0;
+            proc->pointer.vect.y         = 0;
 
             /*Search for 'top' attribute*/
             lv_obj_t * i        = indev_obj_act;
@@ -778,24 +782,24 @@ static void indev_proc_press(lv_indev_proc_t * proc)
     }
 
     /*Calculate the types.pointer.vector*/
-    proc->types.pointer.vect.x = proc->types.pointer.act_point.x - proc->types.pointer.last_point.x;
-    proc->types.pointer.vect.y = proc->types.pointer.act_point.y - proc->types.pointer.last_point.y;
+    proc->pointer.vect.x = proc->pointer.act_point.x - proc->pointer.last_point.x;
+    proc->pointer.vect.y = proc->pointer.act_point.y - proc->pointer.last_point.y;
 
-    proc->types.pointer.drag_throw_vect.x = (proc->types.pointer.drag_throw_vect.x * 5) >> 3;
-    proc->types.pointer.drag_throw_vect.y = (proc->types.pointer.drag_throw_vect.y * 5) >> 3;
+    proc->pointer.drag_throw_vect.x = (proc->pointer.drag_throw_vect.x * 5) >> 3;
+    proc->pointer.drag_throw_vect.y = (proc->pointer.drag_throw_vect.y * 5) >> 3;
 
-    if(proc->types.pointer.drag_throw_vect.x < 0)
-        proc->types.pointer.drag_throw_vect.x++;
-    else if(proc->types.pointer.drag_throw_vect.x > 0)
-        proc->types.pointer.drag_throw_vect.x--;
+    if(proc->pointer.drag_throw_vect.x < 0)
+        proc->pointer.drag_throw_vect.x++;
+    else if(proc->pointer.drag_throw_vect.x > 0)
+        proc->pointer.drag_throw_vect.x--;
 
-    if(proc->types.pointer.drag_throw_vect.y < 0)
-        proc->types.pointer.drag_throw_vect.y++;
-    else if(proc->types.pointer.drag_throw_vect.y > 0)
-        proc->types.pointer.drag_throw_vect.y--;
+    if(proc->pointer.drag_throw_vect.y < 0)
+        proc->pointer.drag_throw_vect.y++;
+    else if(proc->pointer.drag_throw_vect.y > 0)
+        proc->pointer.drag_throw_vect.y--;
 
-    proc->types.pointer.drag_throw_vect.x += (proc->types.pointer.vect.x * 4) >> 3;
-    proc->types.pointer.drag_throw_vect.y += (proc->types.pointer.vect.y * 4) >> 3;
+    proc->pointer.drag_throw_vect.x += (proc->pointer.vect.x * 4) >> 3;
+    proc->pointer.drag_throw_vect.y += (proc->pointer.vect.y * 4) >> 3;
 
     /*If there is active object and it can be dragged run the drag*/
     if(indev_obj_act != NULL) {
@@ -808,7 +812,7 @@ static void indev_proc_press(lv_indev_proc_t * proc)
         if(indev_reset_check(proc)) return;
 
         /*If there is no drag then check for long press time*/
-        if(proc->types.pointer.drag_in_prog == 0 && proc->long_pr_sent == 0) {
+        if(proc->pointer.drag_in_prog == 0 && proc->long_pr_sent == 0) {
             /*Send a signal about the long press if enough time elapsed*/
             if(lv_tick_elaps(proc->pr_timestamp) > indev_act->driver.long_press_time) {
                 indev_obj_act->signal_cb(indev_obj_act, LV_SIGNAL_LONG_PRESS, indev_act);
@@ -824,7 +828,7 @@ static void indev_proc_press(lv_indev_proc_t * proc)
             }
         }
         /*Send long press repeated signal*/
-        if(proc->types.pointer.drag_in_prog == 0 && proc->long_pr_sent == 1) {
+        if(proc->pointer.drag_in_prog == 0 && proc->long_pr_sent == 1) {
             /*Send a signal about the long press repeat if enough time elapsed*/
             if(lv_tick_elaps(proc->longpr_rep_timestamp) > indev_act->driver.long_press_rep_time) {
                 indev_obj_act->signal_cb(indev_obj_act, LV_SIGNAL_LONG_PRESS_REP, indev_act);
@@ -844,13 +848,13 @@ static void indev_proc_press(lv_indev_proc_t * proc)
 static void indev_proc_release(lv_indev_proc_t * proc)
 {
     if(proc->wait_until_release != 0) {
-        proc->types.pointer.act_obj  = NULL;
-        proc->types.pointer.last_obj = NULL;
+        proc->pointer.act_obj  = NULL;
+        proc->pointer.last_obj = NULL;
         proc->pr_timestamp           = 0;
         proc->longpr_rep_timestamp   = 0;
         proc->wait_until_release     = 0;
     }
-    indev_obj_act = proc->types.pointer.act_obj;
+    indev_obj_act = proc->pointer.act_obj;
 
     /*Forget the act obj and send a released signal */
     if(indev_obj_act) {
@@ -862,7 +866,7 @@ static void indev_proc_release(lv_indev_proc_t * proc)
             indev_obj_act->signal_cb(indev_obj_act, LV_SIGNAL_RELEASED, indev_act);
             if(indev_reset_check(proc)) return;
 
-            if(proc->types.pointer.drag_in_prog == 0) {
+            if(proc->pointer.drag_in_prog == 0) {
                 if(proc->long_pr_sent == 0) {
                     lv_event_send(indev_obj_act, LV_EVENT_SHORT_CLICKED, NULL);
                     if(indev_reset_check(proc)) return;
@@ -881,12 +885,12 @@ static void indev_proc_release(lv_indev_proc_t * proc)
             indev_obj_act->signal_cb(indev_obj_act, LV_SIGNAL_RELEASED, indev_act);
             if(indev_reset_check(proc)) return;
 
-            if(proc->long_pr_sent == 0 && proc->types.pointer.drag_in_prog == 0) {
+            if(proc->long_pr_sent == 0 && proc->pointer.drag_in_prog == 0) {
                 lv_event_send(indev_obj_act, LV_EVENT_SHORT_CLICKED, NULL);
                 if(indev_reset_check(proc)) return;
             }
 
-            if(proc->types.pointer.drag_in_prog == 0) {
+            if(proc->pointer.drag_in_prog == 0) {
                 lv_event_send(indev_obj_act, LV_EVENT_CLICKED, NULL);
                 if(indev_reset_check(proc)) return;
             }
@@ -931,14 +935,14 @@ static void indev_proc_release(lv_indev_proc_t * proc)
 
         /* Send defocus to the lastly "active" object and foucus to the new one.
          * DO not sent the events if they was sent by the click focus*/
-        if(proc->types.pointer.last_pressed != indev_obj_act && click_focus_sent == false) {
-            lv_event_send(proc->types.pointer.last_pressed, LV_EVENT_DEFOCUSED, NULL);
+        if(proc->pointer.last_pressed != indev_obj_act && click_focus_sent == false) {
+            lv_event_send(proc->pointer.last_pressed, LV_EVENT_DEFOCUSED, NULL);
             if(indev_reset_check(proc)) return;
 
-            lv_event_send(proc->types.pointer.act_obj, LV_EVENT_FOCUSED, NULL);
+            lv_event_send(proc->pointer.act_obj, LV_EVENT_FOCUSED, NULL);
             if(indev_reset_check(proc)) return;
 
-            proc->types.pointer.last_pressed = indev_obj_act;
+            proc->pointer.last_pressed = indev_obj_act;
         }
 
         if(indev_reset_check(proc)) return;
@@ -951,20 +955,20 @@ static void indev_proc_release(lv_indev_proc_t * proc)
         }
 
         if(drag_obj) {
-            if(lv_obj_get_drag_throw(drag_obj) && proc->types.pointer.drag_in_prog) {
+            if(lv_obj_get_drag_throw(drag_obj) && proc->pointer.drag_in_prog) {
                 lv_event_send(drag_obj, LV_EVENT_DRAG_THROW_BEGIN, NULL);
                 if(indev_reset_check(proc)) return;
             }
         }
 
-        proc->types.pointer.act_obj = NULL;
+        proc->pointer.act_obj = NULL;
         proc->pr_timestamp          = 0;
         proc->longpr_rep_timestamp  = 0;
     }
 
     /*The reset can be set in the signal function.
      * In case of reset query ignore the remaining parts.*/
-    if(proc->types.pointer.last_obj != NULL && proc->reset_query == 0) {
+    if(proc->pointer.last_obj != NULL && proc->reset_query == 0) {
         indev_drag_throw(proc);
         if(indev_reset_check(proc)) return;
     }
@@ -980,18 +984,18 @@ static void indev_proc_release(lv_indev_proc_t * proc)
 static void indev_proc_reset_query_handler(lv_indev_t * indev)
 {
     if(indev->proc.reset_query) {
-        indev->proc.types.pointer.act_obj           = NULL;
-        indev->proc.types.pointer.last_obj          = NULL;
-        indev->proc.types.pointer.last_pressed      = NULL;
-        indev->proc.types.pointer.drag_limit_out    = 0;
-        indev->proc.types.pointer.drag_in_prog      = 0;
+        indev->proc.pointer.act_obj           = NULL;
+        indev->proc.pointer.last_obj          = NULL;
+        indev->proc.pointer.last_pressed      = NULL;
+        indev->proc.pointer.drag_limit_out    = 0;
+        indev->proc.pointer.drag_in_prog      = 0;
         indev->proc.long_pr_sent                    = 0;
         indev->proc.pr_timestamp                    = 0;
         indev->proc.longpr_rep_timestamp            = 0;
-        indev->proc.types.pointer.drag_sum.x        = 0;
-        indev->proc.types.pointer.drag_sum.y        = 0;
-        indev->proc.types.pointer.drag_throw_vect.x = 0;
-        indev->proc.types.pointer.drag_throw_vect.y = 0;
+        indev->proc.pointer.drag_sum.x        = 0;
+        indev->proc.pointer.drag_sum.y        = 0;
+        indev->proc.pointer.drag_throw_vect.x = 0;
+        indev->proc.pointer.drag_throw_vect.y = 0;
         indev->proc.reset_query                     = 0;
         indev_obj_act                               = NULL;
     }
@@ -1014,7 +1018,7 @@ static lv_obj_t * indev_search_obj(const lv_indev_proc_t * proc, lv_obj_t * obj)
     ext_area.y1 = obj->coords.y1 - obj->ext_click_pad_ver;
     ext_area.y2 = obj->coords.y2 + obj->ext_click_pad_ver;
 
-    if(lv_area_is_point_on(&ext_area, &proc->types.pointer.act_point)) {
+    if(lv_area_is_point_on(&ext_area, &proc->pointer.act_point)) {
 #elif LV_USE_EXT_CLICK_AREA == LV_EXT_CLICK_AREA_FULL
     lv_area_t ext_area;
     ext_area.x1 = obj->coords.x1 - obj->ext_click_pad.x1;
@@ -1022,9 +1026,9 @@ static lv_obj_t * indev_search_obj(const lv_indev_proc_t * proc, lv_obj_t * obj)
     ext_area.y1 = obj->coords.y1 - obj->ext_click_pad.y1;
     ext_area.y2 = obj->coords.y2 + obj->ext_click_pad.y2;
 
-    if(lv_area_is_point_on(&ext_area, &proc->types.pointer.act_point)) {
+    if(lv_area_is_point_on(&ext_area, &proc->pointer.act_point)) {
 #else
-    if(lv_area_is_point_on(&obj->coords, &proc->types.pointer.act_point)) {
+    if(lv_area_is_point_on(&obj->coords, &proc->pointer.act_point)) {
 #endif
         lv_obj_t * i;
 
@@ -1055,12 +1059,12 @@ static lv_obj_t * indev_search_obj(const lv_indev_proc_t * proc, lv_obj_t * obj)
 }
 
 /**
- * Handle the dragging of indev_proc_p->types.pointer.act_obj
+ * Handle the dragging of indev_proc_p->pointer.act_obj
  * @param indev pointer to a input device state
  */
 static void indev_drag(lv_indev_proc_t * state)
 {
-    lv_obj_t * drag_obj    = state->types.pointer.act_obj;
+    lv_obj_t * drag_obj    = state->pointer.act_obj;
     bool drag_just_started = false;
 
     /*If drag parent is active check recursively the drag_parent attribute*/
@@ -1075,25 +1079,25 @@ static void indev_drag(lv_indev_proc_t * state)
     lv_drag_dir_t allowed_dirs = lv_obj_get_drag_dir(drag_obj);
 
     /*Count the movement by drag*/
-    state->types.pointer.drag_sum.x += state->types.pointer.vect.x;
-    state->types.pointer.drag_sum.y += state->types.pointer.vect.y;
+    state->pointer.drag_sum.x += state->pointer.vect.x;
+    state->pointer.drag_sum.y += state->pointer.vect.y;
 
     /*Enough move?*/
-    if(state->types.pointer.drag_limit_out == 0) {
+    if(state->pointer.drag_limit_out == 0) {
         /*If a move is greater then LV_DRAG_LIMIT then begin the drag*/
         if(((allowed_dirs & LV_DRAG_DIR_HOR) &&
-            LV_MATH_ABS(state->types.pointer.drag_sum.x) >= indev_act->driver.drag_limit) ||
+            LV_MATH_ABS(state->pointer.drag_sum.x) >= indev_act->driver.drag_limit) ||
            ((allowed_dirs & LV_DRAG_DIR_VER) &&
-            LV_MATH_ABS(state->types.pointer.drag_sum.y) >= indev_act->driver.drag_limit)) {
-            state->types.pointer.drag_limit_out = 1;
+            LV_MATH_ABS(state->pointer.drag_sum.y) >= indev_act->driver.drag_limit)) {
+            state->pointer.drag_limit_out = 1;
             drag_just_started                   = true;
         }
     }
 
     /*If the drag limit is exceeded handle the dragging*/
-    if(state->types.pointer.drag_limit_out != 0) {
+    if(state->pointer.drag_limit_out != 0) {
         /*Set new position if the vector is not zero*/
-        if(state->types.pointer.vect.x != 0 || state->types.pointer.vect.y != 0) {
+        if(state->pointer.vect.x != 0 || state->pointer.vect.y != 0) {
 
             uint16_t inv_buf_size =
                 lv_disp_get_inv_buf_size(indev_act->driver.disp); /*Get the number of currently invalidated areas*/
@@ -1109,25 +1113,25 @@ static void indev_drag(lv_indev_proc_t * state)
 
             if(allowed_dirs == LV_DRAG_DIR_ALL) {
                 if(drag_just_started) {
-                    act_x += state->types.pointer.drag_sum.x;
-                    act_y += state->types.pointer.drag_sum.y;
+                    act_x += state->pointer.drag_sum.x;
+                    act_y += state->pointer.drag_sum.y;
                 }
-                lv_obj_set_pos(drag_obj, act_x + state->types.pointer.vect.x, act_y + state->types.pointer.vect.y);
+                lv_obj_set_pos(drag_obj, act_x + state->pointer.vect.x, act_y + state->pointer.vect.y);
             } else if(allowed_dirs & LV_DRAG_DIR_HOR) {
                 if(drag_just_started) {
-                    act_x += state->types.pointer.drag_sum.x;
+                    act_x += state->pointer.drag_sum.x;
                 }
-                lv_obj_set_x(drag_obj, act_x + state->types.pointer.vect.x);
+                lv_obj_set_x(drag_obj, act_x + state->pointer.vect.x);
             } else if(allowed_dirs & LV_DRAG_DIR_VER) {
                 if(drag_just_started) {
-                    act_y += state->types.pointer.drag_sum.y;
+                    act_y += state->pointer.drag_sum.y;
                 }
-                lv_obj_set_y(drag_obj, act_y + state->types.pointer.vect.y);
+                lv_obj_set_y(drag_obj, act_y + state->pointer.vect.y);
             }
 
             /*If the object didn't moved then clear the invalidated areas*/
             if(drag_obj->coords.x1 == prev_x && drag_obj->coords.y1 == prev_y) {
-//                state->types.pointer.drag_in_prog = 0;
+//                state->pointer.drag_in_prog = 0;
                 /*In a special case if the object is moved on a page and
                  * the scrollable has fit == true and the object is dragged of the page then
                  * while its coordinate is not changing only the parent's size is reduced */
@@ -1138,7 +1142,7 @@ static void indev_drag(lv_indev_proc_t * state)
                     lv_disp_pop_from_inv_buf(indev_act->driver.disp, new_inv_buf_size - inv_buf_size);
                 }
             } else {
-                state->types.pointer.drag_in_prog = 1;
+                state->pointer.drag_in_prog = 1;
                 /*Set the drag in progress flag*/
                 /*Send the drag begin signal on first move*/
                 if(drag_just_started) {
@@ -1158,9 +1162,9 @@ static void indev_drag(lv_indev_proc_t * state)
  */
 static void indev_drag_throw(lv_indev_proc_t * proc)
 {
-    if(proc->types.pointer.drag_in_prog == 0) return;
+    if(proc->pointer.drag_in_prog == 0) return;
 
-    lv_obj_t * drag_obj = proc->types.pointer.last_obj;
+    lv_obj_t * drag_obj = proc->pointer.last_obj;
 
     /*If drag parent is active check recursively the drag_parent attribute*/
     while(lv_obj_get_drag_parent(drag_obj) != false && drag_obj != NULL) {
@@ -1173,7 +1177,7 @@ static void indev_drag_throw(lv_indev_proc_t * proc)
 
     /*Return if the drag throw is not enabled*/
     if(lv_obj_get_drag_throw(drag_obj) == false) {
-        proc->types.pointer.drag_in_prog = 0;
+        proc->pointer.drag_in_prog = 0;
         drag_obj->signal_cb(drag_obj, LV_SIGNAL_DRAG_END, indev_act);
         lv_event_send(drag_obj, LV_EVENT_DRAG_END, NULL);
         if(indev_reset_check(proc)) return;
@@ -1185,17 +1189,17 @@ static void indev_drag_throw(lv_indev_proc_t * proc)
     lv_drag_dir_t allowed_dirs = lv_obj_get_drag_dir(drag_obj);
 
     /*Reduce the vectors*/
-    proc->types.pointer.drag_throw_vect.x =
-        proc->types.pointer.drag_throw_vect.x * (100 - indev_act->driver.drag_throw) / 100;
-    proc->types.pointer.drag_throw_vect.y =
-        proc->types.pointer.drag_throw_vect.y * (100 - indev_act->driver.drag_throw) / 100;
+    proc->pointer.drag_throw_vect.x =
+        proc->pointer.drag_throw_vect.x * (100 - indev_act->driver.drag_throw) / 100;
+    proc->pointer.drag_throw_vect.y =
+        proc->pointer.drag_throw_vect.y * (100 - indev_act->driver.drag_throw) / 100;
 
-    if(proc->types.pointer.drag_throw_vect.x != 0 || proc->types.pointer.drag_throw_vect.y != 0) {
+    if(proc->pointer.drag_throw_vect.x != 0 || proc->pointer.drag_throw_vect.y != 0) {
         /*Get the coordinates and modify them*/
         lv_area_t coords_ori;
         lv_obj_get_coords(drag_obj, &coords_ori);
-        lv_coord_t act_x = lv_obj_get_x(drag_obj) + proc->types.pointer.drag_throw_vect.x;
-        lv_coord_t act_y = lv_obj_get_y(drag_obj) + proc->types.pointer.drag_throw_vect.y;
+        lv_coord_t act_x = lv_obj_get_x(drag_obj) + proc->pointer.drag_throw_vect.x;
+        lv_coord_t act_y = lv_obj_get_y(drag_obj) + proc->pointer.drag_throw_vect.y;
 
         if(allowed_dirs == LV_DRAG_DIR_ALL)
             lv_obj_set_pos(drag_obj, act_x, act_y);
@@ -1208,13 +1212,13 @@ static void indev_drag_throw(lv_indev_proc_t * proc)
         lv_obj_get_coords(drag_obj, &coord_new);
 
         /*If non of the coordinates are changed then do not continue throwing*/
-        if((coords_ori.x1 == coord_new.x1 || proc->types.pointer.drag_throw_vect.x == 0) &&
-           (coords_ori.y1 == coord_new.y1 || proc->types.pointer.drag_throw_vect.y == 0)) {
-            proc->types.pointer.drag_in_prog      = 0;
-            proc->types.pointer.vect.x            = 0;
-            proc->types.pointer.vect.y            = 0;
-            proc->types.pointer.drag_throw_vect.x = 0;
-            proc->types.pointer.drag_throw_vect.y = 0;
+        if((coords_ori.x1 == coord_new.x1 || proc->pointer.drag_throw_vect.x == 0) &&
+           (coords_ori.y1 == coord_new.y1 || proc->pointer.drag_throw_vect.y == 0)) {
+            proc->pointer.drag_in_prog      = 0;
+            proc->pointer.vect.x            = 0;
+            proc->pointer.vect.y            = 0;
+            proc->pointer.drag_throw_vect.x = 0;
+            proc->pointer.drag_throw_vect.y = 0;
             drag_obj->signal_cb(drag_obj, LV_SIGNAL_DRAG_END, indev_act);
             if(indev_reset_check(proc)) return;
             lv_event_send(drag_obj, LV_EVENT_DRAG_END, NULL);
@@ -1224,7 +1228,7 @@ static void indev_drag_throw(lv_indev_proc_t * proc)
     /*If the types.pointer.vectors become 0 -> types.pointer.drag_in_prog = 0 and send a drag end
        signal*/
     else {
-        proc->types.pointer.drag_in_prog = 0;
+        proc->pointer.drag_in_prog = 0;
         drag_obj->signal_cb(drag_obj, LV_SIGNAL_DRAG_END, indev_act);
         if(indev_reset_check(proc)) return;
         lv_event_send(drag_obj, LV_EVENT_DRAG_END, NULL);
