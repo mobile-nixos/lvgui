@@ -149,10 +149,11 @@ libinput_drv_instance* libinput_init_drv(char* dev_name)
 	instance->is_touchscreen = libinput_device_has_capability(instance->libinput_device, LIBINPUT_DEVICE_CAP_TOUCH);
 	instance->is_keyboard = libinput_device_has_capability(instance->libinput_device, LIBINPUT_DEVICE_CAP_KEYBOARD);
 
-	// The least "important" type of input; will be overwritten if pointer or touchscreen.
-	instance->lv_indev_drv_type = LV_INDEV_TYPE_KEYBOARD;
+	if (instance->is_keyboard) {
+		instance->lv_indev_drv_type |= LV_INDEV_TYPE_KEYBOARD;
+	}
 	if (instance->is_touchscreen || instance->is_pointer) {
-		instance->lv_indev_drv_type = LV_INDEV_TYPE_POINTER;
+		instance->lv_indev_drv_type |= LV_INDEV_TYPE_POINTER;
 	}
 
 #if LV_LOG_LEVEL <= LV_LOG_LEVEL_INFO
@@ -260,7 +261,7 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 				break;
 
 			case LIBINPUT_EVENT_KEYBOARD_KEY:
-				if (instance->lv_indev_drv_type == LV_INDEV_TYPE_KEYBOARD) {
+				if (instance->lv_indev_drv_type & LV_INDEV_TYPE_KEYBOARD) {
 					libinput_drv_handle_keyboard_input(instance, event, data);
 
 					// Whatever happens, we have to send the current key event.
