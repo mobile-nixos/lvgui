@@ -42,12 +42,11 @@ struct _lv_indev_drv_t;
 
 /** Possible input device types*/
 enum {
-    LV_INDEV_TYPE_NONE,    /**< Uninitialized state*/
-    LV_INDEV_TYPE_POINTER, /**< Touch pad, mouse, external button*/
-    LV_INDEV_TYPE_KEYBOARD,/**< Keyboard */
-    LV_INDEV_TYPE_BUTTON,  /**< External (hardware button) which is assigned to a specific point of the
-                              screen*/
-    LV_INDEV_TYPE_ENCODER, /**< Encoder with only Left, Right turn and a Button*/
+    LV_INDEV_TYPE_NONE     = 0,       /**< Uninitialized state*/
+    LV_INDEV_TYPE_POINTER  = 2 << 0,  /**< Touch pad, mouse, external button*/
+    LV_INDEV_TYPE_KEYBOARD = 2 << 1,  /**< Keyboard */
+    LV_INDEV_TYPE_BUTTON   = 2 << 2,  /**< External (hardware button) which is assigned to a specific point of the screen*/
+    LV_INDEV_TYPE_ENCODER  = 2 << 3,  /**< Encoder with only Left, Right turn and a Button*/
 };
 typedef uint8_t lv_indev_type_t;
 
