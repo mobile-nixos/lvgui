@@ -440,11 +440,11 @@ lv_res_t lv_obj_del(lv_obj_t * obj)
     /* Reset all input devices if the object to delete is used*/
     lv_indev_t * indev = lv_indev_get_next(NULL);
     while(indev) {
-        if(indev->proc.types.pointer.act_obj == obj || indev->proc.types.pointer.last_obj == obj) {
+        if(indev->proc.pointer.act_obj == obj || indev->proc.pointer.last_obj == obj) {
             lv_indev_reset(indev);
         }
-        if(indev->proc.types.pointer.last_pressed == obj) {
-            indev->proc.types.pointer.last_pressed = NULL;
+        if(indev->proc.pointer.last_pressed == obj) {
+            indev->proc.pointer.last_pressed = NULL;
         }
 
         if(indev->group == group && obj == lv_indev_get_obj_act()) {
@@ -2594,12 +2594,12 @@ static void delete_children(lv_obj_t * obj)
      * the object to delete is used*/
     lv_indev_t * indev = lv_indev_get_next(NULL);
     while(indev) {
-        if(indev->proc.types.pointer.act_obj == obj || indev->proc.types.pointer.last_obj == obj) {
+        if(indev->proc.pointer.act_obj == obj || indev->proc.pointer.last_obj == obj) {
             lv_indev_reset(indev);
         }
 
-        if(indev->proc.types.pointer.last_pressed == obj) {
-            indev->proc.types.pointer.last_pressed = NULL;
+        if(indev->proc.pointer.last_pressed == obj) {
+            indev->proc.pointer.last_pressed = NULL;
         }
         if(indev->group == group && obj == lv_indev_get_obj_act()) {
             lv_indev_reset(indev);
