@@ -389,6 +389,9 @@ static void libinput_drv_handle_keyboard_input(libinput_drv_instance* instance, 
 	instance->key = libinput_event_keyboard_get_key(keyboard_event);
 	instance->state = libinput_event_keyboard_get_key_state(keyboard_event) == LIBINPUT_KEY_STATE_PRESSED;
 
+	// Ensure special keys handling don't shadow following events
+	data->key = 0;
+
 	// Update the state for the key
 	data->state = instance->state;
 
