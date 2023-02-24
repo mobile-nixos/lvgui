@@ -99,20 +99,20 @@ void lv_indev_read_task(lv_task_t * task)
         /*Save the last activity time*/
         if(indev_act->proc.state == LV_INDEV_STATE_PR) {
             indev_act->driver.disp->last_activity_time = lv_tick_get();
-        } else if(indev_act->driver.type & LV_INDEV_TYPE_ENCODER && data.enc_diff) {
+        } else if(data.event_type == LV_INDEV_TYPE_ENCODER && data.enc_diff) {
             indev_act->driver.disp->last_activity_time = lv_tick_get();
         }
 
-        if(indev_act->driver.type & LV_INDEV_TYPE_POINTER) {
+        if(data.event_type == LV_INDEV_TYPE_POINTER) {
             indev_pointer_proc(indev_act, &data);
         }
-		if(indev_act->driver.type & LV_INDEV_TYPE_KEYBOARD) {
+		if(data.event_type == LV_INDEV_TYPE_KEYBOARD) {
             indev_keyboard_proc(indev_act, &data);
         }
-		if(indev_act->driver.type & LV_INDEV_TYPE_ENCODER) {
+		if(data.event_type == LV_INDEV_TYPE_ENCODER) {
             indev_encoder_proc(indev_act, &data);
         }
-		if(indev_act->driver.type & LV_INDEV_TYPE_BUTTON) {
+		if(data.event_type == LV_INDEV_TYPE_BUTTON) {
             indev_button_proc(indev_act, &data);
         }
         /*Handle reset query if it happened in during processing*/
