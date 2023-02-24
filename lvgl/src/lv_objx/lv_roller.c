@@ -500,7 +500,7 @@ static lv_res_t lv_roller_signal(lv_obj_t * roller, lv_signal_t sign, void * par
         lv_indev_type_t indev_type = lv_indev_get_type(lv_indev_get_act());
 
         /*Encoders need special handling*/
-        if(indev_type == LV_INDEV_TYPE_ENCODER) {
+        if(indev_type & LV_INDEV_TYPE_ENCODER) {
             /*In navigate mode revert the original value*/
             if(!editing) {
                 if(ext->ddlist.sel_opt_id != ext->ddlist.sel_opt_id_ori) {
