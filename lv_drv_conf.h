@@ -18,14 +18,12 @@
 
 #define USE_DRM 0
 #define USE_FBDEV 0
-#define USE_EVDEV 0
 #define USE_LIBINPUT 0
 
 #else
 
 #define USE_DRM 1
 #define USE_FBDEV 0
-#define USE_EVDEV 0
 #define USE_LIBINPUT 1
 
 #endif
@@ -305,31 +303,6 @@ extern int monitor_height;
 #ifndef USE_LIBINPUT
 #  define USE_LIBINPUT           0
 #endif
-
-/*-------------------------------------------------
- * Mouse or touchpad as evdev interface (for Linux based systems)
- *------------------------------------------------*/
-#ifndef USE_EVDEV
-#  define USE_EVDEV           0
-#endif
-
-#if USE_EVDEV
-#  define EVDEV_SWAP_AXES         0               /*Swap the x and y axes of the touchscreen*/
-
-#  define EVDEV_SCALE             0               /* Scale input, e.g. if touchscreen resolution does not match display resolution */
-#  if EVDEV_SCALE
-#    define EVDEV_SCALE_HOR_RES     (4096)          /* Horizontal resolution of touchscreen */
-#    define EVDEV_SCALE_VER_RES     (4096)          /* Vertical resolution of touchscreen */
-#  endif  /*EVDEV_SCALE*/
-
-#  define EVDEV_CALIBRATE         0               /*Scale and offset the touchscreen coordinates by using maximum and minimum values for each axis*/
-#  if EVDEV_CALIBRATE
-#    define EVDEV_HOR_MIN   3800                    /*If EVDEV_XXX_MIN > EVDEV_XXX_MAX the XXX axis is automatically inverted*/
-#    define EVDEV_HOR_MAX   200
-#    define EVDEV_VER_MIN   200
-#    define EVDEV_VER_MAX   3800
-#  endif  /*EVDEV_SCALE*/
-#endif  /*USE_EVDEV*/
 
 /*-------------------------------
  *   Keyboard of a PC (using SDL)
