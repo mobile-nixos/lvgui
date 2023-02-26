@@ -58,6 +58,7 @@ bool mouse_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
     (void) indev_drv;      /*Unused*/
 
     /*Store the collected data*/
+    data->event_type = LV_INDEV_TYPE_POINTER;
     data->point.x = last_x;
     data->point.y = last_y;
     data->state = left_button_down ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;

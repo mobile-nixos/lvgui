@@ -53,6 +53,7 @@ void keyboard_init(void)
 bool keyboard_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 {
     (void) indev_drv;      /*Unused*/
+    data->event_type = LV_INDEV_TYPE_KEYBOARD;
     data->state = state;
     data->key = keycode_to_ascii(last_key);
 
