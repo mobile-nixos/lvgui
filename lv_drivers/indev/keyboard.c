@@ -27,6 +27,7 @@ static uint32_t keycode_to_ascii(uint32_t sdl_key);
  **********************/
 static uint32_t last_key;
 static lv_indev_state_t state;
+static bool changed;
 
 /**********************
  *      MACROS
@@ -53,9 +54,13 @@ void keyboard_init(void)
 bool keyboard_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 {
     (void) indev_drv;      /*Unused*/
-    data->event_type = LV_INDEV_TYPE_KEYBOARD;
+    if (changed) {
+        data->event_type = LV_INDEV_TYPE_KEYBOARD;
+    }
     data->state = state;
     data->key = keycode_to_ascii(last_key);
+
+    changed = false;
 
     return false;
 }
@@ -66,6 +71,7 @@ bool keyboard_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
  */
 void keyboard_handler(SDL_Event * event)
 {
+    changed = true;
     /* We only care about SDL_KEYDOWN and SDL_KEYUP events */
     switch(event->type) {
         case SDL_KEYDOWN:                       /*Button press*/
