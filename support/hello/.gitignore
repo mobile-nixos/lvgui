@@ -1,0 +1,7 @@
+*.d
+*.o
+*.a
+*.so
+*.so.*
+hello-gui
+result
