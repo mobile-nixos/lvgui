@@ -207,6 +207,7 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 	while((event = libinput_get_event(instance->libinput_context)) != NULL) {
 		enum libinput_event_type type = libinput_event_get_type(event);
 		changed = true;
+		data->event_type = LV_INDEV_TYPE_POINTER;
 
 		// -> https://github.com/wayland-project/libinput/blob/f2baea50c01f9e10fb2076f5dd64311347ac5c3e/src/libinput.h#L716-L904
 		switch (type) {
@@ -388,6 +389,8 @@ static void libinput_drv_handle_keyboard_input(libinput_drv_instance* instance, 
 	struct libinput_event_keyboard* keyboard_event = libinput_event_get_keyboard_event(event);
 	instance->key = libinput_event_keyboard_get_key(keyboard_event);
 	instance->state = libinput_event_keyboard_get_key_state(keyboard_event) == LIBINPUT_KEY_STATE_PRESSED;
+
+	data->event_type = LV_INDEV_TYPE_KEYBOARD;
 
 	// Ensure special keys handling don't shadow following events
 	data->key = 0;

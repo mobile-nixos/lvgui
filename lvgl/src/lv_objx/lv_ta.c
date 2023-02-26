@@ -1585,7 +1585,7 @@ static lv_res_t lv_ta_signal(lv_obj_t * ta, lv_signal_t sign, void * param)
         lv_indev_type_t indev_type = lv_indev_get_type(lv_indev_get_act());
 
         /*Encoders need special handling*/
-        if(indev_type == LV_INDEV_TYPE_ENCODER) {
+        if(indev_type & LV_INDEV_TYPE_ENCODER) {
             if(editing)
                 lv_ta_set_cursor_type(ta, cur_type & (~LV_CURSOR_HIDDEN));
             else
@@ -1914,8 +1914,8 @@ static void update_cursor_position_on_click(lv_obj_t * ta, lv_signal_t sign, lv_
     if(ext->cursor.click_pos == 0) return;
     if(ext->cursor.type == LV_CURSOR_NONE) return;
 
-    if(lv_indev_get_type(click_source) == LV_INDEV_TYPE_KEYBOARD ||
-       lv_indev_get_type(click_source) == LV_INDEV_TYPE_ENCODER) {
+    if(!(lv_indev_get_type(click_source) & LV_INDEV_TYPE_POINTER ||
+       lv_indev_get_type(click_source) & LV_INDEV_TYPE_BUTTON)) {
         return;
     }
 

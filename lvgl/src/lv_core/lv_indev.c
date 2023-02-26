@@ -99,20 +99,20 @@ void lv_indev_read_task(lv_task_t * task)
         /*Save the last activity time*/
         if(indev_act->proc.state == LV_INDEV_STATE_PR) {
             indev_act->driver.disp->last_activity_time = lv_tick_get();
-        } else if(indev_act->driver.type & LV_INDEV_TYPE_ENCODER && data.enc_diff) {
+        } else if(data.event_type == LV_INDEV_TYPE_ENCODER && data.enc_diff) {
             indev_act->driver.disp->last_activity_time = lv_tick_get();
         }
 
-        if(indev_act->driver.type & LV_INDEV_TYPE_POINTER) {
+        if(data.event_type == LV_INDEV_TYPE_POINTER) {
             indev_pointer_proc(indev_act, &data);
         }
-		if(indev_act->driver.type & LV_INDEV_TYPE_KEYBOARD) {
+		if(data.event_type == LV_INDEV_TYPE_KEYBOARD) {
             indev_keyboard_proc(indev_act, &data);
         }
-		if(indev_act->driver.type & LV_INDEV_TYPE_ENCODER) {
+		if(data.event_type == LV_INDEV_TYPE_ENCODER) {
             indev_encoder_proc(indev_act, &data);
         }
-		if(indev_act->driver.type & LV_INDEV_TYPE_BUTTON) {
+		if(data.event_type == LV_INDEV_TYPE_BUTTON) {
             indev_button_proc(indev_act, &data);
         }
         /*Handle reset query if it happened in during processing*/
@@ -404,11 +404,10 @@ static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
     /* Save the previous state so we can detect state changes below and also set the last state now
      * so if any signal/event handler on the way returns `LV_RES_INV` the last state is remembered
      * for the next time*/
-    uint32_t prev_state             = i->proc.keyboard.last_state;
     i->proc.keyboard.last_state = data->state;
 
     /*Key press happened*/
-    if(data->state == LV_INDEV_STATE_PR && prev_state == LV_INDEV_STATE_REL) {
+    if(data->state == LV_INDEV_STATE_PR) {
         i->proc.pr_timestamp = lv_tick_get();
 
         /*Simulate a press on the object if ENTER was pressed*/
@@ -444,53 +443,8 @@ static void indev_keyboard_proc(lv_indev_t * i, lv_indev_data_t * data)
             lv_group_send_data(g, data);
         }
     }
-    /*Pressing*/
-    else if(data->state == LV_INDEV_STATE_PR && prev_state == LV_INDEV_STATE_PR) {
-        /*Long press time has elapsed?*/
-        if(i->proc.long_pr_sent == 0 && lv_tick_elaps(i->proc.pr_timestamp) > i->driver.long_press_time) {
-            i->proc.long_pr_sent = 1;
-            if(data->key == LV_KEY_ENTER) {
-                i->proc.longpr_rep_timestamp = lv_tick_get();
-                indev_obj_act->signal_cb(indev_obj_act, LV_SIGNAL_LONG_PRESS, NULL);
-                if(indev_reset_check(&i->proc)) return;
-                lv_event_send(indev_obj_act, LV_EVENT_LONG_PRESSED, NULL);
-                if(indev_reset_check(&i->proc)) return;
-            }
-        }
-        /*Long press repeated time has elapsed?*/
-        else if(i->proc.long_pr_sent != 0 &&
-                lv_tick_elaps(i->proc.longpr_rep_timestamp) > i->driver.long_press_rep_time) {
-
-            i->proc.longpr_rep_timestamp = lv_tick_get();
-
-            /*Send LONG_PRESS_REP on ENTER*/
-            if(data->key == LV_KEY_ENTER) {
-                indev_obj_act->signal_cb(indev_obj_act, LV_SIGNAL_LONG_PRESS_REP, NULL);
-                if(indev_reset_check(&i->proc)) return;
-                lv_event_send(indev_obj_act, LV_EVENT_LONG_PRESSED_REPEAT, NULL);
-                if(indev_reset_check(&i->proc)) return;
-            }
-            /*Move the focus on NEXT again*/
-            else if(data->key == LV_KEY_NEXT) {
-                lv_group_set_editing(g, false); /*Editing is not used by KEYBOARD is be sure it is disabled*/
-                lv_group_focus_next(g);
-                if(indev_reset_check(&i->proc)) return;
-            }
-            /*Move the focus on PREV again*/
-            else if(data->key == LV_KEY_PREV) {
-                lv_group_set_editing(g, false); /*Editing is not used by KEYBOARD is be sure it is disabled*/
-                lv_group_focus_prev(g);
-                if(indev_reset_check(&i->proc)) return;
-            }
-            /*Just send other keys again to the object (e.g. 'A' or `LV_GROUP_KEY_RIGHT)*/
-            else {
-                lv_group_send_data(g, data);
-                if(indev_reset_check(&i->proc)) return;
-            }
-        }
-    }
     /*Release happened*/
-    else if(data->state == LV_INDEV_STATE_REL && prev_state == LV_INDEV_STATE_PR) {
+    else if (data->state == LV_INDEV_STATE_REL) {
         /*The user might clear the key when it was released. Always release the pressed key*/
         data->key = prev_key;
         if(data->key == LV_KEY_ENTER) {

@@ -730,7 +730,7 @@ static lv_res_t lv_ddlist_signal(lv_obj_t * ddlist, lv_signal_t sign, void * par
         lv_indev_type_t indev_type = lv_indev_get_type(lv_indev_get_act());
 
         /*Encoders need special handling*/
-        if(indev_type == LV_INDEV_TYPE_ENCODER) {
+        if(indev_type & LV_INDEV_TYPE_ENCODER) {
             /*Open the list if editing*/
             if(editing) {
                 ext->opened         = true;
@@ -856,7 +856,7 @@ static lv_res_t release_handler(lv_obj_t * ddlist)
 
         lv_indev_t * indev = lv_indev_get_act();
         /*Leave edit mode once a new item is selected*/
-        if(lv_indev_get_type(indev) == LV_INDEV_TYPE_ENCODER) {
+        if(lv_indev_get_type(indev) & LV_INDEV_TYPE_ENCODER) {
             ext->sel_opt_id_ori = ext->sel_opt_id;
             lv_group_t * g      = lv_obj_get_group(ddlist);
             if(lv_group_get_editing(g)) {
@@ -865,7 +865,7 @@ static lv_res_t release_handler(lv_obj_t * ddlist)
         }
 
         /*Search the clicked option (For KEYBOARD and ENCODER the new value should be already set)*/
-        if(lv_indev_get_type(indev) == LV_INDEV_TYPE_POINTER || lv_indev_get_type(indev) == LV_INDEV_TYPE_BUTTON) {
+        if(lv_indev_get_type(indev) & LV_INDEV_TYPE_POINTER || lv_indev_get_type(indev) & LV_INDEV_TYPE_BUTTON) {
             lv_point_t p;
             lv_indev_get_point(indev, &p);
             p.y -= ext->label->coords.y1;

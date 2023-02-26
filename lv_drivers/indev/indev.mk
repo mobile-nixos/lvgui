@@ -1,4 +1,3 @@
-CSRCS += evdev.c
 CSRCS += keyboard.c
 CSRCS += libinput.c
 CSRCS += mouse.c

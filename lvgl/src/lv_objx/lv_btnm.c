@@ -771,7 +771,7 @@ static lv_res_t lv_btnm_signal(lv_obj_t * btnm, lv_signal_t sign, void * param)
         lv_btnm_set_map(btnm, ext->map_p);
     } else if(sign == LV_SIGNAL_PRESSED) {
         lv_indev_t * indev = lv_indev_get_act();
-        if(lv_indev_get_type(indev) == LV_INDEV_TYPE_POINTER || lv_indev_get_type(indev) == LV_INDEV_TYPE_BUTTON) {
+        if(lv_indev_get_type(indev) & LV_INDEV_TYPE_POINTER || lv_indev_get_type(indev) & LV_INDEV_TYPE_BUTTON) {
             uint16_t btn_pr;
             /*Search the pressed area*/
             lv_indev_get_point(param, &p);
@@ -864,14 +864,14 @@ static lv_res_t lv_btnm_signal(lv_obj_t * btnm, lv_signal_t sign, void * param)
             indev_type = lv_indev_get_type(indev);
         }
 
-        if(indev_type == LV_INDEV_TYPE_POINTER) {
+        if(indev_type & LV_INDEV_TYPE_POINTER) {
             /*Select the clicked button*/
             lv_point_t p1;
             lv_indev_get_point(indev, &p1);
             uint16_t btn_i = get_button_from_point(btnm, &p1);
             ext->btn_id_pr = btn_i;
 
-        } else if(indev_type == LV_INDEV_TYPE_ENCODER) {
+        } else if(indev_type & LV_INDEV_TYPE_ENCODER) {
             /*In navigation mode don't select any button but in edit mode select the fist*/
             if(lv_group_get_editing(lv_obj_get_group(btnm)))
                 ext->btn_id_pr = 0;
