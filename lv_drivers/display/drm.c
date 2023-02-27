@@ -175,7 +175,11 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 	// This also serves to do the actual modesetting.
 	ret = drmModeSetCrtc(dev->fd, dev->crtc, dev->fb, 0, 0,
 			&dev->conn, 1, &dev->mode);
-	if (ret) {
+
+	// Only complain once; it's possibly not an issue.
+	static bool flip_err_once = false;
+	if (ret && !flip_err_once) {
+		flip_err_once = true;
 		err("cannot flip CRTC for connector %u (%d): %m", dev->conn, errno);
 	}
 
