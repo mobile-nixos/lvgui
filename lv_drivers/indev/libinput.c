@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <linux/input.h>
+#include "../display/drm.h"
 
 #include <xkbcommon/xkbcommon.h>
 #include <xkbcommon/xkbcommon-compose.h>
@@ -214,8 +215,24 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 			case LIBINPUT_EVENT_TOUCH_MOTION:
 			case LIBINPUT_EVENT_TOUCH_DOWN:
 				touch_event = libinput_event_get_touch_event(event);
-				instance->root_x = libinput_event_touch_get_x_transformed(touch_event, LV_HOR_RES);
-				instance->root_y = libinput_event_touch_get_y_transformed(touch_event, LV_VER_RES);
+				switch (drm_display_orientation) {
+					case DRM_ORIENTATION_NORMAL:
+						instance->root_x = libinput_event_pointer_get_absolute_x_transformed(pointer_event, LV_HOR_RES);
+						instance->root_y = libinput_event_pointer_get_absolute_y_transformed(pointer_event, LV_VER_RES);
+						break;
+					case DRM_ORIENTATION_UPSIDE_DOWN:
+						instance->root_x = LV_HOR_RES - libinput_event_touch_get_x_transformed(touch_event, LV_HOR_RES);
+						instance->root_y = LV_VER_RES - libinput_event_touch_get_y_transformed(touch_event, LV_VER_RES);
+						break;
+					case DRM_ORIENTATION_CLOCKWISE:
+						instance->root_y = LV_VER_RES - libinput_event_touch_get_x_transformed(touch_event, LV_VER_RES);
+						instance->root_x = libinput_event_touch_get_y_transformed(touch_event, LV_HOR_RES);
+						break;
+					case DRM_ORIENTATION_COUNTER_CLOCKWISE:
+						instance->root_y = libinput_event_touch_get_x_transformed(touch_event, LV_VER_RES);
+						instance->root_x = LV_HOR_RES - libinput_event_touch_get_y_transformed(touch_event, LV_HOR_RES);
+						break;
+				}
 				instance->state = LV_INDEV_STATE_PR;
 				break;
 
@@ -226,8 +243,24 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 			// Stylus hovering, or "drawing tablet", like QEMU
 			case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
 				pointer_event = libinput_event_get_pointer_event(event);
-				instance->root_x = libinput_event_pointer_get_absolute_x_transformed(pointer_event, LV_HOR_RES);
-				instance->root_y = libinput_event_pointer_get_absolute_y_transformed(pointer_event, LV_VER_RES);
+				switch (drm_display_orientation) {
+					case DRM_ORIENTATION_NORMAL:
+						instance->root_x = libinput_event_pointer_get_absolute_x_transformed(pointer_event, LV_HOR_RES);
+						instance->root_y = libinput_event_pointer_get_absolute_y_transformed(pointer_event, LV_VER_RES);
+						break;
+					case DRM_ORIENTATION_UPSIDE_DOWN:
+						instance->root_x = LV_HOR_RES - libinput_event_pointer_get_absolute_x_transformed(pointer_event, LV_HOR_RES);
+						instance->root_y = LV_VER_RES - libinput_event_pointer_get_absolute_y_transformed(pointer_event, LV_VER_RES);
+						break;
+					case DRM_ORIENTATION_CLOCKWISE:
+						instance->root_y = LV_VER_RES - libinput_event_pointer_get_absolute_x_transformed(pointer_event, LV_VER_RES);
+						instance->root_x = libinput_event_pointer_get_absolute_y_transformed(pointer_event, LV_HOR_RES);
+						break;
+					case DRM_ORIENTATION_COUNTER_CLOCKWISE:
+						instance->root_y = libinput_event_pointer_get_absolute_x_transformed(pointer_event, LV_VER_RES);
+						instance->root_x = LV_HOR_RES - libinput_event_pointer_get_absolute_y_transformed(pointer_event, LV_HOR_RES);
+						break;
+				}
 				break;
 
 			case LIBINPUT_EVENT_POINTER_MOTION:
