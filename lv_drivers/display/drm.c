@@ -171,6 +171,7 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 	// This normally is used with double-buffering, where we would flip to
 	// another buffer, rather than presenting the same buffer.
 	// Though, this does allow rendering to work on some devices (e.g. SDM845).
+	// This also serves to do the actual modesetting.
 	ret = drmModeSetCrtc(dev->fd, dev->crtc, dev->fb, 0, 0,
 			&dev->conn, 1, &dev->mode);
 	if (ret) {
@@ -200,18 +201,10 @@ void drm_init(lv_disp_drv_t* drv)
 	ret = modeset_prepare(fd);
 	if (ret) goto handle_errno_error;
 
-	/* perform actual modesetting on each found connector+CRTC */
-	// Is what would happen, but here we're only handling the first usable one.
-	//for (dev = modeset_list; dev; dev = dev->next) {
+	// Prepare for later modesetting on the first found connector+CRTC
+	// Delaying until the first render prevents a needless unsightly black frame.
 	dev = modeset_list;
 	dev->saved_crtc = drmModeGetCrtc(fd, dev->crtc);
-	ret = drmModeSetCrtc(fd, dev->crtc, dev->fb, 0, 0,
-			&dev->conn, 1, &dev->mode);
-	if (ret) {
-		err("cannot set CRTC for connector %u (%d): %m", dev->conn, errno);
-		goto err;
-	}
-	//}
 
 #ifdef DRV_DEBUG
 	dbg_fill_buffer(dev, 0x00, 0xFF, 0x00);
@@ -547,9 +540,6 @@ static int modeset_create_fb(int fd, struct modeset_dev *dev)
 		ret = -errno;
 		goto err_fb;
 	}
-
-	/* clear the framebuffer to 0 */
-	memset(dev->map, 0, dev->size);
 
 	return 0;
 
