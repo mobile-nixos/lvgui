@@ -25,6 +25,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <glob.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -185,21 +186,42 @@ void drm_init(lv_disp_drv_t* drv)
 {
 	int fd = 0;
 	int ret = 0;
-	const char *card = DRM_CARD;
 	struct modeset_dev *dev;
 
-	// Ensure drivers peeking at DRM orientation gets something sensible
+	// Ensure drivers peeking at DRM orientation gets something sensible as a default value.
 	drm_display_orientation = DRM_ORIENTATION_NORMAL;
 
-	info("Starting DRM subsystem... (%s)", card);
+	char **card_path;
+	size_t cnt;
+	glob_t globbuf;
 
-	/* open the DRM device */
-	ret = modeset_open(&fd, card);
-	if (ret) goto handle_errno_error;
+	info("Starting DRM subsystem...");
 
-	/* open the DRM device */
-	ret = modeset_prepare(fd);
-	if (ret) goto handle_errno_error;
+	// Ensure that if no paths match, `ret` is non-zero.
+	ret = 1;
+
+	// Try opening any of the cards
+	// On some systems (e.g. MT8183), `card0` is not the GPU.
+	glob("/dev/dri/card*", 0, NULL, &globbuf);
+	for (card_path = globbuf.gl_pathv, cnt = globbuf.gl_pathc; cnt; card_path++, cnt--) {
+		info(" -> Trying '%s'", *card_path);
+		ret = modeset_open(&fd, *card_path);
+		if (ret) {
+			err("modeset_open failed with error %d: %m\n", errno);
+			continue;
+		}
+
+		ret = modeset_prepare(fd);
+		if (ret) {
+			err("modeset_prepare failed with error %d: %m\n", errno);
+			continue;
+		}
+
+		// We'll pick the first one available.
+		break;
+	}
+
+	if (ret) goto err;
 
 	// Prepare for later modesetting on the first found connector+CRTC
 	// Delaying until the first render prevents a needless unsightly black frame.
@@ -268,9 +290,6 @@ void drm_init(lv_disp_drv_t* drv)
 	goto ok;
 	goto err;
 
-handle_errno_error:
-	err("modeset failed with error %d: %m\n", errno);
-
 err:
 	if (modeset_list) {
 		drm_exit();
@@ -279,6 +298,7 @@ err:
 	err("(falling back to fbdev...)");
 	fbdev_init(drv);
 	drv->flush_cb = fbdev_flush;
+	return;
 
 ok:
 	info("DRM subsystem and buffer mapped successfully");
