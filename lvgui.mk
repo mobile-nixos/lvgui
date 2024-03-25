@@ -21,6 +21,7 @@ WARNING_FLAGS ?= \
 	-Wno-format-nonliteral \
 	-Wno-ignored-qualifiers \
 	-Wno-missing-field-initializers \
+	-Wno-sequence-point \
 	-Wno-sign-compare \
 	-Wno-switch-default \
 	-Wno-unused-function \
@@ -78,6 +79,7 @@ CONFFILES += $(LVGL_DIR)/lv_conf.h $(LVGL_DIR)/lv_drv_conf.h
 
 include $(LVGL_DIR)/lvgl/lvgl.mk
 include $(LVGL_DIR)/lv_drivers/lv_drivers.mk
+include $(LVGL_DIR)/lv_lib_bmp/lv_lib_bmp.mk
 include $(LVGL_DIR)/lv_lib_nanosvg/lv_lib_nanosvg.mk
 include $(LVGL_DIR)/lv_lib_freetype/lv_lib_freetype.mk
 

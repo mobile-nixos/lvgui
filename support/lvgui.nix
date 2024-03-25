@@ -47,9 +47,7 @@ in
     ++ optionals withSimulator simulatorDeps
     ;
 
-    NIX_CFLAGS_COMPILE = [
-      "-DX_DISPLAY_MISSING"
-    ];
+    env.NIX_CFLAGS_COMPILE = "-DX_DISPLAY_MISSING";
 
     makeFlags = [
       "PREFIX=${placeholder "out"}"
