@@ -43,12 +43,16 @@ static lv_res_t decoder_info(struct _lv_img_decoder * decoder, const void * src,
 			return LV_RES_INV;
 		}
 
-		header->always_zero = 0;
-		header->cf = LV_IMG_CF_RAW_ALPHA;
-
 		// The internal width/height of the SVG
 		width = (int)image->width;
 		height = (int)image->height;
+
+		if (width == 0 || height == 0) {
+			return LV_RES_INV;
+		}
+
+		header->always_zero = 0;
+		header->cf = LV_IMG_CF_RAW_ALPHA;
 
 		// The user might have requested specific dimensions via URL params
 		bool gave_width = url_get_int_param((char*)src, "width", &width);
