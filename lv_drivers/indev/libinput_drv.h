@@ -35,6 +35,9 @@ typedef struct {
 	// Configure this input driver to be a specific LVGL input type.
 	int lv_indev_drv_type;
 
+	// The lvgl input device
+	lv_indev_t * indev;
+
 	// One context per input device.
 	// This is because LVGL's input handling wants to *own* one loop per
 	// device; sharing context means sharing input FDs.
@@ -67,9 +70,16 @@ typedef struct {
  *      TYPEDEFS
  **********************/
 
+typedef void (*libinput_drv_add_cb_t)(libinput_drv_instance* instance);
+
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
+
+/**
+ * Starts the libinput driver with the usual defaults.
+ */
+void libinput_drv_init();
 
 /**
  * Initialize a new libinput device instance
