@@ -198,7 +198,8 @@ void drm_init(lv_disp_drv_t* drv)
 	info("Starting DRM subsystem...");
 
 	// Ensure that if no paths match, `ret` is non-zero.
-	ret = 1;
+	// Tries to make this fact known with a well-known identifier.
+	ret = 12345;
 
 	// Try opening any of the cards
 	// On some systems (e.g. MT8183), `card0` is not the GPU.
@@ -219,6 +220,9 @@ void drm_init(lv_disp_drv_t* drv)
 
 		// We'll pick the first one available.
 		break;
+	}
+	if (ret == 12345) {
+		info(" -> No DRM card matched.");
 	}
 
 	if (ret) goto err;
