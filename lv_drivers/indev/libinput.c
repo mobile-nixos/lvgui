@@ -4,6 +4,7 @@
 #include "libinput_drv.h"
 #if USE_LIBINPUT != 0
 
+#include <glob.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <linux/limits.h>
@@ -11,6 +12,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <linux/input.h>
+#include <sys/inotify.h>
 #include "../display/drm.h"
 
 #include <xkbcommon/xkbcommon.h>
@@ -85,6 +87,11 @@ static struct xkb_state  *our_xkb_state = NULL;
 static struct xkb_compose_state *our_xkb_compose_state = NULL;
 static int handle_xkbcommon_input(int keycode, int direction, char *key_character, int key_character_length);
 
+static int hotplug_fd;
+static struct pollfd hotplug_fds[1];
+
+static libinput_drv_add_cb_t libinput_drv_add_cb;
+
 /**********************
  *      MACROS
  **********************/
@@ -129,6 +136,108 @@ bool libinput_set_file(libinput_drv_instance* instance, char* dev_name)
 	return true;
 }
 
+static void libinput_drv_check_devices()
+{
+	// See man inotify(7);
+	char buf[4096] __attribute__ ((aligned(__alignof__(struct inotify_event))));
+	const struct inotify_event *event;
+	ssize_t len;
+
+	int poll_num;
+
+	if (hotplug_fd == -1) { return; }
+
+	poll_num = poll(hotplug_fds, 1, 0);
+	if (poll_num == -1) {
+		if (errno == EINTR) {
+			return;
+		}
+		// On any other error, let's also just return...
+		return;
+	}
+
+	if (!(hotplug_fds[0].revents & POLLIN)) {
+		return;
+	}
+
+	for (;;) {
+		// Read events.
+		len = read(hotplug_fd, buf, sizeof(buf));
+		if (len == -1 && errno != EAGAIN) {
+			perror("read");
+			exit(EXIT_FAILURE);
+		}
+
+		// If the nonblocking read() found no events to read, then
+		// it returns -1 with errno set to EAGAIN. In that case,
+		// we exit the loop.
+		if (len <= 0) {
+			break;
+		}
+
+		// Loop over all events in the buffer.
+		for (char *ptr = buf; ptr < buf + len; ptr += sizeof(struct inotify_event) + event->len) {
+			event = (const struct inotify_event *) ptr;
+			// Seeing a new `event` file?
+			if (
+					!(event->mask & IN_ISDIR)
+					&& event->mask & IN_CREATE
+					&& strncmp(event->name, "event", 5) == 0
+			) {
+				char dev_path[PATH_MAX+1];
+				strncpy(dev_path, "/dev/input/", 12);
+				strncat(dev_path, event->name, PATH_MAX);
+				LVGUI_LOG_INFO("[indev/libinput]: Hot-plugging device %s", dev_path);
+				libinput_init_drv(dev_path);
+			}
+		}
+	}
+}
+
+static void libinput_drv_setup_hotplug()
+{
+	int ret;
+
+	// We're using `inotify` to be notified of new `/dev/input/event*` devices,
+	// rather than relying on libinput's udev support since LVGL requires usage
+	// of one context per device (for the input FD). *sigh*.
+	hotplug_fd = inotify_init();
+
+	if (hotplug_fd == -1) {
+		LVGUI_LOG_WARN("Could not setup inotify for watching /dev/input. (%s)",  strerror(errno));
+		return;
+	}
+
+	hotplug_fds[0].fd = hotplug_fd;
+	hotplug_fds[0].events = POLLIN;
+	hotplug_fds[0].revents = 0;
+	fcntl(hotplug_fd, F_SETFL, O_ASYNC | O_NONBLOCK);
+
+	ret = inotify_add_watch(hotplug_fd, "/dev/input", IN_CREATE);
+	if (ret == -1) {
+		LVGUI_LOG_WARN("Could not watch /dev/input. (%s)",  strerror(errno));
+		hotplug_fd == -1;
+	}
+}
+
+void libinput_drv_init(libinput_drv_add_cb_t callback)
+{
+	char **dev_path;
+
+	size_t cnt;
+	glob_t globbuf;
+
+	libinput_drv_add_cb = callback;
+
+	libinput_drv_setup_hotplug();
+
+	glob("/dev/input/event*", 0, NULL, &globbuf);
+	for (dev_path = globbuf.gl_pathv, cnt = globbuf.gl_pathc; cnt; dev_path++, cnt--) {
+		LVGUI_LOG_INFO("[indev/libinput]: Opening device %s", *dev_path);
+		libinput_init_drv(*dev_path);
+	}
+}
+
 libinput_drv_instance* libinput_init_drv(char* dev_name)
 {
 	LVGUI_LOG_INFO("[indev/libinput]: Initializing for '%s'...", dev_name);
@@ -137,6 +246,8 @@ libinput_drv_instance* libinput_init_drv(char* dev_name)
 	libinput_drv_instance* instance = libinput_drv_instance_new();
 
 	// Assign a fresh context
+	// This is because LVGL's input handling wants to *own* one loop per
+	// device; sharing context means sharing input FDs.
 	instance->libinput_context = libinput_path_create_context(&drv_libinput_interface, NULL);
 
 	if(!libinput_set_file(instance, dev_name)) {
@@ -177,10 +288,22 @@ libinput_drv_instance* libinput_init_drv(char* dev_name)
 
 	fcntl(instance->fds[0].fd, F_SETFL, O_ASYNC | O_NONBLOCK);
 
+	lv_indev_drv_t indev_drv;
+	lv_indev_drv_init(&indev_drv);
+
+	indev_drv.type = instance->lv_indev_drv_type;
+	indev_drv.read_cb = libinput_read;
+	indev_drv.user_data = instance;
+	instance->indev = lv_indev_drv_register(&indev_drv);
+
 	LVGUI_LOG_INFO("[indev/libinput]: done with '%s'...", dev_name);
 
 	// Initialize xkbcommon
 	xkbcommon_init();
+
+	if (libinput_drv_add_cb != NULL) {
+		libinput_drv_add_cb(instance);
+	}
 
 	return instance;
 }
@@ -383,6 +506,8 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 			libinput_device_get_name(instance->libinput_device)
 		);
 	}
+
+	libinput_drv_check_devices();
 
 	// False because there are no events to handle anymore
 	return false;

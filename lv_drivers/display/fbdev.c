@@ -115,7 +115,6 @@ void fbdev_init(lv_disp_drv_t* disp_drv)
         perror("Error: failed to map framebuffer device to memory");
         return;
     }
-    memset(fbp, 0, screensize);
 
     print("The framebuffer device was mapped to memory successfully.\n");
 
