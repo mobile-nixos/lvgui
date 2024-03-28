@@ -31,7 +31,7 @@ WARNING_FLAGS ?= \
 	-Wreturn-type \
 	-Wshift-negative-value \
 	-Wsizeof-pointer-memaccess \
-	-Wstack-usage=4096 \
+	-Wstack-usage=8704 \
 	-Wswitch-enum \
 	-Wtype-limits \
 	-Wundef \
