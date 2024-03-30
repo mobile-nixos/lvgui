@@ -328,3 +328,20 @@ void lvgui_focus_ring_disable()
 	lv_group_set_style_mod_cb(lvgui_focus_group, lvgui_style_mod_noop);
 	lv_group_set_style_mod_edit_cb(lvgui_focus_group, lvgui_style_mod_noop);
 }
+
+hal_panel_orientation_t hal_get_panel_orientation() 
+{
+#if USE_DRM
+	switch (drm_display_orientation) {
+		case DRM_ORIENTATION_NORMAL:
+			return HAL_PANEL_ORIENTATION_NORMAL;
+		case DRM_ORIENTATION_UPSIDE_DOWN:
+			return HAL_PANEL_ORIENTATION_BOTTOM_UP;
+		case DRM_ORIENTATION_CLOCKWISE:
+			return HAL_PANEL_ORIENTATION_LEFT_UP;
+		case DRM_ORIENTATION_COUNTER_CLOCKWISE:
+			return HAL_PANEL_ORIENTATION_RIGHT_UP;
+	}
+#endif
+	return 0;
+}
