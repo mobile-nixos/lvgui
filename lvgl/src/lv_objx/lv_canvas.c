@@ -300,6 +300,20 @@ void lv_canvas_rotate(lv_obj_t * canvas, lv_img_dsc_t * img, int16_t angle, lv_c
     int32_t y;
     for(x = -offset_x; x < dest_width - offset_x; x++) {
         for(y = -offset_y; y < dest_height - offset_y; y++) {
+            // Right angle rotations are "perfect" pixel-for-pixel rotations.
+            // Since we always operate on the same scale (1 pixel to 1 pixel)
+            // we can rely on simpler lookups.
+            // Usage (rb):
+            //     # The offset has to be -1/-1 to get the full picture in.
+            //     canvas.rotate(other.get_img(), 180, width-1, height-1, 0, 0)
+            if (angle == 180 && pivot_x == 0 && pivot_y == 0) {
+                int32_t source_x = img_width  - 1 - (x + offset_x);
+                int32_t source_y = img_height - 1 - (y + offset_y);
+
+                lv_color_t color_res = lv_img_buf_get_px_color(img, source_x, source_y, style);
+                lv_img_buf_set_px_color(&ext_dst->dsc, x + offset_x, y + offset_y, color_res);
+                continue;
+            }
             /*Get the target point relative coordinates to the pivot*/
             int32_t xt = x - pivot_x;
             int32_t yt = y - pivot_y;
