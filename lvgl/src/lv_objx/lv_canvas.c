@@ -269,6 +269,9 @@ void lv_canvas_copy_buf(lv_obj_t * canvas, const void * to_copy, lv_coord_t x, l
 
 /**
  * Rotate and image and store the result on a canvas.
+ *
+ * NOTE: When doing 90, 180 or 270 degree rotations, using pivot point 0,0 will do a perfect rotation.
+ *
  * @param canvas pointer to a canvas object
  * @param img pointer to an image descriptor.
  *             Can be the image descriptor of an other canvas too (`lv_canvas_get_img()`).
@@ -314,6 +317,26 @@ void lv_canvas_rotate(lv_obj_t * canvas, lv_img_dsc_t * img, int16_t angle, lv_c
                 lv_img_buf_set_px_color(&ext_dst->dsc, x + offset_x, y + offset_y, color_res);
                 continue;
             }
+            if ((angle == 270 || angle == 90) && pivot_x == 0 && pivot_y == 0) {
+				int32_t source_x = x + offset_x;
+				int32_t source_y = y + offset_y;
+				int32_t dest_x = x + offset_x;
+				int32_t dest_y = y + offset_y;
+
+				if (angle == 90) {
+					source_x = img_height - 1 - (x + offset_x);
+				}
+				else {
+					source_y = img_width - 1 - (y + offset_y);
+				}
+
+                lv_color_t color_res = lv_img_buf_get_px_color(img, source_y, source_x, style);
+
+                lv_img_buf_set_px_color(&ext_dst->dsc, dest_x, dest_y, color_res);
+
+                continue;
+            }
+
             /*Get the target point relative coordinates to the pivot*/
             int32_t xt = x - pivot_x;
             int32_t yt = y - pivot_y;
