@@ -319,6 +319,12 @@ void lv_ta_add_text(lv_obj_t * ta, const char * txt)
     LV_ASSERT_OBJ(ta, LV_OBJX_NAME);
     LV_ASSERT_NULL(txt);
 
+    if (!LV_DEBUG_IS_STR(txt)) {
+        LV_LOG_WARN("lv_ta_add_text() called with invalid string?\n");
+
+        return;
+    }
+
     lv_ta_ext_t * ext = lv_obj_get_ext_attr(ta);
 
     ta_insert_replace = NULL;
