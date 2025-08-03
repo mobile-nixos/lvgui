@@ -138,7 +138,7 @@ void lvgui_set_lv_style__text_sel_color(lv_style_t * s, lv_color_t value) {
   s->text.sel_color = value;
 }
 
-lv_font_t * lvgui_get_lv_style__text_font(lv_style_t * s) {
+const lv_font_t * lvgui_get_lv_style__text_font(lv_style_t * s) {
   return s->text.font;
 }
 void lvgui_set_lv_style__text_font(lv_style_t * s, lv_font_t * value) {

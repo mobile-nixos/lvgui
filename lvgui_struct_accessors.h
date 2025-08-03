@@ -63,7 +63,7 @@ void lvgui_set_lv_style__text_color(lv_style_t * s, lv_color_t value) __attribut
 lv_color_t lvgui_get_lv_style__text_sel_color(lv_style_t * s) __attribute__((used));
 void lvgui_set_lv_style__text_sel_color(lv_style_t * s, lv_color_t value) __attribute__((used));
 
-lv_font_t * lvgui_get_lv_style__text_font(lv_style_t * s) __attribute__((used));
+const lv_font_t * lvgui_get_lv_style__text_font(lv_style_t * s) __attribute__((used));
 void lvgui_set_lv_style__text_font(lv_style_t * s, lv_font_t * value) __attribute__((used));
 
 lv_coord_t lvgui_get_lv_style__text_letter_space(lv_style_t * s) __attribute__((used));
