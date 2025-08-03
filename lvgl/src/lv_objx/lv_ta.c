@@ -277,21 +277,26 @@ void lv_ta_add_char(lv_obj_t * ta, uint32_t c)
         lv_txt_ins(ext->pwd_tmp, ext->cursor.pos, (const char *)letter_buf);
 
 #if LV_USE_ANIMATION
-        /*Auto hide characters*/
-        lv_anim_t a;
-        a.var            = ta;
-        a.exec_cb        = (lv_anim_exec_xcb_t)pwd_char_hider_anim;
-        a.time           = ext->pwd_show_time;
-        a.act_time       = 0;
-        a.ready_cb       = pwd_char_hider_anim_ready;
-        a.start          = 0;
-        a.end            = 1;
-        a.repeat         = 0;
-        a.repeat_pause   = 0;
-        a.playback       = 0;
-        a.playback_pause = 0;
-        a.path_cb        = lv_anim_path_step;
-        lv_anim_create(&a);
+        if (ext->pwd_show_time > 0) {
+            /*Auto hide characters*/
+            lv_anim_t a;
+            a.var            = ta;
+            a.exec_cb        = (lv_anim_exec_xcb_t)pwd_char_hider_anim;
+            a.time           = ext->pwd_show_time;
+            a.act_time       = 0;
+            a.ready_cb       = pwd_char_hider_anim_ready;
+            a.start          = 0;
+            a.end            = 1;
+            a.repeat         = 0;
+            a.repeat_pause   = 0;
+            a.playback       = 0;
+            a.playback_pause = 0;
+            a.path_cb        = lv_anim_path_step;
+            lv_anim_create(&a);
+        }
+        else {
+            pwd_char_hider(ta);
+        }
 
 #else
         pwd_char_hider(ta);
@@ -367,21 +372,26 @@ void lv_ta_add_text(lv_obj_t * ta, const char * txt)
         lv_txt_ins(ext->pwd_tmp, ext->cursor.pos, txt);
 
 #if LV_USE_ANIMATION
-        /*Auto hide characters*/
-        lv_anim_t a;
-        a.var            = ta;
-        a.exec_cb        = (lv_anim_exec_xcb_t)pwd_char_hider_anim;
-        a.time           = ext->pwd_show_time;
-        a.act_time       = 0;
-        a.ready_cb       = pwd_char_hider_anim_ready;
-        a.start          = 0;
-        a.end            = 1;
-        a.repeat         = 0;
-        a.repeat_pause   = 0;
-        a.playback       = 0;
-        a.playback_pause = 0;
-        a.path_cb        = lv_anim_path_step;
-        lv_anim_create(&a);
+        if (ext->pwd_show_time > 0) {
+            /*Auto hide characters*/
+            lv_anim_t a;
+            a.var            = ta;
+            a.exec_cb        = (lv_anim_exec_xcb_t)pwd_char_hider_anim;
+            a.time           = ext->pwd_show_time;
+            a.act_time       = 0;
+            a.ready_cb       = pwd_char_hider_anim_ready;
+            a.start          = 0;
+            a.end            = 1;
+            a.repeat         = 0;
+            a.repeat_pause   = 0;
+            a.playback       = 0;
+            a.playback_pause = 0;
+            a.path_cb        = lv_anim_path_step;
+            lv_anim_create(&a);
+        }
+        else {
+            pwd_char_hider(ta);
+        }
 #else
         pwd_char_hider(ta);
 #endif
@@ -516,21 +526,26 @@ void lv_ta_set_text(lv_obj_t * ta, const char * txt)
         strcpy(ext->pwd_tmp, txt);
 
 #if LV_USE_ANIMATION
-        /*Auto hide characters*/
-        lv_anim_t a;
-        a.var            = ta;
-        a.exec_cb        = (lv_anim_exec_xcb_t)pwd_char_hider_anim;
-        a.time           = ext->pwd_show_time;
-        a.act_time       = 0;
-        a.ready_cb       = pwd_char_hider_anim_ready;
-        a.start          = 0;
-        a.end            = 1;
-        a.repeat         = 0;
-        a.repeat_pause   = 0;
-        a.playback       = 0;
-        a.playback_pause = 0;
-        a.path_cb        = lv_anim_path_step;
-        lv_anim_create(&a);
+        if (ext->pwd_show_time > 0) {
+            /*Auto hide characters*/
+            lv_anim_t a;
+            a.var            = ta;
+            a.exec_cb        = (lv_anim_exec_xcb_t)pwd_char_hider_anim;
+            a.time           = ext->pwd_show_time;
+            a.act_time       = 0;
+            a.ready_cb       = pwd_char_hider_anim_ready;
+            a.start          = 0;
+            a.end            = 1;
+            a.repeat         = 0;
+            a.repeat_pause   = 0;
+            a.playback       = 0;
+            a.playback_pause = 0;
+            a.path_cb        = lv_anim_path_step;
+            lv_anim_create(&a);
+        }
+        else {
+            pwd_char_hider(ta);
+        }
 #else
         pwd_char_hider(ta);
 #endif
@@ -1552,6 +1567,11 @@ static lv_res_t lv_ta_signal(lv_obj_t * ta, lv_signal_t sign, void * param)
     } else if(sign == LV_SIGNAL_CONTROL) {
         lv_indev_data_t * data = (lv_indev_data_t *)param;
         uint32_t c = (data->key); /*uint32_t because can be UTF-8*/
+        uint32_t show_time = lv_ta_get_pwd_show_time(ta);
+
+        // Don't show password chars on physical input
+        lv_ta_set_pwd_show_time(ta, 0);
+
         if(c == LV_KEY_RIGHT)
             lv_ta_cursor_right(ta);
         else if(c == LV_KEY_LEFT)
@@ -1576,6 +1596,9 @@ static lv_res_t lv_ta_signal(lv_obj_t * ta, lv_signal_t sign, void * param)
             // Otherwise, append the string given.
             lv_ta_add_text(ta, data->string);
         }
+
+        // Reset show_time to the original value.
+        lv_ta_set_pwd_show_time(ta, show_time);
     } else if(sign == LV_SIGNAL_GET_EDITABLE) {
         bool * editable = (bool *)param;
         *editable       = true;
