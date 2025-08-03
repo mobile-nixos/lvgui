@@ -322,6 +322,8 @@ lv_group_t * lvgui_get_focus_group()
 static void lvgui_style_mod_noop(struct _lv_group_t *g, lv_style_t *t);
 static void lvgui_style_mod_noop(struct _lv_group_t *g, lv_style_t *t)
 {
+	(void)g;
+	(void)t;
 }
 
 void lvgui_focus_ring_disable()
