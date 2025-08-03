@@ -109,13 +109,13 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 
 	// Just in case, this is most likely a BUG in this driver.
 	if (drm_display_orientation == DRM_ORIENTATION_NORMAL || drm_display_orientation == DRM_ORIENTATION_UPSIDE_DOWN) {
-		if (area->y2 > modeset_list->height) {
+		if ((uint32_t)area->y2 > modeset_list->height) {
 			err("drm_flush() too large to fit in buffer!!!! [BUG!!]");
 			return;
 		}
 	}
 	else {
-		if (area->y2 > modeset_list->width) {
+		if ((uint32_t)area->y2 > modeset_list->width) {
 			err("drm_flush() too large to fit in buffer!!!! [BUG!!]");
 			return;
 		}
@@ -237,7 +237,8 @@ void drm_init(lv_disp_drv_t* drv)
 #endif
 
 	{
-		int i;
+		uint32_t i;
+		int j;
 		char * name = 0;
 		uint64_t value;
 		drmModeObjectProperties *props;
@@ -250,11 +251,11 @@ void drm_init(lv_disp_drv_t* drv)
 				value = props->prop_values[i];
 				dbg("prop->name = %s; (value = %lu) (count_enums = %d) (count_values = %d)", prop->name, value, prop->count_enums, prop->count_values);
 				if (!strcmp(prop->name, "panel orientation")) {
-					for (i = 0; i < prop->count_enums; i++) {
-						name = prop->enums[i].name;
+					for (j = 0; j < prop->count_enums; j++) {
+						name = prop->enums[j].name;
 						dbg("name = %s", name)
-						dbg("value = %llu", prop->enums[i].value)
-						if (value == prop->enums[i].value) {
+						dbg("value = %llu", prop->enums[j].value)
+						if (value == prop->enums[j].value) {
 							if (!strcmp(name, "Normal")) {
 								drm_display_orientation = DRM_ORIENTATION_NORMAL;
 							}
@@ -348,7 +349,7 @@ static int modeset_prepare(int fd)
 {
 	drmModeRes *res;
 	drmModeConnector *conn;
-	unsigned int i;
+	int i;
 	struct modeset_dev *dev;
 	int ret;
 
@@ -445,8 +446,9 @@ static int modeset_find_crtc(int fd, drmModeRes *res, drmModeConnector *conn,
 			     struct modeset_dev *dev)
 {
 	drmModeEncoder *enc;
-	unsigned int i, j;
-	int32_t crtc;
+	int i, j;
+	uint32_t crtc;
+	bool found;
 	struct modeset_dev *iter;
 
 	/* first try the currently conected encoder+crtc */
@@ -457,15 +459,16 @@ static int modeset_find_crtc(int fd, drmModeRes *res, drmModeConnector *conn,
 
 	if (enc) {
 		if (enc->crtc_id) {
+			found = true;
 			crtc = enc->crtc_id;
 			for (iter = modeset_list; iter; iter = iter->next) {
 				if (iter->crtc == crtc) {
-					crtc = -1;
+					found = false;
 					break;
 				}
 			}
 
-			if (crtc >= 0) {
+			if (found) {
 				drmModeFreeEncoder(enc);
 				dev->crtc = crtc;
 				return 0;
@@ -493,16 +496,16 @@ static int modeset_find_crtc(int fd, drmModeRes *res, drmModeConnector *conn,
 				continue;
 
 			/* check that no other device already uses this CRTC */
+			found = true;
 			crtc = res->crtcs[j];
 			for (iter = modeset_list; iter; iter = iter->next) {
 				if (iter->crtc == crtc) {
-					crtc = -1;
+					found = false;
 					break;
 				}
 			}
 
-			/* we have found a CRTC, so save it and return */
-			if (crtc >= 0) {
+			if (found) {
 				drmModeFreeEncoder(enc);
 				dev->crtc = crtc;
 				return 0;
@@ -580,7 +583,7 @@ err_destroy:
 
 static void dbg_fill_buffer(struct modeset_dev *dev, uint8_t r, uint8_t g, uint8_t b)
 {
-	int j, k;
+	uint32_t j, k;
 	int off;
 
 	dbg("Filling framebuffer...");
