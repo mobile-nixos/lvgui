@@ -522,12 +522,14 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 
 static int open_restricted(const char *path, int flags, void *user_data)
 {
+	(void)user_data;
 	int fd = open(path, flags);
 	return fd < 0 ? -errno : fd;
 }
 
 static void close_restricted(int fd, void *user_data)
 {
+	(void)user_data;
 	close(fd);
 }
 
