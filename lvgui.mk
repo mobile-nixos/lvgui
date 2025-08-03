@@ -1,46 +1,35 @@
 LVGL_ENV_SIMULATOR ?= 1
 
-WARNING_FLAGS ?= \
-	-Wall \
-	-Wclobbered \
-	-Wdeprecated \
-	-Wdouble-promotion \
-	-Wempty-body \
-	-Werror \
-	-Wextra \
-	-Wformat-security \
-	-Wmaybe-uninitialized \
-	-Wmissing-prototypes \
-	-Wmultichar \
-	-Wno-cast-qual \
-	-Wno-discarded-qualifiers \
-	-Wno-error=cpp \
-	-Wno-error=missing-prototypes \
-	-Wno-error=pedantic \
-	-Wno-error=strict-prototypes \
-	-Wno-format-nonliteral \
-	-Wno-ignored-qualifiers \
-	-Wno-missing-field-initializers \
-	-Wno-sequence-point \
-	-Wno-sign-compare \
-	-Wno-switch-default \
-	-Wno-unused-function \
-	-Wno-unused-parameter \
-	-Wno-unused-value \
-	-Wpointer-arith \
-	-Wreturn-type \
-	-Wshift-negative-value \
-	-Wsizeof-pointer-memaccess \
-	-Wstack-usage=8704 \
-	-Wswitch-enum \
-	-Wtype-limits \
-	-Wundef \
-	-Wuninitialized \
-	-Wunreachable-code \
-	-fno-strict-aliasing \
+WARNING_FLAGS ?= -Wall -Werror
+WARNING_FLAGS += -Wextra
+WARNING_FLAGS += -fno-strict-aliasing
 
-# Fails on master.
-#	-Wshadow \
+WARNING_FLAGS += -Wclobbered
+WARNING_FLAGS += -Wdeprecated
+WARNING_FLAGS += -Wdouble-promotion
+WARNING_FLAGS += -Wempty-body
+WARNING_FLAGS += -Wformat-security
+WARNING_FLAGS += -Wmaybe-uninitialized
+WARNING_FLAGS += -Wmissing-prototypes
+WARNING_FLAGS += -Wmultichar
+WARNING_FLAGS += -Wno-error=discarded-qualifiers
+WARNING_FLAGS += -Wno-error=missing-prototypes
+WARNING_FLAGS += -Wno-error=shadow
+WARNING_FLAGS += -Wno-error=sign-compare
+WARNING_FLAGS += -Wno-error=unused-function
+WARNING_FLAGS += -Wno-error=unused-parameter
+WARNING_FLAGS += -Wno-error=unused-value
+WARNING_FLAGS += -Wpointer-arith
+WARNING_FLAGS += -Wreturn-type
+WARNING_FLAGS += -Wshadow
+WARNING_FLAGS += -Wshift-negative-value
+WARNING_FLAGS += -Wsizeof-pointer-memaccess
+WARNING_FLAGS += -Wstack-usage=8704
+WARNING_FLAGS += -Wtype-limits
+WARNING_FLAGS += -Wundef
+WARNING_FLAGS += -Wuninitialized
+WARNING_FLAGS += -Wunreachable-code
+
 
 DEBUG_FLAGS ?= -O3 -g0
 
