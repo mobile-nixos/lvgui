@@ -14,7 +14,6 @@ WARNING_FLAGS += -Wmaybe-uninitialized
 WARNING_FLAGS += -Wmissing-prototypes
 WARNING_FLAGS += -Wmultichar
 WARNING_FLAGS += -Wno-error=shadow
-WARNING_FLAGS += -Wno-error=sign-compare
 WARNING_FLAGS += -Wno-error=unused-function
 WARNING_FLAGS += -Wno-error=unused-parameter
 WARNING_FLAGS += -Wno-error=unused-value
