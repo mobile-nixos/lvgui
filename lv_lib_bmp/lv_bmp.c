@@ -63,7 +63,6 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
 
 	if (err) {
 		fprintf(stderr, "LoadBMP Load Error: (%s) %u\n", filename, err);
-		free(dsc->img_data);
 
 		return LV_RES_INV;
 	}
