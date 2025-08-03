@@ -12,7 +12,7 @@ char* url_get_path(const char* url)
 		return NULL;
 	}
 
-	char* end = strchr(url, '?');
+	const char* end = strchr(url, '?');
 
 	if (end == NULL) {
 		end = url + strlen(url);
