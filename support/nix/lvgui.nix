@@ -22,9 +22,9 @@ let
 in
   stdenv.mkDerivation {
     pname = "lvgui${optionalString withSimulator "-simulator"}";
-    version = "2023-02-25";
+    version = "undefined";
 
-    src = nix-gitignore.gitignoreSource [] ../.;
+    src = nix-gitignore.gitignoreSource [] ../../.;
 
     # Document `LVGL_ENV_SIMULATOR` in the built headers.
     # This allows the mrbgem to know about it.
