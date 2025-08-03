@@ -107,7 +107,7 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 	// Partial update, so we need to update the back buffer with the front buffer content first.
 	// if ((w != modeset_list->width || h != modeset_list->height) && modeset_list->cur_bufs[1])
 	// 	memcpy(dev->map, modeset_list->cur_bufs[1]->map, dev->size);
-	(int) h; // temporary until ^ is added back...
+	(void) h; // temporary until ^ is added back...
 
 	// Just in case, this is most likely a BUG in this driver.
 	if (drm_display_orientation == DRM_ORIENTATION_NORMAL || drm_display_orientation == DRM_ORIENTATION_UPSIDE_DOWN) {
