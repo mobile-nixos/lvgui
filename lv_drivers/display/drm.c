@@ -54,7 +54,9 @@ static int modeset_setup_dev(int fd, drmModeRes *res, drmModeConnector *conn, st
 static int modeset_open(int *out, const char *node);
 static int modeset_prepare(int fd);
 
+#ifdef DRV_DEBUG
 static void dbg_fill_buffer(struct modeset_dev *iter, uint8_t r, uint8_t g, uint8_t b);
+#endif
 
 struct modeset_dev {
 	struct modeset_dev *next;
@@ -581,6 +583,7 @@ err_destroy:
 
 // }}}
 
+#ifdef DRV_DEBUG
 static void dbg_fill_buffer(struct modeset_dev *dev, uint8_t r, uint8_t g, uint8_t b)
 {
 	uint32_t j, k;
@@ -594,5 +597,6 @@ static void dbg_fill_buffer(struct modeset_dev *dev, uint8_t r, uint8_t g, uint8
 		}
 	}
 }
+#endif
 
 #endif
