@@ -2,6 +2,7 @@ LVGL_ENV_SIMULATOR ?= 1
 
 WARNING_FLAGS ?= -Wall -Werror
 WARNING_FLAGS += -Wextra
+WARNING_FLAGS += -Wpedantic
 WARNING_FLAGS += -fno-strict-aliasing
 
 WARNING_FLAGS += -Wclobbered
