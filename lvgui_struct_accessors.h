@@ -4,7 +4,7 @@
 #include <lvgl/lvgl.h>
 #include <lv_drv_conf.h>
 
-lv_style_t * lvgui_allocate_lv_style();
+lv_style_t * lvgui_allocate_lv_style(void);
 
 uint8_t lvgui_get_lv_style__glass(lv_style_t * s) __attribute__((used));
 void lvgui_set_lv_style__glass(lv_style_t * s, uint8_t value) __attribute__((used));
@@ -96,6 +96,6 @@ void lvgui_set_lv_style__line_opa(lv_style_t * s, lv_opa_t value) __attribute__(
 uint8_t lvgui_get_lv_style__line_rounded(lv_style_t * s) __attribute__((used));
 void lvgui_set_lv_style__line_rounded(lv_style_t * s, uint8_t value) __attribute__((used));
 
-lv_anim_t * lvgui_allocate_lv_anim();
+lv_anim_t * lvgui_allocate_lv_anim(void);
 
 #endif
