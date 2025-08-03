@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "url.h"
 
 /**
  * Given a string, returns a copy up to and excluding the first '?', or the end.
