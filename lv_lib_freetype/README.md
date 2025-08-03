@@ -12,7 +12,7 @@ Interface to FreeType to generate font bitmaps run time
 
 ## Usage in LVGL
 ```c
-lv_freetype_init(64); /*Cache max 64 glyphs*/
+lv_freetype_init();
 
 /*Create a font*/
 static lv_font_t font1;
