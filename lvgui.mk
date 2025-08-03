@@ -13,7 +13,6 @@ WARNING_FLAGS += -Wformat-security
 WARNING_FLAGS += -Wmaybe-uninitialized
 WARNING_FLAGS += -Wmissing-prototypes
 WARNING_FLAGS += -Wmultichar
-WARNING_FLAGS += -Wno-error=unused-value
 WARNING_FLAGS += -Wpointer-arith
 WARNING_FLAGS += -Wreturn-type
 WARNING_FLAGS += -Wshadow
