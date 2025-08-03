@@ -79,7 +79,7 @@ typedef void (*libinput_drv_add_cb_t)(libinput_drv_instance* instance);
 /**
  * Starts the libinput driver with the usual defaults.
  */
-void libinput_drv_init();
+void libinput_drv_init(libinput_drv_add_cb_t callback);
 
 /**
  * Initialize a new libinput device instance

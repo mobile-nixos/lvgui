@@ -64,13 +64,15 @@ static void libinput_drv_handle_keyboard_input(libinput_drv_instance* instance, 
 /**
  * Manages memory allocation for libinput_drv_instance
  */
-static libinput_drv_instance* libinput_drv_instance_new();
+static libinput_drv_instance* libinput_drv_instance_new(void);
 /**
  * Manages memory deallocation for libinput_drv_instance
  */
 static void libinput_drv_instance_destroy(libinput_drv_instance* instance);
 
-static int xkbcommon_init();
+static int xkbcommon_init(void);
+
+static bool libinput_set_file(libinput_drv_instance* instance, char* dev_name);
 
 /**********************
  *  STATIC VARIABLES
@@ -106,7 +108,7 @@ static libinput_drv_add_cb_t libinput_drv_add_cb;
  * @return true: the device file set complete
  *         false: the device file doesn't exist current system
  */
-bool libinput_set_file(libinput_drv_instance* instance, char* dev_name)
+static bool libinput_set_file(libinput_drv_instance* instance, char* dev_name)
 {
 	// This check *should* not be necessary, yet applications crashes even on NULL handles.
 	// citing libinput.h:libinput_path_remove_device:
