@@ -101,8 +101,8 @@ void hal_set_dpi()
 	// Not strictly DPI, but fonts don't actually scale with DPI
 	// so we need to handle it ourselves.
 
-	// Init freetype with this many cached glyphs
-	lv_freetype_init(255);
+	// Init freetype.
+	lv_freetype_init();
 
 	// Font we're going to use
 	static lv_font_t font;
