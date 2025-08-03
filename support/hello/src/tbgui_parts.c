@@ -50,6 +50,7 @@ lv_obj_t* add_container(lv_obj_t* parent, bool transp)
 	return container;
 }
 
+lv_obj_t* add_page(lv_obj_t* parent, bool transp);
 lv_obj_t* add_page(lv_obj_t* parent, bool transp)
 {
 	static lv_style_t page_style;
