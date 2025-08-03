@@ -7,8 +7,8 @@
 #include "hal.h"
 #include "scale.h"
 
-LV_IMG_DECLARE(lvgui_cursor);
-LV_IMG_DECLARE(lvgui_touch);
+LV_IMG_DECLARE(lvgui_cursor)
+LV_IMG_DECLARE(lvgui_touch)
 
 lv_disp_drv_t disp_drv;
 int mn_hal_default_dpi;
