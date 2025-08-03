@@ -176,7 +176,7 @@ void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color
 	ret = drmModeSetCrtc(dev->fd, dev->crtc, dev->fb, 0, 0,
 			&dev->conn, 1, &dev->mode);
 	if (ret) {
-		err("cannot flip CRTC for connector %u (%d): %m", dev->conn, errno);
+		err("cannot flip CRTC for connector %u (%d): %s", dev->conn, errno, strerror(errno));
 	}
 
 	lv_disp_flush_ready(disp_drv);
@@ -208,13 +208,13 @@ void drm_init(lv_disp_drv_t* drv)
 		info(" -> Trying '%s'", *card_path);
 		ret = modeset_open(&fd, *card_path);
 		if (ret) {
-			err("modeset_open failed with error %d: %m\n", errno);
+			err("modeset_open failed with error %d: %s", errno, strerror(errno));
 			continue;
 		}
 
 		ret = modeset_prepare(fd);
 		if (ret) {
-			err("modeset_prepare failed with error %d: %m\n", errno);
+			err("modeset_prepare failed with error %d: %s", errno, strerror(errno));
 			continue;
 		}
 
@@ -329,7 +329,7 @@ static int modeset_open(int *out, const char *node)
 	fd = open(node, O_RDWR | O_CLOEXEC);
 	if (fd < 0) {
 		ret = -errno;
-		err("cannot open '%s': %m", node);
+		err("cannot open '%s' (%d): %s", node, errno, strerror(errno));
 		return ret;
 	}
 
@@ -355,7 +355,7 @@ static int modeset_prepare(int fd)
 	/* retrieve resources */
 	res = drmModeGetResources(fd);
 	if (!res) {
-		err("cannot retrieve DRM resources (%d): %m", errno);
+		err("cannot retrieve DRM resources (%d): %s", errno, strerror(errno));
 		return -errno;
 	}
 
@@ -365,7 +365,7 @@ static int modeset_prepare(int fd)
 		/* get information for each connector */
 		conn = drmModeGetConnector(fd, res->connectors[i]);
 		if (!conn) {
-			err("cannot retrieve DRM connector %u:%u (%d): %m", i, res->connectors[i], errno);
+			err("cannot retrieve DRM connector %u:%u (%d): %s", i, res->connectors[i], errno, strerror(errno));
 			continue;
 		}
 
@@ -380,7 +380,7 @@ static int modeset_prepare(int fd)
 		if (ret) {
 			if (ret != -ENOENT) {
 				errno = -ret;
-				err("cannot setup device for connector %u:%u (%d): %m", i, res->connectors[i], errno);
+				err("cannot setup device for connector %u:%u (%d): %s", i, res->connectors[i], errno, strerror(errno));
 			}
 			free(dev);
 			drmModeFreeConnector(conn);
@@ -482,7 +482,7 @@ static int modeset_find_crtc(int fd, drmModeRes *res, drmModeConnector *conn,
 	for (i = 0; i < conn->count_encoders; ++i) {
 		enc = drmModeGetEncoder(fd, conn->encoders[i]);
 		if (!enc) {
-			err("cannot retrieve encoder %u:%u (%d): %m", i, conn->encoders[i], errno);
+			err("cannot retrieve encoder %u:%u (%d): %s", i, conn->encoders[i], errno, strerror(errno));
 			continue;
 		}
 
@@ -530,7 +530,7 @@ static int modeset_create_fb(int fd, struct modeset_dev *dev)
 	creq.bpp = 32;
 	ret = drmIoctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
 	if (ret < 0) {
-		err("cannot create dumb buffer (%d): %m", errno);
+		err("cannot create dumb buffer (%d): %s", errno, strerror(errno));
 		return -errno;
 	}
 	dev->stride = creq.pitch;
@@ -541,7 +541,7 @@ static int modeset_create_fb(int fd, struct modeset_dev *dev)
 	ret = drmModeAddFB(fd, dev->width, dev->height, 24, 32, dev->stride,
 			   dev->handle, &dev->fb);
 	if (ret) {
-		err("cannot create framebuffer (%d): %m", errno);
+		err("cannot create framebuffer (%d): %s", errno, strerror(errno));
 		ret = -errno;
 		goto err_destroy;
 	}
@@ -551,7 +551,7 @@ static int modeset_create_fb(int fd, struct modeset_dev *dev)
 	mreq.handle = dev->handle;
 	ret = drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
 	if (ret) {
-		err("cannot map dumb buffer (%d): %m", errno);
+		err("cannot map dumb buffer (%d): %s", errno, strerror(errno));
 		ret = -errno;
 		goto err_fb;
 	}
@@ -560,7 +560,7 @@ static int modeset_create_fb(int fd, struct modeset_dev *dev)
 	dev->map = mmap(0, dev->size, PROT_READ | PROT_WRITE, MAP_SHARED,
 		        fd, mreq.offset);
 	if (dev->map == MAP_FAILED) {
-		err("cannot mmap dumb buffer (%d): %m", errno);
+		err("cannot mmap dumb buffer (%d): %s", errno, strerror(errno));
 		ret = -errno;
 		goto err_fb;
 	}
