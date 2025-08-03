@@ -218,7 +218,7 @@ static void libinput_drv_setup_hotplug()
 	ret = inotify_add_watch(hotplug_fd, "/dev/input", IN_CREATE);
 	if (ret == -1) {
 		LVGUI_LOG_WARN("Could not watch /dev/input. (%s)",  strerror(errno));
-		hotplug_fd == -1;
+		hotplug_fd = -1;
 	}
 }
 
