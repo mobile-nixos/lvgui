@@ -13,7 +13,6 @@ WARNING_FLAGS += -Wformat-security
 WARNING_FLAGS += -Wmaybe-uninitialized
 WARNING_FLAGS += -Wmissing-prototypes
 WARNING_FLAGS += -Wmultichar
-WARNING_FLAGS += -Wno-error=shadow
 WARNING_FLAGS += -Wno-error=unused-function
 WARNING_FLAGS += -Wno-error=unused-parameter
 WARNING_FLAGS += -Wno-error=unused-value
@@ -27,7 +26,6 @@ WARNING_FLAGS += -Wtype-limits
 WARNING_FLAGS += -Wundef
 WARNING_FLAGS += -Wuninitialized
 WARNING_FLAGS += -Wunreachable-code
-
 
 DEBUG_FLAGS ?= -O3 -g0
 
