@@ -26,21 +26,21 @@
 #if LV_LOG_LEVEL <= LV_LOG_LEVEL_ERROR
 #define LVGUI_LOG_ERROR(s, ...) fprintf(stderr, "[ERROR] (%s): " s "\n", __func__, ##__VA_ARGS__);
 #else
-#define LVGUI_LOG_ERROR
+#define LVGUI_LOG_ERROR(s, ...)
 #endif
 
 #undef LVGUI_LOG_WARN
 #if LV_LOG_LEVEL <= LV_LOG_LEVEL_WARN
 #define LVGUI_LOG_WARN(s, ...) fprintf(stderr, "[WARN] (%s): " s "\n", __func__, ##__VA_ARGS__);
 #else
-#define LVGUI_LOG_WARN
+#define LVGUI_LOG_WARN(s, ...)
 #endif
 
 #undef LVGUI_LOG_INFO
 #if LV_LOG_LEVEL <= LV_LOG_LEVEL_INFO
 #define LVGUI_LOG_INFO(s, ...) fprintf(stderr, "[INFO] (%s): " s "\n", __func__, ##__VA_ARGS__);
 #else
-#define LVGUI_LOG_INFO
+#define LVGUI_LOG_INFO(s, ...)
 #endif
 
 /*********************
