@@ -167,7 +167,7 @@ void lv_spinbox_set_digit_format(lv_obj_t * spinbox, uint8_t digit_count, uint8_
 
     if(digit_count < LV_SPINBOX_MAX_DIGIT_COUNT)
     {
-        uint64_t max_val = lv_pow(10, digit_count);
+        int64_t max_val = lv_pow(10, digit_count);
         if(ext->range_max > max_val - 1) ext->range_max = max_val - 1;
         if(ext->range_min < - max_val  + 1) ext->range_min = - max_val  + 1;
     }

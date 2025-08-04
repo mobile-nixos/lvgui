@@ -26,21 +26,21 @@
 #if LV_LOG_LEVEL <= LV_LOG_LEVEL_ERROR
 #define LVGUI_LOG_ERROR(s, ...) fprintf(stderr, "[ERROR] (%s): " s "\n", __func__, ##__VA_ARGS__);
 #else
-#define LVGUI_LOG_ERROR
+#define LVGUI_LOG_ERROR(s, ...)
 #endif
 
 #undef LVGUI_LOG_WARN
 #if LV_LOG_LEVEL <= LV_LOG_LEVEL_WARN
 #define LVGUI_LOG_WARN(s, ...) fprintf(stderr, "[WARN] (%s): " s "\n", __func__, ##__VA_ARGS__);
 #else
-#define LVGUI_LOG_WARN
+#define LVGUI_LOG_WARN(s, ...)
 #endif
 
 #undef LVGUI_LOG_INFO
 #if LV_LOG_LEVEL <= LV_LOG_LEVEL_INFO
 #define LVGUI_LOG_INFO(s, ...) fprintf(stderr, "[INFO] (%s): " s "\n", __func__, ##__VA_ARGS__);
 #else
-#define LVGUI_LOG_INFO
+#define LVGUI_LOG_INFO(s, ...)
 #endif
 
 /*********************
@@ -64,13 +64,15 @@ static void libinput_drv_handle_keyboard_input(libinput_drv_instance* instance, 
 /**
  * Manages memory allocation for libinput_drv_instance
  */
-static libinput_drv_instance* libinput_drv_instance_new();
+static libinput_drv_instance* libinput_drv_instance_new(void);
 /**
  * Manages memory deallocation for libinput_drv_instance
  */
 static void libinput_drv_instance_destroy(libinput_drv_instance* instance);
 
-static int xkbcommon_init();
+static int xkbcommon_init(void);
+
+static bool libinput_set_file(libinput_drv_instance* instance, char* dev_name);
 
 /**********************
  *  STATIC VARIABLES
@@ -106,7 +108,7 @@ static libinput_drv_add_cb_t libinput_drv_add_cb;
  * @return true: the device file set complete
  *         false: the device file doesn't exist current system
  */
-bool libinput_set_file(libinput_drv_instance* instance, char* dev_name)
+static bool libinput_set_file(libinput_drv_instance* instance, char* dev_name)
 {
 	// This check *should* not be necessary, yet applications crashes even on NULL handles.
 	// citing libinput.h:libinput_path_remove_device:
@@ -216,7 +218,7 @@ static void libinput_drv_setup_hotplug()
 	ret = inotify_add_watch(hotplug_fd, "/dev/input", IN_CREATE);
 	if (ret == -1) {
 		LVGUI_LOG_WARN("Could not watch /dev/input. (%s)",  strerror(errno));
-		hotplug_fd == -1;
+		hotplug_fd = -1;
 	}
 }
 
@@ -520,12 +522,14 @@ bool libinput_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 
 static int open_restricted(const char *path, int flags, void *user_data)
 {
+	(void)user_data;
 	int fd = open(path, flags);
 	return fd < 0 ? -errno : fd;
 }
 
 static void close_restricted(int fd, void *user_data)
 {
+	(void)user_data;
 	close(fd);
 }
 

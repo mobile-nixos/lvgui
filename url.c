@@ -1,17 +1,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "url.h"
 
 /**
  * Given a string, returns a copy up to and excluding the first '?', or the end.
  */
-char* url_get_path(char* url)
+char* url_get_path(const char* url)
 {
 	if (url == NULL) {
 		return NULL;
 	}
 
-	char* end = strchr(url, '?');
+	const char* end = strchr(url, '?');
 
 	if (end == NULL) {
 		end = url + strlen(url);

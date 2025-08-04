@@ -13,10 +13,10 @@ enum {
 typedef uint8_t hal_panel_orientation_t;
 
 void hal_init(const char* asset_path);
-lv_group_t * lvgui_get_focus_group();
-void lvgui_focus_ring_disable();
+lv_group_t * lvgui_get_focus_group(void);
+void lvgui_focus_ring_disable(void);
 char * hal_asset_path(const char* asset_path);
-hal_panel_orientation_t hal_get_panel_orientation() ;
+hal_panel_orientation_t hal_get_panel_orientation(void);
 
 extern lv_disp_drv_t disp_drv;
 extern int mn_hal_default_dpi;

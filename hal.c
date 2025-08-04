@@ -7,8 +7,8 @@
 #include "hal.h"
 #include "scale.h"
 
-LV_IMG_DECLARE(lvgui_cursor);
-LV_IMG_DECLARE(lvgui_touch);
+LV_IMG_DECLARE(lvgui_cursor)
+LV_IMG_DECLARE(lvgui_touch)
 
 lv_disp_drv_t disp_drv;
 int mn_hal_default_dpi;
@@ -101,8 +101,8 @@ void hal_set_dpi()
 	// Not strictly DPI, but fonts don't actually scale with DPI
 	// so we need to handle it ourselves.
 
-	// Init freetype with this many cached glyphs
-	lv_freetype_init(255);
+	// Init freetype.
+	lv_freetype_init();
 
 	// Font we're going to use
 	static lv_font_t font;
@@ -319,8 +319,11 @@ lv_group_t * lvgui_get_focus_group()
 	return lvgui_focus_group;
 }
 
-void lvgui_style_mod_noop(struct _lv_group_t *g, lv_style_t *t)
+static void lvgui_style_mod_noop(struct _lv_group_t *g, lv_style_t *t);
+static void lvgui_style_mod_noop(struct _lv_group_t *g, lv_style_t *t)
 {
+	(void)g;
+	(void)t;
 }
 
 void lvgui_focus_ring_disable()

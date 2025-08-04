@@ -50,6 +50,7 @@ lv_obj_t* add_container(lv_obj_t* parent, bool transp)
 	return container;
 }
 
+lv_obj_t* add_page(lv_obj_t* parent, bool transp);
 lv_obj_t* add_page(lv_obj_t* parent, bool transp)
 {
 	static lv_style_t page_style;
@@ -110,6 +111,8 @@ window_t* create_window(char* title_text)
 	lv_obj_t * title = lv_label_create(top_container, NULL);
 	lv_label_set_text(title, title_text);
 	lv_label_set_align(title, LV_LABEL_ALIGN_CENTER);
+#else
+	(void)title_text;
 #endif
 
 	// Catches default focused option

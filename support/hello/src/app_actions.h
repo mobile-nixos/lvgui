@@ -8,6 +8,6 @@ enum app_actions {
 };
 typedef enum app_actions app_actions_t;
 
-void handle_app_actions();
+void handle_app_actions(void);
 
 #endif

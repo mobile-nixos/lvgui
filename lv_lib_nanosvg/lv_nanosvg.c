@@ -31,7 +31,7 @@ static lv_res_t decoder_info(struct _lv_img_decoder * decoder, const void * src,
 	(void) width;
 
 	if (src_type == LV_IMG_SRC_FILE) {
-		const char * path = url_get_path(src);
+		char * path = url_get_path(src);
 		NSVGimage *image = NULL;
 
 		image = nsvgParseFromFile(path, "px", 96.0f);
@@ -87,7 +87,7 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
 
 	(void) decoder;
 
-	const char * filename = url_get_path(dsc->src);
+	char * filename = url_get_path(dsc->src);
 	NSVGimage *image = NULL;
 	NSVGrasterizer *rast = NULL;
 
@@ -116,7 +116,7 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
 		free(filename);
 		return LV_RES_INV;
 	}
-	nsvgRasterize(rast, image, 0,0, ((float)dsc->header.w/(float)image->width), dsc->img_data, dsc->header.w, dsc->header.h, dsc->header.w*4);
+	nsvgRasterize(rast, image, 0,0, ((float)dsc->header.w/(float)image->width), (unsigned char*)dsc->img_data, dsc->header.w, dsc->header.h, dsc->header.w*4);
 
 	nsvgDeleteRasterizer(rast);
 	nsvgDelete(image);

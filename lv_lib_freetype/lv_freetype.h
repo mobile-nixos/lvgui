@@ -48,7 +48,7 @@ typedef struct {
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-int lv_freetype_init();
+int lv_freetype_init(void);
 int lv_freetype_font_init(lv_font_t * font, const char * font_path, uint16_t font_size);
 
 /**********************

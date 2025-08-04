@@ -20,6 +20,7 @@ extern int monitor_width;
 // Define `app` once.
 app_state_t* app;
 
+void font_init(void);
 void font_init()
 {
 	int ret = 0;
@@ -42,6 +43,7 @@ void font_init()
 #endif
 }
 
+void tbgui_app_init(void);
 void tbgui_app_init()
 {
 #if USE_MONITOR
@@ -83,6 +85,6 @@ int main()
 	while (true) {
 		lv_task_handler();
 		usleep(SECOND_AS_MICROSECONDS * FRAME_RATE);
-		handle_app_actions(app);
+		handle_app_actions();
 	}
 }

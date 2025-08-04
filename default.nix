@@ -1,13 +1,20 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? null
+, nixpkgs_path ? null
+}@args:
 
-rec {
-  lvgui = pkgs.callPackage ./support/lvgui.nix {};
-  lvgui-simulator = lvgui.override { withSimulator = true; };
-  hello = pkgs.callPackage ./support/hello {
-    inherit lvgui;
-  };
-  hello-simulator = pkgs.callPackage ./support/hello {
-    inherit lvgui;
-    withSimulator = true;
-  };
+let
+  pkgs =
+  if args ? pkgs && args ? nixpkgs_path then
+    builtins.abort "Either pkgs or nixpkgs_path can be given, not both at once."
+  else if args ? pkgs then
+    args.pkgs
+  else if args ? nixpkgs_path then
+    import nixpkgs_path {}
+  else
+    import (import ./npins).nixpkgs {}
+  ;
+in
+
+(pkgs.callPackage ./support/nix {}) // {
+  inherit pkgs;
 }
